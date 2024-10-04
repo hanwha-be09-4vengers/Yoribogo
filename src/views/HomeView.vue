@@ -1,5 +1,5 @@
 <template>
-  <div id="homeview" class="homeview">
+  <div id="home-view" class="home-view">
     <img class="bg-circle" src="/src/assets/Intersect.png" alt="Background Circle" />
     <img class="chicken" src="/src/assets/chicken.png" alt="Chicken" />
     <header>
@@ -14,7 +14,7 @@
           <span class="normal">여러분의 <span class="f-red">취향</span>에</span>
           <span class="indent normal">맞춘 <span class="f-red">음식 레시피.</span></span>
         </div>
-        <button id="start-btn" class="start-btn">시작하기</button>
+        <button id="start-btn" class="start-btn" @click="goQuestion">시작하기</button>
       </section>
     </main>
   </div>
@@ -22,10 +22,17 @@
 
 <script setup>
 import MainNav from '@/components/MainNav.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const goQuestion = () => {
+  router.push('/question/1')
+}
 </script>
 
 <style scoped>
-.homeview {
+.home-view {
   position: relative;
   display: flex;
   flex-direction: column;

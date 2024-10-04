@@ -2,6 +2,7 @@
   --white-color: #fff;
   --black-color: #202020;
   --yellow-color: #ffda14;
+  --sub-yellow-color: #b29b1d;
   --red-color: #f45c47;
 
   font-weight: normal;
@@ -22,7 +23,7 @@ header {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 8rem;
+  min-height: 8rem;
   z-index: 2;
 }
 

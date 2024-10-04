@@ -24,6 +24,7 @@
 .logo {
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .logo img {
@@ -43,5 +44,9 @@
   font-size: 2rem;
   font-weight: 600;
   color: var(--black-color);
+}
+
+ul li {
+  cursor: pointer;
 }
 </style>
