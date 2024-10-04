@@ -1,0 +1,116 @@
+:root {
+  --white-color: #fff;
+  --black-color: #202020;
+  --yellow-color: #ffda14;
+  --red-color: #f45c47;
+
+  font-weight: normal;
+  font-family: 'Noto Sans';
+  font-size: 10px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 8rem;
+  z-index: 2;
+}
+
+main {
+  display: flex;
+  width: 100%;
+  z-index: 2;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+li,
+dl,
+dt,
+dd,
+p,
+span {
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+li {
+  list-style: none;
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+.hide-text {
+  text-indent: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.hidden {
+  display: none;
+}
+
+/* 노트북 */
+@media screen and (max-width: 1683px) {
+  :root {
+    font-size: 8px;
+  }
+}
+
+@media screen and (max-width: 1439px) {
+  :root {
+    font-size: 7.5px;
+  }
+}
+
+/* 태블릿 */
+@media screen and (max-width: 1023px) {
+  :root {
+    font-size: 7px;
+  }
+}
+
+/* 모바일 */
+@media screen and (max-width: 767px) {
+  :root {
+    font-size: 6px;
+  }
+}
+
+@media screen and (max-width: 560px) {
+  :root {
+    font-size: 5.5px;
+  }
+}
+
+@media screen and (max-width: 374px) {
+  :root {
+    font-size: 5px;
+  }
+}
+@media screen and (max-width: 320px) {
+  :root {
+    font-size: 4.5px;
+  }
+}
