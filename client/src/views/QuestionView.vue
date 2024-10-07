@@ -9,9 +9,17 @@
           <span>{{ questions[qid - 1].label }}</span>
         </div>
         <div class="card-board-container">
-          <CardBoard :img="questions[qid - 1].leftImg" :text="questions[qid - 1].leftText">
+          <CardBoard
+            :img="questions[qid - 1].leftImg"
+            :text="questions[qid - 1].leftText"
+            @click="goNext(qid + 1)"
+          >
           </CardBoard>
-          <CardBoard :img="questions[qid - 1].rightImg" :text="questions[qid - 1].rightText">
+          <CardBoard
+            :img="questions[qid - 1].rightImg"
+            :text="questions[qid - 1].rightText"
+            @click="goNext(qid + 1)"
+          >
           </CardBoard>
         </div>
       </div>
@@ -24,11 +32,20 @@ import QuestionNav from '../components/QuestionNav.vue'
 import CardBoard from '../components/CardBoard.vue'
 import sunnyImg from '../assets/sunny.svg'
 import cloudyImg from '../assets/cloudy.svg'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { ref, watch } from 'vue'
 
 const route = useRoute()
+const router = useRouter()
 
-const qid = parseInt(route.params.qid)
+const qid = ref(parseInt(route.params.qid))
+
+watch(
+  () => route.params.qid,
+  (newQid) => {
+    qid.value = parseInt(newQid)
+  }
+)
 
 const questions = [
   {
@@ -72,6 +89,10 @@ const questions = [
     rightText: '흐려요'
   }
 ]
+
+const goNext = (nextQid) => {
+  nextQid <= 5 ? router.push(`/question/${nextQid}`) : router.push(`/question/result`)
+}
 </script>
 
 <style scoped>

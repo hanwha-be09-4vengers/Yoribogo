@@ -11,6 +11,11 @@ const routes = [
     path: '/question/:qid',
     name: 'question',
     component: () => import('../views/QuestionView.vue')
+  },
+  {
+    path: '/question/result',
+    name: 'result',
+    component: () => import('../views/ResultView.vue')
   }
 ]
 

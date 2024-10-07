@@ -1,45 +1,27 @@
 <template>
-  <div class="question-nav">
+  <div class="result-nav">
     <div class="rounded-line"></div>
-    <div class="menu" v-for="(question, index) in props.questions" :key="index">
+    <div class="menu">
       <div class="circle">
-        <div class="mini-circle" v-if="currentQid === question.qid"></div>
+        <div class="mini-circle"></div>
       </div>
-      <span>{{ question.label }}</span>
+      <span>요리보고의 추천</span>
     </div>
   </div>
 </template>
 
 <script setup>
 import { useRoute } from 'vue-router'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 
 // 현재 경로에서 qid를 추출하고 숫자로 변환
 const route = useRoute()
-
-// 현재 qid를 추출하고 이를 추적하는 상태로 만듭니다.
-let currentQid = ref(parseInt(route.params.qid))
-
-// route.params.qid가 변경될 때마다 currentQid 값을 업데이트
-watch(
-  () => route.params.qid,
-  (newQid) => {
-    currentQid.value = parseInt(newQid)
-  }
-)
-
-const props = defineProps({
-  questions: {
-    type: Array,
-    required: true
-  }
-})
 </script>
 
 <style scoped>
-.question-nav {
+.result-nav {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
   width: calc(100% - 24rem);
   height: 100%;
