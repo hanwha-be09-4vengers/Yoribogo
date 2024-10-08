@@ -7,10 +7,11 @@
       <div class="result-container">
         <p>요리보고가 추천하는 음식은!</p>
         <div class="result-info">
-          <span>{{ result.label }}</span>
+          <span :style="{ opacity: isFlipped ? 1 : 0 }">{{ result.label }}</span>
         </div>
         <div class="card-board-container">
-          <ResultBoard :img="result.img" :text="result.label"> </ResultBoard>
+          <ResultBoard :img="result.img" :text="result.label" @flipped="isFlipped = !isFlipped">
+          </ResultBoard>
         </div>
       </div>
     </main>
@@ -26,6 +27,8 @@ import { ref } from 'vue'
 
 const route = useRoute()
 const router = useRouter()
+
+const isFlipped = ref(false)
 
 const result = {
   rid: 1,
@@ -74,6 +77,10 @@ main {
   height: 8rem;
   background-color: var(--light-yellow-color);
   border-radius: 5rem;
+}
+
+.result-info span {
+  transition: opacity 0.5s ease;
 }
 
 .card-board-container {
