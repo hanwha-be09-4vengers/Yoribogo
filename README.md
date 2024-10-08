@@ -46,6 +46,7 @@
 <br>
 
 # ✔️ 논리 모델링
+![논리모델](https://github.com/user-attachments/assets/17ad908f-9dfb-4d97-a310-853f27d55dec)
 
 ---
 <br>
