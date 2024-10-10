@@ -105,7 +105,6 @@ CREATE TABLE recipe (
     menu_ingredient TEXT NOT NULL,
     menu_image TEXT,
     menu_type VARCHAR(255) NOT NULL DEFAULT 'PUBLIC' CHECK(menu_type IN ('PUBLIC', 'AI')),
-    recipe_status VARCHAR(255) NOT NULL DEFAULT 'ACTIVE' CHECK(recipe_status IN ('ACTIVE','INACTIVE')),
     user_id BIGINT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES USER(user_id)
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='요리레시피' DEFAULT CHARSET=UTF8;
@@ -147,6 +146,7 @@ CREATE TABLE recipe_board_recomment (
 CREATE TABLE recommended_menu (
     recommended_menu_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     satisfaction VARCHAR(255) NOT NULL CHECK(satisfaction IN ('GOOD','BAD')),
+    recommended_menu_status VARCHAR(255) NOT NULL DEFAULT 'ACTIVE' CHECK(recommended_menu_status IN ('ACTIVE','INACTIVE')),
     user_id BIGINT NOT NULL,
     recipe_id BIGINT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES USER(user_id),
@@ -189,16 +189,14 @@ CREATE TABLE public_data_recipe (
 
 CREATE TABLE recipe_manual (
     recipe_manual_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    recipe_manual_step INTEGER NOT NULL,
-    recipe_manual_image TEXT,
-    recipe_manual_content TEXT NOT NULL,
+    manual_menu_image TEXT,
+    manual_content TEXT NOT NULL,
     recipe_id BIGINT NOT NULL,
     FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id)
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='요리메뉴얼' DEFAULT CHARSET=UTF8;
 
 CREATE TABLE recipe_board_manual (
     recipe_board_manual_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    recipe_board_manual_step INTEGER NOT NULL,
     recipe_board_manual_image TEXT,
     recipe_board_manual_content TEXT NOT NULL,
     recipe_board_id BIGINT NOT NULL,
