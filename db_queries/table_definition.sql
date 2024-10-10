@@ -189,6 +189,7 @@ CREATE TABLE public_data_recipe (
 
 CREATE TABLE recipe_manual (
     recipe_manual_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    recipe_manual_step INT NOT NULL,
     manual_menu_image TEXT,
     manual_content TEXT NOT NULL,
     recipe_id BIGINT NOT NULL,
@@ -197,6 +198,7 @@ CREATE TABLE recipe_manual (
 
 CREATE TABLE recipe_board_manual (
     recipe_board_manual_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    recipe_board_manual_step INT NOT NULL,
     recipe_board_manual_image TEXT,
     recipe_board_manual_content TEXT NOT NULL,
     recipe_board_id BIGINT NOT NULL,
