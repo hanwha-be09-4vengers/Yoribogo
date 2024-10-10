@@ -25,10 +25,6 @@
 ## •  Context
 ![devops project - Step 5  Bounded Context](https://github.com/user-attachments/assets/8bc565a9-7a87-47f6-9759-1ce08e364dd3)
 
-
-> - <br>
-
-
 ---
 <br>
 
