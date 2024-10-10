@@ -189,14 +189,16 @@ CREATE TABLE public_data_recipe (
 
 CREATE TABLE recipe_manual (
     recipe_manual_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    manual_menu_image TEXT,
-    manual_content TEXT NOT NULL,
+    recipe_manual_step INTEGER NOT NULL,
+    recipe_manual_image TEXT,
+    recipe_manual_content TEXT NOT NULL,
     recipe_id BIGINT NOT NULL,
     FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id)
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='요리메뉴얼' DEFAULT CHARSET=UTF8;
 
 CREATE TABLE recipe_board_manual (
     recipe_board_manual_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    recipe_board_manual_step INTEGER NOT NULL,
     recipe_board_manual_image TEXT,
     recipe_board_manual_content TEXT NOT NULL,
     recipe_board_id BIGINT NOT NULL,
