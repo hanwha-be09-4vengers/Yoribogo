@@ -1,12 +1,12 @@
 import sys
-sys.stdout.reconfigure(encoding='utf-8')
+sys.stdout.reconfigure(encoding='utf-8')  # 한글 출력을 위해 추가
 
-# 라이브러리 먼저 설치해주세요
+# 라이브러리 설치 후 진행해주세요
+import requests
 from sqlalchemy import create_engine, Column, String, Integer, Text, ForeignKey
 from sqlalchemy.orm import declarative_base, sessionmaker
-import requests
 
-# 데이터베이스 설정 (mysqlclient 사용) 본인 루트비번 입력하시면 됩니다.
+# 데이터베이스 설정, 본인 계정과 비번 입력하세요
 DATABASE_URL = 'mysql+mysqldb://root:mariadb@localhost/yoribogodb'
 
 engine = create_engine(DATABASE_URL)
@@ -15,20 +15,19 @@ session = Session()
 
 Base = declarative_base()
 
-# 테이블 모델 정의
+# 테이블 정의
 class Recipe(Base):
-    __tablename__ = 'recipe'  # 이미 구축된 테이블 이름
+    __tablename__ = 'recipe'
     
     recipe_id = Column(Integer, primary_key=True, autoincrement=True)
     menu_name = Column(String(255), nullable=False)
     menu_ingredient = Column(Text, nullable=False)
     menu_image = Column(Text)
     menu_type = Column(String(255), default='PUBLIC')
-    recipe_status = Column(String(255), default='ACTIVE')
-    user_id = Column(Integer, default=1)  # user_id에 기본값 1 설정
+    user_id = Column(Integer, nullable=False)
 
 class PublicDataRecipe(Base):
-    __tablename__ = 'public_data_recipe'  # 이미 구축된 테이블 이름
+    __tablename__ = 'public_data_recipe'
     
     public_data_recipe_id = Column(Integer, primary_key=True, autoincrement=True)
     public_data_menu_name = Column(String(255), nullable=False)
@@ -37,26 +36,24 @@ class PublicDataRecipe(Base):
     recipe_id = Column(Integer, ForeignKey('recipe.recipe_id'), nullable=False)
 
 class RecipeManual(Base):
-    __tablename__ = 'recipe_manual'  # 테이블 이름
+    __tablename__ = 'recipe_manual'
     
     recipe_manual_id = Column(Integer, primary_key=True, autoincrement=True)
-    recipe_manual_step = Column(Integer, nullable=False)  # 메뉴얼 단계
-    recipe_manual_image = Column(Text)  # 메뉴얼 이미지
-    recipe_manual_content = Column(Text, nullable=False)  # 메뉴얼 내용
-    recipe_id = Column(Integer, ForeignKey('recipe.recipe_id'), nullable=False)  # 레시피 외래키
+    recipe_manual_step = Column(Integer, nullable=False)  # 단계 추가
+    manual_content = Column(Text, nullable=False)
+    manual_menu_image = Column(Text)
+    recipe_id = Column(Integer, ForeignKey('recipe.recipe_id'), nullable=False)
 
-# 레시피 이름으로 검색
+# 레시피가 이미 있는지 확인하는 함수
 def find_recipe_by_name(menu_name):
     return session.query(Recipe).filter_by(menu_name=menu_name).first()
 
-# 데이터 삽입 부분 수정 (한 번에 데이터 추가 후 commit)
+# 데이터 삽입 함수
 def insert_data(data):
     for item in data:
         if item['RCP_PAT2'] != '후식':  # '후식' 제외
-            # 레시피가 존재하는지 확인
             existing_recipe = find_recipe_by_name(item['RCP_NM'])
             if not existing_recipe:
-                # recipe 테이블에 삽입
                 recipe = Recipe(
                     menu_name=item['RCP_NM'],
                     menu_ingredient=item['RCP_PARTS_DTLS'],
@@ -64,51 +61,52 @@ def insert_data(data):
                     user_id=1
                 )
                 session.add(recipe)
-                session.commit()  # commit을 통해 recipe_id를 생성
+                session.commit()
 
-                # public_data_recipe 테이블에 삽입
                 public_data_recipe = PublicDataRecipe(
                     public_data_menu_name=item['RCP_NM'],
                     public_data_menu_ingredient=item['RCP_PARTS_DTLS'],
                     public_data_menu_image=item['ATT_FILE_NO_MAIN'],
-                    recipe_id=recipe.recipe_id  # commit 후 생성된 recipe_id 사용
+                    recipe_id=recipe.recipe_id
                 )
                 session.add(public_data_recipe)
 
-                # recipe_manual 테이블에 메뉴얼 데이터 삽입
                 for i in range(1, 21):
                     manual_key = f'MANUAL{i:02}'
                     manual_img_key = f'MANUAL_IMG{i:02}'
                     if item[manual_key]:
                         recipe_manual = RecipeManual(
                             recipe_manual_step=i,  # 단계 추가
-                            recipe_manual_content=item[manual_key],
-                            recipe_manual_image=item.get(manual_img_key, None),
-                            recipe_id=recipe.recipe_id  # commit 후 생성된 recipe_id 사용
+                            manual_content=item[manual_key],
+                            manual_menu_image=item[manual_img_key],
+                            recipe_id=recipe.recipe_id
                         )
                         session.add(recipe_manual)
+                session.commit()
             else:
                 print(f"레시피 '{item['RCP_NM']}'가 이미 존재합니다. 삽입하지 않습니다.")
+
+# API로 데이터 가져오기
+def fetch_data():
+    API_URL_1 = 'https://openapi.foodsafetykorea.go.kr/api/838af5d280254da4acbb/COOKRCP01/json/1/1000'
+    API_URL_2 = 'https://openapi.foodsafetykorea.go.kr/api/838af5d280254da4acbb/COOKRCP01/json/1001/1124'
+
+    response_1 = requests.get(API_URL_1)
+    response_2 = requests.get(API_URL_2)
     
-    # 모든 데이터 추가 후 한 번에 commit
-    session.commit()
+    if response_1.status_code == 200:
+        data1 = response_1.json().get('COOKRCP01', {}).get('row', [])
+        print(f"첫 번째 데이터 수: {len(data1)}")
+        insert_data(data1)
+    else:
+        print(f"첫 번째 API 호출 실패: {response_1.status_code}")
 
-# API에서 데이터를 가져오는 함수 (범위 설정 추가)
-def fetch_data(start, end):
-    url = f"https://openapi.foodsafetykorea.go.kr/api/838af5d280254da4acbb/COOKRCP01/json/{start}/{end}"
-    response = requests.get(url)
-    data = response.json()
-    return data['COOKRCP01']['row']
+    if response_2.status_code == 200:
+        data2 = response_2.json().get('COOKRCP01', {}).get('row', [])
+        print(f"두 번째 데이터 수: {len(data2)}")
+        insert_data(data2)
+    else:
+        print(f"두 번째 API 호출 실패: {response_2.status_code}")
 
-# 데이터 삽입 실행
-try:
-    # 첫 번째 요청: 1~1000
-    data1 = fetch_data(1, 1000)
-    insert_data(data1)
-
-    # 두 번째 요청: 1001~1124
-    data2 = fetch_data(1001, 1124)
-    insert_data(data2)
-
-finally:
-    session.close()
+# 데이터 가져오기 실행
+fetch_data()
