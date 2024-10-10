@@ -23,7 +23,8 @@
 
 > Domain-Driven Design<br>
 ## •  Context
-![image]
+![devops project - Step 5  Bounded Context](https://github.com/user-attachments/assets/8bc565a9-7a87-47f6-9759-1ce08e364dd3)
+
 
 > - <br>
 
@@ -32,6 +33,7 @@
 <br>
 
 # ✔️ DDD - 연관 관계
+![image](https://github.com/user-attachments/assets/ca16faff-789f-4fa6-8a46-921636d6f3e3)
 
 ---
 <br>
@@ -41,17 +43,20 @@
 
 
 # ✔️ 개념 모델링
+![image](https://github.com/user-attachments/assets/7d9fa206-fdac-4a4b-b707-ba8545c19475)
 
 ---
 <br>
 
 # ✔️ 논리 모델링
-![논리모델](https://github.com/user-attachments/assets/17ad908f-9dfb-4d97-a310-853f27d55dec)
+![image](https://github.com/user-attachments/assets/c610b0dd-2132-4689-a4fb-247238b6c9e7)
+
 
 ---
 <br>
 
 # ✔️ 물리 모델링
+![image](https://github.com/user-attachments/assets/76ac4237-b652-4cc7-8500-77e56154cbf8)
 
 <br>
 
