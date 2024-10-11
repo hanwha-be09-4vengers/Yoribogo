@@ -1,6 +1,7 @@
 package com.avengers.yoribogo.recipe.service;
 
 import com.avengers.yoribogo.recipe.domain.Recipe;
+import com.avengers.yoribogo.recipe.dto.RecipeDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +26,7 @@ class RecipeServiceTests {
         Integer pageNo = 1;
 
         // When
-        Page<Recipe> recipePage = recipeService.findRecipeByPageNo(pageNo);
+        Page<RecipeDTO> recipePage = recipeService.findRecipeByPageNo(pageNo);
 
         // Then
         Assertions.assertNotNull(recipePage, "레시피 페이지가 null 입니다.");

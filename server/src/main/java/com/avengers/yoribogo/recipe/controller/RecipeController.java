@@ -8,10 +8,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("/api/recipes")
+@RestController
+@RequestMapping("/api/recipes")
 public class RecipeController {
 
     private final ModelMapper modelMapper;
@@ -25,8 +27,8 @@ public class RecipeController {
 
     // 페이지 번호로 요리 레시피 목록 조회
     @GetMapping
-    public ResponseDTO<Page<Recipe>> getRecipeByPageNo(@RequestParam Integer pageNo) {
-        Page<Recipe> recipes = recipeService.findRecipeByPageNo(pageNo);
+    public ResponseDTO<Page<RecipeDTO>> getRecipeByPageNo(@RequestParam("page") Integer pageNo) {
+        Page<RecipeDTO> recipes = recipeService.findRecipeByPageNo(pageNo);
         return ResponseDTO.ok(recipes);
     }
 
