@@ -7,7 +7,7 @@ from sqlalchemy import create_engine, Column, String, Integer, Text, ForeignKey
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 # 데이터베이스 설정, 본인 계정과 비번 입력하세요
-DATABASE_URL = 'mysql+mysqldb://root:mariadb@localhost/yoribogodb'
+DATABASE_URL = 'mysql+mysqldb://yoribogo:yoribogo@localhost/yoribogodb'
 
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
