@@ -127,7 +127,8 @@
 <br>
 
 # ✔️ 물리 모델링
-![image](https://github.com/user-attachments/assets/edcdf2be-23de-42fb-944f-0555fd8bd0c3)
+![image](https://github.com/user-attachments/assets/ca4c23da-0d3e-47bf-a90e-0fe984251b01)
+
 
 
 <br>
