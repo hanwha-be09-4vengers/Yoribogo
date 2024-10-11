@@ -40,6 +40,13 @@ public class RecipeController {
         return ResponseDTO.ok(recipeDTOPage);
     }
 
+    // 요리 레시피 등록
+    @PostMapping
+    public ResponseDTO<RecipeDTO> createRecipe(@RequestBody RecipeDTO registRecipeDTO) {
+        RecipeDTO recipeDTO = recipeService.registRecipe(registRecipeDTO);
+        return ResponseDTO.ok(recipeDTO);
+    }
+
     // 요리 레시피 수정
     @PutMapping("/{recipeId}")
     public ResponseDTO<RecipeDTO> updateRecipe(@PathVariable("recipeId") Long recipeId,

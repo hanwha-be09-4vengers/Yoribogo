@@ -1,6 +1,7 @@
 package com.avengers.yoribogo.recipe.service;
 
 import com.avengers.yoribogo.common.exception.CommonException;
+import com.avengers.yoribogo.recipe.domain.MenuType;
 import com.avengers.yoribogo.recipe.dto.RecipeDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -73,6 +74,28 @@ class RecipeServiceTests {
         for (RecipeDTO recipe : recipeDTOPage.getContent()) {
             log.info(recipe.toString());
         }
+    }
+
+    @DisplayName("요리 레시피 등록 테스트")
+    @Test
+    void testRegistRecipe() {
+        // Given
+        RecipeDTO recipeDTO = RecipeDTO
+                .builder()
+                .menuName("AI요리이름")
+                .menuIngredient("AI요리재료")
+                .menuType(MenuType.AI)
+                .userId(1L)
+                .build();
+
+        // When
+        recipeDTO = recipeService.registRecipe(recipeDTO);
+
+        // Then
+        Assertions.assertNotNull(recipeDTO, "레시피가 null 입니다.");
+
+        // 요소를 로그로 찍기
+        log.info(recipeDTO.toString());
     }
 
     @DisplayName("요리 레시피 수정 테스트")
