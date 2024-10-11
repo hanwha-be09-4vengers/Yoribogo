@@ -109,9 +109,7 @@ class RecipeServiceTests {
 
         // Then
         Assertions.assertThrows(CommonException.class,
-            () -> {
-                recipeService.removeRecipe(recipeId);
-            }
+            () -> recipeService.removeRecipe(recipeId)
             , "요리 레시피가 삭제되지 않았습니다."
         );
     }
