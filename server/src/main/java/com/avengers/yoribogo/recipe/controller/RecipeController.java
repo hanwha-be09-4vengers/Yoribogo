@@ -32,4 +32,12 @@ public class RecipeController {
         return ResponseDTO.ok(recipeDTO);
     }
 
+    // 요리 레시피 요리 이름으로 조회
+    @GetMapping("/search")
+    public ResponseDTO<Page<RecipeDTO>> getRecipeByMenuName(@RequestParam("name") String menuName,
+                                                              @RequestParam("page") Integer pageNo) {
+        Page<RecipeDTO> recipeDTOPage = recipeService.findRecipeByMenuName(menuName, pageNo);
+        return ResponseDTO.ok(recipeDTOPage);
+    }
+
 }
