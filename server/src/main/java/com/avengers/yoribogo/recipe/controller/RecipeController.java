@@ -42,7 +42,7 @@ public class RecipeController {
 
     // 요리 레시피 수정
     @PutMapping
-    public ResponseDTO<RecipeDTO> updateRecipe(@RequestBody(required = true) RecipeDTO modifyRecipeDTO) {
+    public ResponseDTO<RecipeDTO> updateRecipe(@RequestBody RecipeDTO modifyRecipeDTO) {
         RecipeDTO recipeDTO = recipeService.modifyRecipe(modifyRecipeDTO);
         return ResponseDTO.ok(recipeDTO);
     }
