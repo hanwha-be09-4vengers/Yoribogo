@@ -1,5 +1,6 @@
 package com.avengers.yoribogo.recipe.service;
 
+import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.recipe.dto.GoodMenuDTO;
 import com.avengers.yoribogo.recipe.dto.RecommendedMenuDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -30,12 +31,28 @@ class RecommendedMenuServiceTests {
         List<GoodMenuDTO> recommendedMenuDTOList = recommendedMenuService.findRecommendedMenuByUserId(userId);
 
         // Then
-        Assertions.assertNotNull(recommendedMenuDTOList);
+        Assertions.assertNotNull(recommendedMenuDTOList, "추천 요리가 null 입니다");
 
         // 로그 찍기
         for (GoodMenuDTO goodMenuDTO : recommendedMenuDTOList) {
             log.info(goodMenuDTO.toString());
         }
+    }
+
+    @DisplayName("추천 요리 삭제 테스트")
+    @Test
+    void testRemoveRecommendedMenu() {
+        // Given
+        Long recommendedMenuId = 1L;
+
+        // When
+        recommendedMenuService.removeRecommendedMenu(recommendedMenuId);
+
+        // Then
+        Assertions.assertThrows(CommonException.class,
+                () -> recommendedMenuService.removeRecommendedMenu(recommendedMenuId),
+                "추천 요리가 삭제되지 않았습니다."
+        );
     }
 
 }

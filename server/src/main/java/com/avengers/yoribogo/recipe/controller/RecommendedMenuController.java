@@ -4,10 +4,7 @@ import com.avengers.yoribogo.common.ResponseDTO;
 import com.avengers.yoribogo.recipe.dto.GoodMenuDTO;
 import com.avengers.yoribogo.recipe.service.RecommendedMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,9 +21,16 @@ public class RecommendedMenuController {
 
     // 추천 요리 회원별 조회
     @GetMapping
-    public ResponseDTO<List<GoodMenuDTO>> getRecommendedMenuByUserId(@RequestParam("user") Long userId) {
+    public ResponseDTO<?> getRecommendedMenuByUserId(@RequestParam("user") Long userId) {
         List<GoodMenuDTO> recommendedMenuList = recommendedMenuService.findRecommendedMenuByUserId(userId);
         return ResponseDTO.ok(recommendedMenuList);
+    }
+
+    // 추천 요리 삭제
+    @DeleteMapping("/{recommendedMenuId}")
+    public ResponseDTO<?> deleteRecommendedMenu(@PathVariable("recommendedMenuId") Long recommendedMenuId) {
+        recommendedMenuService.removeRecommendedMenu(recommendedMenuId);
+        return ResponseDTO.ok(null);
     }
 
 }
