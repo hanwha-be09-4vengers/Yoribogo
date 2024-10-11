@@ -97,12 +97,11 @@ public class RecipeServiceImpl implements RecipeService {
         return new PageImpl<>(recipeDTOList, pageable, recipePage.getTotalElements());
     }
 
+    // 요리 레시피 수정
     @Override
-    public RecipeDTO modifyRecipe(RecipeDTO modifyRecipeDTO) {
-        // 관리자 여부 확인하는 로직 추가 예정
-
+    public RecipeDTO modifyRecipe(Long recipeId, RecipeDTO modifyRecipeDTO) {
         // 기존 엔티티 조회
-        Recipe existingRecipe = recipeRepository.findById(modifyRecipeDTO.getRecipeId())
+        Recipe existingRecipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECIPE));
 
         // 엔티티 정보 수정
@@ -112,6 +111,16 @@ public class RecipeServiceImpl implements RecipeService {
         existingRecipe.setUserId(modifyRecipeDTO.getUserId());
 
         return modelMapper.map(recipeRepository.save(existingRecipe), RecipeDTO.class);
+    }
+
+    // 요리 레시피 삭제
+    @Override
+    public void removeRecipe(Long recipeId) {
+        // 기존 엔티티 조회
+        Recipe existingRecipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECIPE));
+
+        recipeRepository.delete(existingRecipe);
     }
 
     // 페이지 내 엔티티를 DTO로 변환해주는 메소드
