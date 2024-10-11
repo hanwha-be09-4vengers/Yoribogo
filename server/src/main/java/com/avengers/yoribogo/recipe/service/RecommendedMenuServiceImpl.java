@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class RecommendedMenuServiceImpl implements RecommendedMenuService {
@@ -28,6 +27,7 @@ public class RecommendedMenuServiceImpl implements RecommendedMenuService {
         this.recommendedMenuRepository = recommendedMenuRepository;
     }
 
+    // 추천 요리 회원별 조회
     @Override
     public List<GoodMenuDTO> findRecommendedMenuByUserId(Long userId) {
         // 기존 엔티티 목록 조회

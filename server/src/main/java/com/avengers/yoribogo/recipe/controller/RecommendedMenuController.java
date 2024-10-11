@@ -22,6 +22,7 @@ public class RecommendedMenuController {
         this.recommendedMenuService = recommendedMenuService;
     }
 
+    // 추천 요리 회원별 조회
     @GetMapping
     public ResponseDTO<List<GoodMenuDTO>> getRecommendedMenuByUserId(@RequestParam("user") Long userId) {
         List<GoodMenuDTO> recommendedMenuList = recommendedMenuService.findRecommendedMenuByUserId(userId);

@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface RecommendedMenuService {
 
+    // 추천 요리 회원별 조회
     List<GoodMenuDTO> findRecommendedMenuByUserId(Long userId);
 
 }

@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface RecommendedMenuRepository extends JpaRepository<RecommendedMenu, Long> {
+
+    // 추천 요리 회원별 조회
     @Query("SELECT new com.avengers.yoribogo.recipe.dto.GoodMenuDTO(rm, r) " +
             "FROM RecommendedMenu rm " +
             "JOIN Recipe r ON rm.recipeId = r.recipeId " +
@@ -21,4 +23,5 @@ public interface RecommendedMenuRepository extends JpaRepository<RecommendedMenu
             @Param("userId") Long userId,
             @Param("satisfaction") Satisfaction satisfaction,
             @Param("status") RecommendedMenuStatus status);
+
 }
