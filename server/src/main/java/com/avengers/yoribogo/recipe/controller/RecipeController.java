@@ -1,7 +1,6 @@
 package com.avengers.yoribogo.recipe.controller;
 
 import com.avengers.yoribogo.common.ResponseDTO;
-import com.avengers.yoribogo.recipe.domain.Recipe;
 import com.avengers.yoribogo.recipe.dto.RecipeDTO;
 import com.avengers.yoribogo.recipe.service.RecipeServiceImpl;
 import org.modelmapper.ModelMapper;

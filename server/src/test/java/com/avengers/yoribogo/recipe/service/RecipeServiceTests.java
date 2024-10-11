@@ -1,6 +1,5 @@
 package com.avengers.yoribogo.recipe.service;
 
-import com.avengers.yoribogo.recipe.domain.Recipe;
 import com.avengers.yoribogo.recipe.dto.RecipeDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -33,11 +32,11 @@ class RecipeServiceTests {
         Assertions.assertFalse(recipePage.isEmpty(), "레시피 페이지가 비어 있습니다.");
 
         // 요소를 로그로 찍기
-        recipePage.getContent().forEach(recipe -> {
+        for (RecipeDTO recipe : recipePage.getContent()) {
             log.info("레시피 ID: {}, 레시피 이름: {}, 레시피 타입: {}",
                     recipe.getRecipeId(),
                     recipe.getMenuName(),
                     recipe.getMenuType());
-        });
+        }
     }
 }
