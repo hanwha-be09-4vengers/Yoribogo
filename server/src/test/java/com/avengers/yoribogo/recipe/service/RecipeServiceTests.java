@@ -25,18 +25,35 @@ class RecipeServiceTests {
         Integer pageNo = 1;
 
         // When
-        Page<RecipeDTO> recipePage = recipeService.findRecipeByPageNo(pageNo);
+        Page<RecipeDTO> recipeDTOPage = recipeService.findRecipeByPageNo(pageNo);
 
         // Then
-        Assertions.assertNotNull(recipePage, "레시피 페이지가 null 입니다.");
-        Assertions.assertFalse(recipePage.isEmpty(), "레시피 페이지가 비어 있습니다.");
+        Assertions.assertNotNull(recipeDTOPage, "레시피 페이지가 null 입니다.");
+        Assertions.assertFalse(recipeDTOPage.isEmpty(), "레시피 페이지가 비어 있습니다.");
 
         // 요소를 로그로 찍기
-        for (RecipeDTO recipe : recipePage.getContent()) {
+        for (RecipeDTO recipe : recipeDTOPage.getContent()) {
             log.info("레시피 ID: {}, 레시피 이름: {}, 레시피 타입: {}",
                     recipe.getRecipeId(),
                     recipe.getMenuName(),
                     recipe.getMenuType());
         }
     }
+
+    @DisplayName("요리 레시피 단건 조회")
+    @Test
+    void testFindRecipeByRecipeId() {
+        // Given
+        Long recipeId = 1L;
+
+        // When
+        RecipeDTO recipeDTO = recipeService.findRecipeByRecipeId(recipeId);
+
+        // Then
+        Assertions.assertNotNull(recipeDTO, "레시피가 null 입니다.");
+
+        // 요소를 로그로 찍기
+        log.info(recipeDTO.toString());
+    }
+
 }

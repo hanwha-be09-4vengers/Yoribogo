@@ -59,4 +59,13 @@ public class RecipeServiceImpl implements RecipeService {
         return new PageImpl<>(recipeDTOList, pageable, recipePage.getTotalElements());
     }
 
+    // 요리 레시피 단건 조회
+    @Override
+    public RecipeDTO findRecipeByRecipeId(Long recipeId) {
+        // 레시피 조회
+        Recipe recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECIPE));
+        return modelMapper.map(recipe, RecipeDTO.class);
+    }
+
 }

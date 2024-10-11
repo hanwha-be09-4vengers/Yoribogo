@@ -8,4 +8,7 @@ public interface RecipeService {
     // 페이지 번호로 요리 레시피 목록 조회
     Page<RecipeDTO> findRecipeByPageNo(Integer pageNo);
 
+    // 요리 레시피 단건 조회
+    RecipeDTO findRecipeByRecipeId(Long recipeId);
+
 }
