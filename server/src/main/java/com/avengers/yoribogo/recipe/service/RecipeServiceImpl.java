@@ -99,9 +99,9 @@ public class RecipeServiceImpl implements RecipeService {
 
     // 요리 레시피 수정
     @Override
-    public RecipeDTO modifyRecipe(RecipeDTO modifyRecipeDTO) {
+    public RecipeDTO modifyRecipe(Long recipeId, RecipeDTO modifyRecipeDTO) {
         // 기존 엔티티 조회
-        Recipe existingRecipe = recipeRepository.findById(modifyRecipeDTO.getRecipeId())
+        Recipe existingRecipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECIPE));
 
         // 엔티티 정보 수정

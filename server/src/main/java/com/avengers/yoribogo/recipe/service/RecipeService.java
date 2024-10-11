@@ -15,7 +15,7 @@ public interface RecipeService {
     Page<RecipeDTO> findRecipeByMenuName(String menuName, Integer pageNo);
 
     // 요리 레시피 수정
-    RecipeDTO modifyRecipe(RecipeDTO modifyRecipeDTO);
+    RecipeDTO modifyRecipe(Long recipeId, RecipeDTO modifyRecipeDTO);
 
     // 요리 레시피 삭제
     void removeRecipe(Long recipeId);

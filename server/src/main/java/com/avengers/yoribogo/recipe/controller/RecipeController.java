@@ -41,9 +41,10 @@ public class RecipeController {
     }
 
     // 요리 레시피 수정
-    @PutMapping
-    public ResponseDTO<RecipeDTO> updateRecipe(@RequestBody RecipeDTO modifyRecipeDTO) {
-        RecipeDTO recipeDTO = recipeService.modifyRecipe(modifyRecipeDTO);
+    @PutMapping("/{recipeId}")
+    public ResponseDTO<RecipeDTO> updateRecipe(@PathVariable("recipeId") Long recipeId,
+                                               @RequestBody RecipeDTO modifyRecipeDTO) {
+        RecipeDTO recipeDTO = recipeService.modifyRecipe(recipeId, modifyRecipeDTO);
         return ResponseDTO.ok(recipeDTO);
     }
 

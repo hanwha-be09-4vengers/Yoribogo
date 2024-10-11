@@ -79,9 +79,9 @@ class RecipeServiceTests {
     @Test
     void testModifyRecipe() {
         // Given
+        Long recipeId = 1L;
         RecipeDTO recipeDTO = RecipeDTO
                 .builder()
-                .recipeId(1L)
                 .menuName("김치찌개")
                 .menuIngredient("김치")
                 .menuImage("http://www.foodsafetykorea.go.kr/uploadimg/cook/10_00028_2.png")
@@ -89,7 +89,7 @@ class RecipeServiceTests {
                 .build();
 
         // When
-        recipeDTO = recipeService.modifyRecipe(recipeDTO);
+        recipeDTO = recipeService.modifyRecipe(recipeId, recipeDTO);
 
         // Then
         Assertions.assertNotNull(recipeDTO, "레시피가 null 입니다.");
