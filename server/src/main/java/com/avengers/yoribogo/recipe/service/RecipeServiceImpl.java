@@ -97,6 +97,23 @@ public class RecipeServiceImpl implements RecipeService {
         return new PageImpl<>(recipeDTOList, pageable, recipePage.getTotalElements());
     }
 
+    @Override
+    public RecipeDTO modifyRecipe(RecipeDTO modifyRecipeDTO) {
+        // 관리자 여부 확인하는 로직 추가 예정
+
+        // 기존 엔티티 조회
+        Recipe existingRecipe = recipeRepository.findById(modifyRecipeDTO.getRecipeId())
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECIPE));
+
+        // 엔티티 정보 수정
+        existingRecipe.setMenuName(modifyRecipeDTO.getMenuName());
+        existingRecipe.setMenuImage(modifyRecipeDTO.getMenuImage());
+        existingRecipe.setMenuIngredient(modifyRecipeDTO.getMenuIngredient());
+        existingRecipe.setUserId(modifyRecipeDTO.getUserId());
+
+        return modelMapper.map(recipeRepository.save(existingRecipe), RecipeDTO.class);
+    }
+
     // 페이지 내 엔티티를 DTO로 변환해주는 메소드
     private List<RecipeDTO> convertEntityPageToDTOPage(Page<Recipe> recipePage) {
         return recipePage.getContent().stream()
