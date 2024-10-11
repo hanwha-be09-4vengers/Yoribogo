@@ -1,10 +1,14 @@
 package com.avengers.yoribogo.recipe.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "RECIPE")
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class Recipe {
 

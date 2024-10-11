@@ -8,6 +8,7 @@ import com.avengers.yoribogo.recipe.repository.RecipeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     // 페이지 번호로 요리 레시피 조회
     @Override
-    public Page<Recipe> findRecipeByPageNo(Integer pageNo) {
+    public Page<RecipeDTO> findRecipeByPageNo(Integer pageNo) {
         // 페이지 번호 유효성 검사
         if (pageNo == null || pageNo < 1) {
             throw new CommonException(ErrorCode.INVALID_PARAMETER_FORMAT);
@@ -49,7 +50,22 @@ public class RecipeServiceImpl implements RecipeService {
             throw new CommonException(ErrorCode.NOT_FOUND_RECIPE);
         }
 
-        return recipePage;
+        // Recipe -> RecipeDTO 변환
+        List<RecipeDTO> recipeDTOList = recipePage.getContent().stream()
+                .map(recipe -> modelMapper.map(recipe, RecipeDTO.class))
+                .toList();
+
+        // 새로운 Page 객체 생성
+        return new PageImpl<>(recipeDTOList, pageable, recipePage.getTotalElements());
+    }
+
+    // 요리 레시피 단건 조회
+    @Override
+    public RecipeDTO findRecipeByRecipeId(Long recipeId) {
+        // 레시피 조회
+        Recipe recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECIPE));
+        return modelMapper.map(recipe, RecipeDTO.class);
     }
 
 }
