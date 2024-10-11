@@ -47,4 +47,11 @@ public class RecipeController {
         return ResponseDTO.ok(recipeDTO);
     }
 
+    // 요리 레시피 삭제
+    @DeleteMapping("/{recipeId}")
+    public ResponseDTO<RecipeDTO> deleteRecipe(@PathVariable("recipeId") Long recipeId) {
+        recipeService.removeRecipe(recipeId);
+        return ResponseDTO.ok(null);
+    }
+
 }

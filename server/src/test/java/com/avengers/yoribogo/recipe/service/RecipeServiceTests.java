@@ -1,5 +1,6 @@
 package com.avengers.yoribogo.recipe.service;
 
+import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.recipe.dto.RecipeDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -95,6 +96,24 @@ class RecipeServiceTests {
 
         // 요소를 로그로 찍기
         log.info(recipeDTO.toString());
+    }
+
+    @DisplayName("요리 레시피 삭제 테스트")
+    @Test
+    void testRemoveRecipe() {
+        // Given
+        Long recipeId = 1L;
+
+        // When
+        recipeService.removeRecipe(recipeId);
+
+        // Then
+        Assertions.assertThrows(CommonException.class,
+            () -> {
+                recipeService.removeRecipe(recipeId);
+            }
+            , "요리 레시피가 삭제되지 않았습니다."
+        );
     }
 
 }
