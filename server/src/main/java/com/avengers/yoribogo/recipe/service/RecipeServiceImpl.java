@@ -2,8 +2,15 @@ package com.avengers.yoribogo.recipe.service;
 
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
+import com.avengers.yoribogo.recipe.domain.AIRecipe;
+import com.avengers.yoribogo.recipe.domain.MenuType;
+import com.avengers.yoribogo.recipe.domain.PublicDataRecipe;
 import com.avengers.yoribogo.recipe.domain.Recipe;
+import com.avengers.yoribogo.recipe.dto.AIRecipeDTO;
+import com.avengers.yoribogo.recipe.dto.PublicDataRecipeDTO;
 import com.avengers.yoribogo.recipe.dto.RecipeDTO;
+import com.avengers.yoribogo.recipe.repository.AIRecipeRepository;
+import com.avengers.yoribogo.recipe.repository.PublicDataRecipeRepository;
 import com.avengers.yoribogo.recipe.repository.RecipeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +28,18 @@ public class RecipeServiceImpl implements RecipeService {
 
     private final ModelMapper modelMapper;
     private final RecipeRepository recipeRepository;
+    private final PublicDataRecipeRepository publicDataRecipeRepository;
+    private final AIRecipeRepository aiRecipeRepository;
 
     @Autowired
-    public RecipeServiceImpl(ModelMapper modelMapper, RecipeRepository recipeRepository) {
+    public RecipeServiceImpl(ModelMapper modelMapper,
+                             RecipeRepository recipeRepository,
+                             PublicDataRecipeRepository publicDataRecipeRepository,
+                             AIRecipeRepository aiRecipeRepository) {
         this.modelMapper = modelMapper;
         this.recipeRepository = recipeRepository;
+        this.publicDataRecipeRepository = publicDataRecipeRepository;
+        this.aiRecipeRepository = aiRecipeRepository;
     }
 
     // 페이지 번호로 요리 레시피 조회
@@ -95,6 +109,49 @@ public class RecipeServiceImpl implements RecipeService {
 
         // 새로운 Page 객체 생성
         return new PageImpl<>(recipeDTOList, pageable, recipePage.getTotalElements());
+    }
+
+    // 요리 레시피 등록
+    @Override
+    public RecipeDTO registRecipe(RecipeDTO registRecipeDTO) {
+        // 요리 레시피 테이블에 저장
+        Recipe newRecipe = modelMapper.map(registRecipeDTO, Recipe.class);
+        newRecipe = recipeRepository.save(newRecipe);
+
+        // 요리 구분 검사
+        if (registRecipeDTO.getMenuType() == MenuType.PUBLIC) {
+            // DTO에 요리 레시피 정보 담기
+            PublicDataRecipeDTO publicDataRecipeDTO = PublicDataRecipeDTO
+                    .builder()
+                    .publicDataMenuName(newRecipe.getMenuName())
+                    .publicDataMenuIngredient(newRecipe.getMenuIngredient())
+                    .publicDataMenuImage(newRecipe.getMenuImage())
+                    .recipeId(newRecipe.getRecipeId())
+                    .build();
+
+            // 공공데이터 요리 레시피 테이블에 저장
+            PublicDataRecipe publicDataRecipe =
+                    modelMapper.map(publicDataRecipeDTO, PublicDataRecipe.class);
+            publicDataRecipeRepository.save(publicDataRecipe);
+        } else if (registRecipeDTO.getMenuType() == MenuType.AI) {
+            // DTO에 요리 레시피 정보 담기
+            AIRecipeDTO aiRecipeDTO = AIRecipeDTO
+                    .builder()
+                    .aiMenuName(newRecipe.getMenuName())
+                    .aiMenuIngredient(newRecipe.getMenuIngredient())
+                    .recipeId(newRecipe.getRecipeId())
+                    .build();
+
+            // AI 요리 레시피 테이블에 저장
+            AIRecipe aiRecipe =
+                    modelMapper.map(aiRecipeDTO, AIRecipe.class);
+            aiRecipeRepository.save(aiRecipe);
+        } else {
+            // 요리 구분이 잘못되었을 경우
+            throw new CommonException(ErrorCode.INVALID_REQUEST_BODY);
+        }
+
+        return modelMapper.map(newRecipe, RecipeDTO.class);
     }
 
     // 요리 레시피 수정

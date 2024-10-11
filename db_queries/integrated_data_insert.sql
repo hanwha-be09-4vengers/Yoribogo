@@ -25,8 +25,15 @@ VALUES
     ('박민수', 'password123', 'minsu_p', 'minsu@example.com', NULL, '2023-09-01 10:00:00', 'NORMAL', CONCAT('NORMAL_', 'minsu123'), 'minsu123', 'ACTIVE', 'ENTERPRISE', 'Y', 2, 3),  -- 실버 (likes >= 1)
     ('이정현', 'password456', 'jung_h', 'jung@example.com', NULL, '2023-09-05 09:30:00', 'KAKAO', CONCAT('KAKAO_', 'jung123'), 'jung123', 'ACTIVE', 'ENTERPRISE', 'Y', 1, 0);  -- 브론즈 (likes >= 0)
 
--- 그 뒤 테이블 삽입
-
+-- 추천 요리 데이터 삽입
+INSERT INTO recommended_menu (satisfaction, recommended_menu_status, user_id, recipe_id)
+VALUES
+	 ('GOOD', 'ACTIVE', 3, 1),
+	 ('GOOD', 'INACTIVE', 3, 2),
+	 ('BAD', 'ACTIVE', 3, 3),
+	 ('BAD', 'INACTIVE', 3, 4),
+	 ('GOOD', 'ACTIVE', 3, 5),
+	 ('GOOD', 'ACTIVE', 3, 6);
 
 
 -- 데이터 확인
