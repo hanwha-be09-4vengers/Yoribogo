@@ -74,4 +74,27 @@ class RecipeServiceTests {
         }
     }
 
+    @DisplayName("요리 레시피 수정 테스트")
+    @Test
+    void testModifyRecipe() {
+        // Given
+        RecipeDTO recipeDTO = RecipeDTO
+                .builder()
+                .recipeId(1L)
+                .menuName("김치찌개")
+                .menuIngredient("김치")
+                .menuImage("http://www.foodsafetykorea.go.kr/uploadimg/cook/10_00028_2.png")
+                .userId(1L)
+                .build();
+
+        // When
+        recipeDTO = recipeService.modifyRecipe(recipeDTO);
+
+        // Then
+        Assertions.assertNotNull(recipeDTO, "레시피가 null 입니다.");
+
+        // 요소를 로그로 찍기
+        log.info(recipeDTO.toString());
+    }
+
 }

@@ -40,4 +40,11 @@ public class RecipeController {
         return ResponseDTO.ok(recipeDTOPage);
     }
 
+    // 요리 레시피 수정
+    @PutMapping
+    public ResponseDTO<RecipeDTO> updateRecipe(@RequestBody RecipeDTO modifyRecipeDTO) {
+        RecipeDTO recipeDTO = recipeService.modifyRecipe(modifyRecipeDTO);
+        return ResponseDTO.ok(recipeDTO);
+    }
+
 }
