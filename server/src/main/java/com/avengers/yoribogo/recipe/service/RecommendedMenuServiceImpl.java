@@ -42,6 +42,23 @@ public class RecommendedMenuServiceImpl implements RecommendedMenuService {
         return recommendedMenuList;
     }
 
+    // 추천 요리 등록
+    @Override
+    public RecommendedMenuDTO registRecommendedMenu(RecommendedMenuDTO registRecommendedMenuDTO) {
+        RecommendedMenuDTO newRecommendedMenuDTO = RecommendedMenuDTO
+                .builder()
+                .satisfaction(registRecommendedMenuDTO.getSatisfaction())
+                .recommendedMenuStatus(RecommendedMenuStatus.ACTIVE)
+                .userId(registRecommendedMenuDTO.getUserId())
+                .recipeId(registRecommendedMenuDTO.getRecipeId())
+                .build();
+
+        RecommendedMenu recommendedMenu =
+            recommendedMenuRepository.save(modelMapper.map(newRecommendedMenuDTO, RecommendedMenu.class));
+
+        return modelMapper.map(recommendedMenu, RecommendedMenuDTO.class);
+    }
+
     // 추천 요리 삭제
     @Override
     public void removeRecommendedMenu(Long recommendedMenuId) {

@@ -2,11 +2,13 @@ package com.avengers.yoribogo.recipe.service;
 
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
+import com.avengers.yoribogo.openai.service.OpenAIService;
 import com.avengers.yoribogo.recipe.domain.MenuType;
 import com.avengers.yoribogo.recipe.domain.Recipe;
 import com.avengers.yoribogo.recipe.dto.AIRecipeDTO;
 import com.avengers.yoribogo.recipe.dto.PublicDataRecipeDTO;
 import com.avengers.yoribogo.recipe.dto.RecipeDTO;
+import com.avengers.yoribogo.recipe.dto.RequestRecommendDTO;
 import com.avengers.yoribogo.recipe.repository.RecipeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @Service
@@ -26,16 +29,19 @@ public class RecipeServiceImpl implements RecipeService {
     private final RecipeRepository recipeRepository;
     private final PublicDataRecipeService publicDataRecipeService;
     private final AIRecipeService aiRecipeService;
+    private final OpenAIService openAIService;
 
     @Autowired
     public RecipeServiceImpl(ModelMapper modelMapper,
                              RecipeRepository recipeRepository,
                              PublicDataRecipeService publicDataRecipeService,
-                             AIRecipeService aiRecipeService) {
+                             AIRecipeService aiRecipeService,
+                             OpenAIService openAIService) {
         this.modelMapper = modelMapper;
         this.recipeRepository = recipeRepository;
         this.publicDataRecipeService = publicDataRecipeService;
         this.aiRecipeService = aiRecipeService;
+        this.openAIService = openAIService;
     }
 
     // 페이지 번호로 요리 레시피 조회
@@ -170,6 +176,26 @@ public class RecipeServiceImpl implements RecipeService {
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECIPE));
 
         recipeRepository.delete(existingRecipe);
+    }
+
+    // 요리 추천하기
+    @Override
+    public RecipeDTO registRecommendRecipe(RequestRecommendDTO requestRecommendDTO) {
+        // AI에게 추천하는 요리 이름 물어보기
+        String prompt = "'오늘의 날씨는 어떤가요?'라는 질문의 답은 " + requestRecommendDTO.getFirst() + "이고" +
+                "'오늘의 기분은 어떤가요?'라는 질문의 답은 " + requestRecommendDTO.getSecond() + "이고" +
+                "'몇 명이 먹는 음식인가요?'라는 질문의 답은 " + requestRecommendDTO.getThird() + "이고" +
+                "'채식 또는 비건 식단을 따르시나요?'라는 질문의 답은 " + requestRecommendDTO.getFourth() + "이고" +
+                "'제가 또 알아야 하는게 있나요?'라는 질문의 답은 " + requestRecommendDTO.getFifth() + "일 때 " +
+                "이 답을 모두 고려했을 때 괜찮은 음식 이름을 하나 알려줘, 꼭 이름만 알려줘야해!";
+        String aiAnswer = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
+
+        Recipe recipe =
+                recipeRepository.findByMenuName(aiAnswer).orElse(null);
+
+        System.out.println(aiAnswer);
+
+        return new RecipeDTO();
     }
 
     // 페이지 내 엔티티를 DTO로 변환해주는 메소드

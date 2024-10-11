@@ -2,6 +2,7 @@ package com.avengers.yoribogo.recipe.controller;
 
 import com.avengers.yoribogo.common.ResponseDTO;
 import com.avengers.yoribogo.recipe.dto.GoodMenuDTO;
+import com.avengers.yoribogo.recipe.dto.RecommendedMenuDTO;
 import com.avengers.yoribogo.recipe.service.RecommendedMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,14 @@ public class RecommendedMenuController {
     public ResponseDTO<?> getRecommendedMenuByUserId(@RequestParam("user") Long userId) {
         List<GoodMenuDTO> recommendedMenuList = recommendedMenuService.findRecommendedMenuByUserId(userId);
         return ResponseDTO.ok(recommendedMenuList);
+    }
+
+    // 추천 요리 등록
+    @PostMapping
+    public ResponseDTO<?> createRecommendedMenu(@RequestBody RecommendedMenuDTO registRecommendedMenuDTO) {
+        RecommendedMenuDTO recommendedMenuDTO =
+                recommendedMenuService.registRecommendedMenu(registRecommendedMenuDTO);
+        return ResponseDTO.ok(recommendedMenuDTO);
     }
 
     // 추천 요리 삭제

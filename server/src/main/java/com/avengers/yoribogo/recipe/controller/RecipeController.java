@@ -2,6 +2,7 @@ package com.avengers.yoribogo.recipe.controller;
 
 import com.avengers.yoribogo.common.ResponseDTO;
 import com.avengers.yoribogo.recipe.dto.RecipeDTO;
+import com.avengers.yoribogo.recipe.dto.RequestRecommendDTO;
 import com.avengers.yoribogo.recipe.service.RecipeServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -60,6 +61,14 @@ public class RecipeController {
     public ResponseDTO<?> deleteRecipe(@PathVariable("recipeId") Long recipeId) {
         recipeService.removeRecipe(recipeId);
         return ResponseDTO.ok(null);
+    }
+
+    // 요리 추천하기
+    @PostMapping("/recommend")
+    public ResponseDTO<?> createRecommendRecipe(@RequestParam("user") Long userId,
+                                                @RequestBody RequestRecommendDTO requestRecommendDTO) {
+        RecipeDTO recipeDTO = recipeService.registRecommendRecipe(requestRecommendDTO);
+        return ResponseDTO.ok(recipeDTO);
     }
 
 }
