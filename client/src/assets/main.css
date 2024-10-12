@@ -73,6 +73,13 @@ h1 {
   display: none;
 }
 
+/* 데스크탑 */
+@media screen and (max-width: 1920px) {
+  :root {
+    font-size: 8.5px;
+  }
+}
+
 /* 노트북 */
 @media screen and (max-width: 1683px) {
   :root {
