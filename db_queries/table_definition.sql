@@ -66,7 +66,7 @@ CREATE TABLE choice (
     choice_image TEXT NOT NULL,
     choice_content VARCHAR(255) NOT NULL,
     main_question_id INT NOT NULL,
-    FOREIGN KEY (main_question_id) REFERENCES main_question(main_question_id)
+    FOREIGN KEY (main_question_id) REFERENCES main_question(main_question_id) ON DELETE CASCADE
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='선지' DEFAULT CHARSET=UTF8;
 
 CREATE TABLE inquiry (
