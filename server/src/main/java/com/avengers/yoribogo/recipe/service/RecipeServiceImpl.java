@@ -200,7 +200,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     // 요리 추천하기
     @Override
-    public BaseRecipeDTO registRecommendRecipe(RequestRecommendDTO requestRecommendDTO) {
+    public BaseRecipeDTO registRecommendRecipe(Long userId, RequestRecommendDTO requestRecommendDTO) {
         // 1단계: AI에게 추천하는 요리 이름 물어보기
         String prompt = "'오늘의 날씨는 어떤가요?'라는 질문의 답은 " + requestRecommendDTO.getFirst() + "이고" +
                 "'오늘의 기분은 어떤가요?'라는 질문의 답은 " + requestRecommendDTO.getSecond() + "이고" +
