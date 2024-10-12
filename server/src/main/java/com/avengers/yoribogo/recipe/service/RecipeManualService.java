@@ -11,9 +11,9 @@ public interface RecipeManualService {
     List<RecipeManualDTO> findRecipeManualByRecipeId(Long recipeId);
 
     // 요리 레시피 매뉴얼 등록
-    List<RecipeManualDTO> registRecipeManual(RequestRecipeManualDTO requestRecipeManualDTO);
+    List<RecipeManualDTO> registRecipeManual(Long recipeId, RequestRecipeManualDTO requestRecipeManualDTO);
 
     // 요리 레시피 매뉴얼 수정
-    List<RecipeManualDTO> modifyRecipeManual(RequestRecipeManualDTO requestRecipeManualDTO);
+    List<RecipeManualDTO> modifyRecipeManual(Long recipeId, RequestRecipeManualDTO requestRecipeManualDTO);
 
 }

@@ -43,6 +43,8 @@ class RecipeManualServiceTests {
     @Test
     void testRegistRecipeManual() {
         // Given
+        Long recipeId = 1L;
+
         List<Map<String,String>> manual = new ArrayList<>();
 
         Map<String,String> map = new HashMap<>();
@@ -54,12 +56,12 @@ class RecipeManualServiceTests {
 
         RequestRecipeManualDTO requestRecipeManualDTO = RequestRecipeManualDTO
                 .builder()
-                .recipeId(1L)
                 .manual(manual)
                 .build();
 
         // When
-        List<RecipeManualDTO> recipeManualDTOList = recipeManualService.registRecipeManual(requestRecipeManualDTO);
+        List<RecipeManualDTO> recipeManualDTOList =
+                recipeManualService.registRecipeManual(recipeId, requestRecipeManualDTO);
 
         // Then
         Assertions.assertNotNull(recipeManualDTOList, "매뉴얼이 null 입니다.");
@@ -72,6 +74,8 @@ class RecipeManualServiceTests {
     @Test
     void testModifyRecipeManual() {
         // Given
+        Long recipeId = 1L;
+
         List<Map<String,String>> manual = new ArrayList<>();
 
         Map<String,String> map = new HashMap<>();
@@ -83,12 +87,12 @@ class RecipeManualServiceTests {
 
         RequestRecipeManualDTO requestRecipeManualDTO = RequestRecipeManualDTO
                 .builder()
-                .recipeId(1L)
                 .manual(manual)
                 .build();
 
         // When
-        List<RecipeManualDTO> recipeManualDTOList = recipeManualService.modifyRecipeManual(requestRecipeManualDTO);
+        List<RecipeManualDTO> recipeManualDTOList =
+                recipeManualService.modifyRecipeManual(recipeId, requestRecipeManualDTO);
 
         // Then
         Assertions.assertNotNull(recipeManualDTOList, "매뉴얼이 null 입니다.");

@@ -31,7 +31,8 @@ public class RecipeManualController {
     @PostMapping
     public ResponseDTO<?> createRecipeManual(@RequestParam("recipe") Long recipeId,
                                           @RequestBody RequestRecipeManualDTO requestRecipeManualDTO) {
-        List<RecipeManualDTO> recipeManualDTOList = recipeManualService.registRecipeManual(requestRecipeManualDTO);
+        List<RecipeManualDTO> recipeManualDTOList =
+                recipeManualService.registRecipeManual(recipeId, requestRecipeManualDTO);
         return ResponseDTO.ok(recipeManualDTOList);
     }
 
@@ -39,7 +40,8 @@ public class RecipeManualController {
     @PutMapping
     public ResponseDTO<?> updateRecipeManual(@RequestParam("recipe") Long recipeId,
                                              @RequestBody RequestRecipeManualDTO requestRecipeManualDTO) {
-        List<RecipeManualDTO> recipeManualDTOList = recipeManualService.modifyRecipeManual(requestRecipeManualDTO);
+        List<RecipeManualDTO> recipeManualDTOList =
+                recipeManualService.modifyRecipeManual(recipeId, requestRecipeManualDTO);
         return ResponseDTO.ok(recipeManualDTOList);
     }
 

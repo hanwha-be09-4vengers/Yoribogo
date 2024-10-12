@@ -15,9 +15,6 @@ import java.util.Map;
 @Builder
 public class RequestRecipeManualDTO {
 
-    @JsonProperty("recipe_id")
-    private Long recipeId;
-
     @JsonProperty("manual")
     private List<Map<String,String>> manual;
 

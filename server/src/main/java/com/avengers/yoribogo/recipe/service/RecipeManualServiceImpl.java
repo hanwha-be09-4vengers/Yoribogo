@@ -44,7 +44,7 @@ public class RecipeManualServiceImpl implements RecipeManualService {
 
     // 요리 레시피 매뉴얼 등록
     @Override
-    public List<RecipeManualDTO> registRecipeManual(RequestRecipeManualDTO requestRecipeManualDTO) {
+    public List<RecipeManualDTO> registRecipeManual(Long recipeId, RequestRecipeManualDTO requestRecipeManualDTO) {
         List<RecipeManual> recipeManualList = new ArrayList<>();
 
         List<Map<String,String>> manual = requestRecipeManualDTO.getManual();
@@ -55,7 +55,7 @@ public class RecipeManualServiceImpl implements RecipeManualService {
                     .recipeManualStep(i+1)
                     .manualMenuImage(manual.get(i).get("image"))
                     .manualContent(manual.get(i).get("content"))
-                    .recipeId(requestRecipeManualDTO.getRecipeId())
+                    .recipeId(recipeId)
                     .build();
 
             // 매뉴얼 등록
@@ -68,10 +68,10 @@ public class RecipeManualServiceImpl implements RecipeManualService {
 
     // 요리 레시피 매뉴얼 수정
     @Override
-    public List<RecipeManualDTO> modifyRecipeManual(RequestRecipeManualDTO requestRecipeManualDTO) {
+    public List<RecipeManualDTO> modifyRecipeManual(Long recipeId, RequestRecipeManualDTO requestRecipeManualDTO) {
         // 기존 엔티티 목록 조회
         List<RecipeManual> recipeManualList =
-                recipeManualRepository.findByRecipeId(requestRecipeManualDTO.getRecipeId());
+                recipeManualRepository.findByRecipeId(recipeId);
 
         // 조회된게 없을 경우 예외처리
         if (recipeManualList.isEmpty()) {
@@ -82,7 +82,7 @@ public class RecipeManualServiceImpl implements RecipeManualService {
         recipeManualRepository.deleteAll(recipeManualList);
 
         // 바뀐 매뉴얼 등록
-        return registRecipeManual(requestRecipeManualDTO);
+        return registRecipeManual(recipeId, requestRecipeManualDTO);
     }
 
     // RecipeManual -> RecipeManualDTO 변환 및 List 반환 메소드
