@@ -11,7 +11,9 @@ import com.avengers.yoribogo.recipe.repository.RecommendedMenuRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import software.amazon.ion.Timestamp;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -49,6 +51,7 @@ public class RecommendedMenuServiceImpl implements RecommendedMenuService {
                 .builder()
                 .satisfaction(registRecommendedMenuDTO.getSatisfaction())
                 .recommendedMenuStatus(RecommendedMenuStatus.ACTIVE)
+                .recommendedMenuCreatedAt(LocalDateTime.now().withNano(0))
                 .userId(registRecommendedMenuDTO.getUserId())
                 .recipeId(registRecommendedMenuDTO.getRecipeId())
                 .build();

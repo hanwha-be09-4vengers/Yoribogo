@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -22,6 +24,9 @@ public class RecommendedMenuDTO {
 
     @JsonProperty("recommended_menu_status")
     private RecommendedMenuStatus recommendedMenuStatus;
+
+    @JsonProperty("created_at")
+    private LocalDateTime recommendedMenuCreatedAt;
 
     @JsonProperty("user_id")
     private Long userId;

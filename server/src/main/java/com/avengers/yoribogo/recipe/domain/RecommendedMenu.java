@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "RECOMMENDED_MENU")
 @NoArgsConstructor
@@ -24,6 +26,9 @@ public class RecommendedMenu {
     @Enumerated(EnumType.STRING)
     @Column(name = "RECOMMENDED_MENU_STATUS")
     private RecommendedMenuStatus recommendedMenuStatus;
+
+    @Column(name = "RECOMMENDED_MENU_CREATED_AT")
+    private LocalDateTime recommendedMenuCreatedAt;
 
     @Column(name = "USER_ID")
     private Long userId;
