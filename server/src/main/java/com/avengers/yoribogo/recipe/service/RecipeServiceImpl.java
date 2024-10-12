@@ -13,7 +13,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
 
 @Transactional
 @Service
@@ -23,6 +23,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     private final ModelMapper modelMapper;
     private final RecipeRepository recipeRepository;
+    private final RecipeManualService recipeManualService;
     private final PublicDataRecipeService publicDataRecipeService;
     private final AIRecipeService aiRecipeService;
     private final OpenAIService openAIService;
@@ -30,11 +31,13 @@ public class RecipeServiceImpl implements RecipeService {
     @Autowired
     public RecipeServiceImpl(ModelMapper modelMapper,
                              RecipeRepository recipeRepository,
+                             RecipeManualService recipeManualService,
                              PublicDataRecipeService publicDataRecipeService,
                              AIRecipeService aiRecipeService,
                              OpenAIService openAIService) {
         this.modelMapper = modelMapper;
         this.recipeRepository = recipeRepository;
+        this.recipeManualService = recipeManualService;
         this.publicDataRecipeService = publicDataRecipeService;
         this.aiRecipeService = aiRecipeService;
         this.openAIService = openAIService;
@@ -255,11 +258,27 @@ public class RecipeServiceImpl implements RecipeService {
                 .userId(1L)
                 .build();
 
+        newRecipeDTO = registRecipe(newRecipeDTO);
+
         // 8단계: AI가 생성한 요리 레시피 등록
+        List<Map<String,String>> manual = new ArrayList<>();
 
+        List<String> contents = Arrays.stream(aiAnswerRecipe.split("\n")).toList();
+        for(String content: contents) {
+            Map<String,String> map = new HashMap<>();
+            map.put("content", content);
+            manual.add(map);
+        }
 
-        // 신규 등록 후 결과 반환
-        return registRecipe(newRecipeDTO);
+        RequestRecipeManualDTO requestRecipeManualDTO = RequestRecipeManualDTO
+                .builder()
+                .recipeId(newRecipeDTO.getRecipeId())
+                .manual(manual)
+                .build();
+
+        recipeManualService.registRecipeManual(requestRecipeManualDTO);
+
+        return newRecipeDTO;
     }
 
     // ':'가 있는 경우, ':' 이후의 문자열만 남기는 메소드

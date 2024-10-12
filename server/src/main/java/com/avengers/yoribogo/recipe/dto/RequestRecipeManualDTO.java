@@ -6,25 +6,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.Map;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class RecipeManualDTO {
-
-    @JsonProperty("manual_id")
-    private Long recipeManualId;
-
-    @JsonProperty("manual_step")
-    private Integer recipeManualStep;
-
-    @JsonProperty("manual_image")
-    private String manualMenuImage;
-
-    @JsonProperty("manual_content")
-    private String manualContent;
+public class RequestRecipeManualDTO {
 
     @JsonProperty("recipe_id")
     private Long recipeId;
+
+    @JsonProperty("manual")
+    private List<Map<String,String>> manual;
 
 }
