@@ -275,7 +275,7 @@ public class RecipeServiceImpl implements RecipeService {
                 .manual(manual)
                 .build();
 
-        recipeManualService.registRecipeManual(requestRecipeManualDTO);
+        recipeManualService.registRecipeManual(newRecipeDTO.getRecipeId(), requestRecipeManualDTO);
 
         return newRecipeDTO;
     }
