@@ -13,8 +13,9 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @Transactional
 @Service
@@ -200,14 +201,16 @@ public class RecipeServiceImpl implements RecipeService {
 
     // 요리 추천하기
     @Override
-    public BaseRecipeDTO registRecommendRecipe(Long userId, RequestRecommendDTO requestRecommendDTO) {
+    public BaseRecipeDTO registRecommendRecipe(RequestRecommendDTO requestRecommendDTO) {
         // 1단계: AI에게 추천하는 요리 이름 물어보기
-        String prompt = "'오늘의 날씨는 어떤가요?'라는 질문의 답은 " + requestRecommendDTO.getFirst() + "이고" +
-                "'오늘의 기분은 어떤가요?'라는 질문의 답은 " + requestRecommendDTO.getSecond() + "이고" +
-                "'몇 명이 먹는 음식인가요?'라는 질문의 답은 " + requestRecommendDTO.getThird() + "이고" +
-                "'채식 또는 비건 식단을 따르시나요?'라는 질문의 답은 " + requestRecommendDTO.getFourth() + "이고" +
-                "'제가 또 알아야 하는게 있나요?'라는 질문의 답은 " + requestRecommendDTO.getFifth() + "일 때 " +
-                "이 답을 모두 고려했을 때 괜찮은 음식 이름을 하나 알려줘, 꼭 이름만 알려줘야해!";
+        String prompt = "다음 정보를 바탕으로 알맞은 요리를 하나만 추천해줘: " +
+                "'오늘의 날씨는 어떤가요?' → '" + requestRecommendDTO.getFirst() + "', " +
+                "'오늘의 기분은 어떤가요?' → '" + requestRecommendDTO.getSecond() + "', " +
+                "'몇 명이 먹는 음식인가요?' → '" + requestRecommendDTO.getThird() + "', " +
+                "'채식 또는 비건 식단을 따르시나요?' → '" + requestRecommendDTO.getFourth() + "', " +
+                "'제가 또 알아야 하는게 있나요?' → '" + requestRecommendDTO.getFifth() + "'." +
+                " 특히 '" + requestRecommendDTO.getFifth() + "'를 가장 중요하게 고려하고, " +
+                "요리 이름은 특수문자와 다른 말은 빼고 오직 이름만 알려줘.";
         String aiAnswerMenu = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
 
         System.out.println(aiAnswerMenu);
@@ -224,13 +227,50 @@ public class RecipeServiceImpl implements RecipeService {
         // 조회되었을 경우
         if (aiRecipeDTO != null) return aiRecipeDTO;
 
-        // 5단계: AI가 추천한 요리의 레시피를 물어보기
-        prompt = aiAnswerMenu + "를 만들 때 필요한 재료와, 레시피를 단계별로 이해하기 쉽고 자세하게 설명해줘";
-        String aiAnswerRecipe = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
+        // 5단계: AI가 추천한 요리의 재료를 물어보기
+        String ingredientsPrompt = "다음 요리를 만들 때 필요한 재료를 자세하게 설명해줘: " + aiAnswerMenu +
+                "를 만들기 위한 재료를 꼭 ','로 구분하여 양을 포함하고, '설탕 2스푼' 형식으로 작성해줘. " +
+                "단, 앞과 뒤에 특수문자와 다른 말은 빼고 오직 재료 내용만 제공해줘.";
+        String aiAnswerIngredients = openAIService.getRecommend(ingredientsPrompt).getChoices().get(0).getMessage().getContent();
 
-        System.out.println(aiAnswerRecipe);
+        // ':'가 있는 경우, ':' 이후의 문자열만 남기기
+        aiAnswerIngredients = parseString(aiAnswerIngredients);
 
-        return new BaseRecipeDTO();
+        // 6단계: AI가 추천한 요리의 레시피를 물어보기
+        String recipePrompt = aiAnswerMenu + "를 만들기 위한 재료가 " + aiAnswerIngredients +
+                "일 때, " + aiAnswerMenu + "의 레시피를 단계별로 자세하게 설명해줘:\n" +
+                "레시피는 각 단계에 번호를 붙여서 '1. 파를 썹니다.'와 같은 형식으로 작성해줘. " +
+                "단, 한자 사용을 피하고, 앞과 뒤에 특수문자와 다른 말은 빼고 오직 레시피 내용만 제공해줘.";
+        String aiAnswerRecipe = openAIService.getRecommend(recipePrompt).getChoices().get(0).getMessage().getContent();
+
+        // ':'가 있는 경우, ':' 이후의 문자열만 남기기
+        aiAnswerRecipe = parseString(aiAnswerRecipe);
+
+        // 7단계: AI가 생성한 요리 등록
+
+        // AI가 생성한 요리 정보 입력
+        RecipeDTO newRecipeDTO = RecipeDTO
+                .builder()
+                .menuName(aiAnswerMenu)
+                .menuIngredient(aiAnswerIngredients)
+                .menuType(MenuType.AI)
+                .userId(1L)
+                .build();
+
+        // 8단계: AI가 생성한 요리 레시피 등록
+
+
+        // 신규 등록 후 결과 반환
+        return registRecipe(newRecipeDTO);
+    }
+
+    // ':'가 있는 경우, ':' 이후의 문자열만 남기는 메소드
+    private static String parseString(String aiAnswer) {
+        int colonIndex = aiAnswer.indexOf(":");
+        if (colonIndex != -1) {
+            aiAnswer = aiAnswer.substring(colonIndex + 1).trim();
+        }
+        return aiAnswer;
     }
 
     // Recipe -> RecipeDTO 변환 및 Page 반환 메소드

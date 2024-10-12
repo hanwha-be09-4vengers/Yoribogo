@@ -66,9 +66,8 @@ public class RecipeController {
 
     // 요리 추천하기
     @PostMapping("/recommend")
-    public ResponseDTO<?> createRecommendRecipe(@RequestParam("user") Long userId,
-                                                @RequestBody RequestRecommendDTO requestRecommendDTO) {
-        BaseRecipeDTO baseRecipeDTO = recipeService.registRecommendRecipe(userId, requestRecommendDTO);
+    public ResponseDTO<?> createRecommendRecipe(@RequestBody RequestRecommendDTO requestRecommendDTO) {
+        BaseRecipeDTO baseRecipeDTO = recipeService.registRecommendRecipe(requestRecommendDTO);
         return ResponseDTO.ok(baseRecipeDTO);
     }
 

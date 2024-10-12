@@ -26,6 +26,6 @@ public interface RecipeService {
     void removeRecipe(Long recipeId);
 
     // 요리 추천하기
-    BaseRecipeDTO registRecommendRecipe(Long userId, RequestRecommendDTO requestRecommendDTO);
+    BaseRecipeDTO registRecommendRecipe(RequestRecommendDTO requestRecommendDTO);
 
 }
