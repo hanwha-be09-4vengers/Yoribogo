@@ -2,17 +2,20 @@ package com.avengers.yoribogo.recipe.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+
+import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@SuperBuilder
-public class AIRecipeDTO extends BaseRecipeDTO {
+@Builder
+public class RequestRecipeManualDTO {
 
-    @JsonProperty("ai_recipe_id")
-    private Long aiRecipeId;
+    @JsonProperty("manual")
+    private List<Map<String,String>> manual;
 
 }
