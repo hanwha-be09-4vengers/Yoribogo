@@ -12,7 +12,7 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
     // 요리 이름이 포함된 레시피 목록을 페이지네이션 처리하여 반환
     Page<Recipe> findByMenuNameContaining(String menuName, Pageable pageable);
 
-    // 레시피 이름으로 조회하는 메소드
+    // 요리 이름으로 조회하는 메소드(이름이 동일한 요리)
     Optional<Recipe> findByMenuName(String menuName);
 
 }

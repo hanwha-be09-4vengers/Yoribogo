@@ -5,10 +5,7 @@ import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.openai.service.OpenAIService;
 import com.avengers.yoribogo.recipe.domain.MenuType;
 import com.avengers.yoribogo.recipe.domain.Recipe;
-import com.avengers.yoribogo.recipe.dto.AIRecipeDTO;
-import com.avengers.yoribogo.recipe.dto.PublicDataRecipeDTO;
-import com.avengers.yoribogo.recipe.dto.RecipeDTO;
-import com.avengers.yoribogo.recipe.dto.RequestRecommendDTO;
+import com.avengers.yoribogo.recipe.dto.*;
 import com.avengers.yoribogo.recipe.repository.RecipeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,11 +64,8 @@ public class RecipeServiceImpl implements RecipeService {
             throw new CommonException(ErrorCode.NOT_FOUND_RECIPE);
         }
 
-        // Recipe -> RecipeDTO 변환
-        List<RecipeDTO> recipeDTOList = convertEntityPageToDTOPage(recipePage);
-
-        // 새로운 Page 객체 생성
-        return new PageImpl<>(recipeDTOList, pageable, recipePage.getTotalElements());
+        // Recipe -> RecipeDTO 변환 및 Page 반환
+        return convertEntityPageToDTOPage(recipePage);
     }
 
     // 요리 레시피 단건 조회
@@ -106,11 +100,8 @@ public class RecipeServiceImpl implements RecipeService {
             throw new CommonException(ErrorCode.NOT_FOUND_RECIPE);
         }
 
-        // Recipe -> RecipeDTO 변환
-        List<RecipeDTO> recipeDTOList = convertEntityPageToDTOPage(recipePage);
-
-        // 새로운 Page 객체 생성
-        return new PageImpl<>(recipeDTOList, pageable, recipePage.getTotalElements());
+        // Recipe -> RecipeDTO 변환 및 Page 반환
+        return convertEntityPageToDTOPage(recipePage);
     }
 
     // 요리 레시피 등록
@@ -125,9 +116,9 @@ public class RecipeServiceImpl implements RecipeService {
             // DTO에 요리 레시피 정보 담기
             PublicDataRecipeDTO publicDataRecipeDTO = PublicDataRecipeDTO
                     .builder()
-                    .publicDataMenuName(newRecipe.getMenuName())
-                    .publicDataMenuIngredient(newRecipe.getMenuIngredient())
-                    .publicDataMenuImage(newRecipe.getMenuImage())
+                    .menuName(newRecipe.getMenuName())
+                    .menuIngredient(newRecipe.getMenuIngredient())
+                    .menuImage(newRecipe.getMenuImage())
                     .recipeId(newRecipe.getRecipeId())
                     .build();
 
@@ -137,8 +128,8 @@ public class RecipeServiceImpl implements RecipeService {
             // DTO에 요리 레시피 정보 담기
             AIRecipeDTO aiRecipeDTO = AIRecipeDTO
                     .builder()
-                    .aiMenuName(newRecipe.getMenuName())
-                    .aiMenuIngredient(newRecipe.getMenuIngredient())
+                    .menuName(newRecipe.getMenuName())
+                    .menuIngredient(newRecipe.getMenuIngredient())
                     .recipeId(newRecipe.getRecipeId())
                     .build();
 
@@ -161,9 +152,38 @@ public class RecipeServiceImpl implements RecipeService {
 
         // 엔티티 정보 수정
         existingRecipe.setMenuName(modifyRecipeDTO.getMenuName());
-        existingRecipe.setMenuImage(modifyRecipeDTO.getMenuImage());
         existingRecipe.setMenuIngredient(modifyRecipeDTO.getMenuIngredient());
+        existingRecipe.setMenuImage(modifyRecipeDTO.getMenuImage());
         existingRecipe.setUserId(modifyRecipeDTO.getUserId());
+
+        // 요리 구분 검사
+        if (existingRecipe.getMenuType() == MenuType.PUBLIC) {
+            // DTO에 요리 레시피 정보 담기
+            PublicDataRecipeDTO publicDataRecipeDTO = PublicDataRecipeDTO
+                    .builder()
+                    .menuName(modifyRecipeDTO.getMenuName())
+                    .menuIngredient(modifyRecipeDTO.getMenuIngredient())
+                    .menuImage(modifyRecipeDTO.getMenuImage())
+                    .recipeId(existingRecipe.getRecipeId())
+                    .build();
+
+            // 공공데이터 요리 레시피 수정
+            publicDataRecipeService.modifyPublicDataRecipe(publicDataRecipeDTO);
+        } else if (existingRecipe.getMenuType() == MenuType.AI) {
+            // DTO에 요리 레시피 정보 담기
+            AIRecipeDTO aiRecipeDTO = AIRecipeDTO
+                    .builder()
+                    .menuName(modifyRecipeDTO.getMenuName())
+                    .menuIngredient(modifyRecipeDTO.getMenuIngredient())
+                    .recipeId(existingRecipe.getRecipeId())
+                    .build();
+
+            // AI 요리 레시피 수정
+            aiRecipeService.modifyAIRecipe(aiRecipeDTO);
+        } else {
+            // 요리 구분이 잘못되었을 경우
+            throw new CommonException(ErrorCode.INVALID_REQUEST_BODY);
+        }
 
         return modelMapper.map(recipeRepository.save(existingRecipe), RecipeDTO.class);
     }
@@ -180,29 +200,46 @@ public class RecipeServiceImpl implements RecipeService {
 
     // 요리 추천하기
     @Override
-    public RecipeDTO registRecommendRecipe(RequestRecommendDTO requestRecommendDTO) {
-        // AI에게 추천하는 요리 이름 물어보기
+    public BaseRecipeDTO registRecommendRecipe(RequestRecommendDTO requestRecommendDTO) {
+        // 1단계: AI에게 추천하는 요리 이름 물어보기
         String prompt = "'오늘의 날씨는 어떤가요?'라는 질문의 답은 " + requestRecommendDTO.getFirst() + "이고" +
                 "'오늘의 기분은 어떤가요?'라는 질문의 답은 " + requestRecommendDTO.getSecond() + "이고" +
                 "'몇 명이 먹는 음식인가요?'라는 질문의 답은 " + requestRecommendDTO.getThird() + "이고" +
                 "'채식 또는 비건 식단을 따르시나요?'라는 질문의 답은 " + requestRecommendDTO.getFourth() + "이고" +
                 "'제가 또 알아야 하는게 있나요?'라는 질문의 답은 " + requestRecommendDTO.getFifth() + "일 때 " +
                 "이 답을 모두 고려했을 때 괜찮은 음식 이름을 하나 알려줘, 꼭 이름만 알려줘야해!";
-        String aiAnswer = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
+        String aiAnswerMenu = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
 
-        Recipe recipe =
-                recipeRepository.findByMenuName(aiAnswer).orElse(null);
+        System.out.println(aiAnswerMenu);
 
-        System.out.println(aiAnswer);
+        // 2단계: 공공데이터 요리 레시피 테이블 조회하기
+        PublicDataRecipeDTO publicDataRecipeDTO = publicDataRecipeService.findPublicDataRecipeByMenuName(aiAnswerMenu);
 
-        return new RecipeDTO();
+        // 조회되었을 경우
+        if (publicDataRecipeDTO != null) return publicDataRecipeDTO;
+
+        // 4단계: AI 요리 레시피 테이블 조회하기
+        AIRecipeDTO aiRecipeDTO = aiRecipeService.findAIRecipeByMenuName(aiAnswerMenu);
+
+        // 조회되었을 경우
+        if (aiRecipeDTO != null) return aiRecipeDTO;
+
+        // 5단계: AI가 추천한 요리의 레시피를 물어보기
+        prompt = aiAnswerMenu + "를 만들 때 필요한 재료와, 레시피를 단계별로 이해하기 쉽고 자세하게 설명해줘";
+        String aiAnswerRecipe = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
+
+        System.out.println(aiAnswerRecipe);
+
+        return new BaseRecipeDTO();
     }
 
-    // 페이지 내 엔티티를 DTO로 변환해주는 메소드
-    private List<RecipeDTO> convertEntityPageToDTOPage(Page<Recipe> recipePage) {
-        return recipePage.getContent().stream()
+    // Recipe -> RecipeDTO 변환 및 Page 반환 메소드
+    private Page<RecipeDTO> convertEntityPageToDTOPage(Page<Recipe> recipePage) {
+        List<RecipeDTO> recipeDTOList = recipePage.getContent().stream()
                 .map(recipe -> modelMapper.map(recipe, RecipeDTO.class))
                 .toList();
+
+        return new PageImpl<>(recipeDTOList, recipePage.getPageable(), recipePage.getTotalElements());
     }
 
 }

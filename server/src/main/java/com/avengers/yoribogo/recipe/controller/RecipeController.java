@@ -1,6 +1,7 @@
 package com.avengers.yoribogo.recipe.controller;
 
 import com.avengers.yoribogo.common.ResponseDTO;
+import com.avengers.yoribogo.recipe.dto.BaseRecipeDTO;
 import com.avengers.yoribogo.recipe.dto.RecipeDTO;
 import com.avengers.yoribogo.recipe.dto.RequestRecommendDTO;
 import com.avengers.yoribogo.recipe.service.RecipeServiceImpl;
@@ -67,8 +68,8 @@ public class RecipeController {
     @PostMapping("/recommend")
     public ResponseDTO<?> createRecommendRecipe(@RequestParam("user") Long userId,
                                                 @RequestBody RequestRecommendDTO requestRecommendDTO) {
-        RecipeDTO recipeDTO = recipeService.registRecommendRecipe(requestRecommendDTO);
-        return ResponseDTO.ok(recipeDTO);
+        BaseRecipeDTO baseRecipeDTO = recipeService.registRecommendRecipe(requestRecommendDTO);
+        return ResponseDTO.ok(baseRecipeDTO);
     }
 
 }
