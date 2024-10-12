@@ -10,9 +10,18 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @Data
 @SuperBuilder
-public class AIRecipeDTO extends BaseRecipeDTO {
+public class BaseRecipeDTO {
 
-    @JsonProperty("ai_recipe_id")
-    private Long aiRecipeId;
+    @JsonProperty("recipe_id")
+    private Long recipeId;
+
+    @JsonProperty("menu_name")
+    private String menuName;
+
+    @JsonProperty("menu_ingredient")
+    private String menuIngredient;
+
+    @JsonProperty("menu_image")
+    private String menuImage;
 
 }
