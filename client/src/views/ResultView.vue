@@ -35,21 +35,20 @@ const menuImage = ref('https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1
 const recipeId = ref()
 
 const fetchRecommendedMenu = async () => {
-  const questionResponse = JSON.parse(localStorage.getItem('question_responses'));
-  const requestData = {
-    first: questionResponse[0].response, 
-    second: questionResponse[1].response,
-    third: questionResponse[2].response,
-    fourth: questionResponse[3].response,
-    fifth: questionResponse[4].response,
-  };
   try {
+    const questionResponse = JSON.parse(localStorage.getItem('question_responses'));
+    const requestData = {
+      first: questionResponse[0].response, 
+      second: questionResponse[1].response,
+      third: questionResponse[2].response,
+      fourth: questionResponse[3].response,
+      fifth: questionResponse[4].response,
+    };
     const response = (await axios.post('/api/recipes/recommend',requestData)).data;
     if(response.success) {
       menuName.value = response.data.menu_name;
       if(response.data.menu_image) menuImage.value = response.data.menu_image;
       recipeId.value = response.data.recipe_id; 
-      if(response.data.menu_image) menuImage.value = response.data.menu_image;
       isLoading.value = false;
       localStorage.removeItem("question_responses");
     }
