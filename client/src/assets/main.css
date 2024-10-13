@@ -4,7 +4,11 @@
   --yellow-color: #ffda14;
   --sub-yellow-color: #b29b1d;
   --light-yellow-color: #ffee91;
-  --red-color: #f45c47;
+  --blended-light-color: #fffbe8;
+  --text-red-color: #f45c47;
+  --red-color: #FF4040;
+  --pink-color: #FF7D7D;
+  --light-pink-color: #FFF5F5;
 
   font-weight: normal;
   font-family: 'Noto Sans';

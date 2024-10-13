@@ -84,11 +84,11 @@ const goQuestion = () => {
 }
 
 .f-red {
-  color: var(--red-color);
+  color: var(--text-red-color);
 }
 
 .normal div span {
-  color: var(--red-color);
+  color: var(--text-red-color);
 }
 
 .indent {
