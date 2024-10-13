@@ -45,14 +45,14 @@ const qid = ref(parseInt(route.params.qid))
 const inputText = ref("");
 
 // 얘는 나중에 저희 s3쓰면 바뀔 예정
-const sunnyImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728802076203_597f003c-9c70-44a5-a0a5-17b41acc8ecc_%E1%84%82%E1%85%A1%E1%86%AF%E1%84%8A%E1%85%B5-%E1%84%8C%E1%85%A9%E1%87%82%E1%84%8B%E1%85%A1%E1%84%8B%E1%85%AD.svg'
-const cloudyImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728802076202_42e590b1-4ad9-43b8-a265-f5bb3c90a4aa_%E1%84%82%E1%85%A1%E1%86%AF%E1%84%8A%E1%85%B5-%E1%84%92%E1%85%B3%E1%84%85%E1%85%A7%E1%84%8B%E1%85%AD.svg'
-const feelGoodImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728802376035_35580f1b-82dd-45eb-af7b-846808f78d65_%E1%84%80%E1%85%B5%E1%84%87%E1%85%AE%E1%86%AB-%E1%84%8C%E1%85%A9%E1%87%82%E1%84%8B%E1%85%A1%E1%84%8B%E1%85%AD.svg'
-const feelBadImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728802376035_7e441d8a-2f4e-4318-8466-81bf2c79b086_%E1%84%80%E1%85%B5%E1%84%87%E1%85%AE%E1%86%AB-%E1%84%82%E1%85%A1%E1%84%88%E1%85%A1%E1%84%8B%E1%85%AD.svg'
-const eatAloneImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808005528_d69f3de9-43a1-49e1-9695-0e8f8434546c_%E1%84%80%E1%85%B3%E1%84%85%E1%85%B3%E1%86%BA.svg'
-const eatTogetherImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728802401230_1100e968-5f72-4e80-b96a-911d6098d3bb_%E1%84%80%E1%85%A1%E1%87%80%E1%84%8B%E1%85%B5%E1%84%86%E1%85%A5%E1%86%A8%E1%84%8B%E1%85%A5%E1%84%8B%E1%85%AD.svg'
-const vegeImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728802376019_b65e001e-3788-4f9f-904a-9378aa94b498_%E1%84%8E%E1%85%A2%E1%84%89%E1%85%B5%E1%86%A8.svg'
-const meatImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728806853872_2b46dd9d-f7c5-49bf-b67c-fbfb7d2d2529_%E1%84%80%E1%85%A9%E1%84%80%E1%85%B5.svg'
+const sunnyImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808575580_c6554ceb-96c2-47a3-88b6-8622d067e0c6_%E1%84%82%E1%85%A1%E1%86%AF%E1%84%8A%E1%85%B5-%E1%84%8C%E1%85%A9%E1%87%82%E1%84%8B%E1%85%A1%E1%84%8B%E1%85%AD.png'
+const cloudyImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808575569_fa440027-cbc6-4afa-b736-26e76f8d16d1_%E1%84%82%E1%85%A1%E1%86%AF%E1%84%8A%E1%85%B5-%E1%84%92%E1%85%B3%E1%84%85%E1%85%A7%E1%84%8B%E1%85%AD.png'
+const feelGoodImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808575573_c2a3291e-ea1f-4d7c-892d-5a6543c7530b_%E1%84%80%E1%85%B5%E1%84%87%E1%85%AE%E1%86%AB-%E1%84%8C%E1%85%A9%E1%87%82%E1%84%8B%E1%85%A1%E1%84%8B%E1%85%AD.png'
+const feelBadImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808546668_8a0acfdc-0dfd-48f8-a35d-5126dcbdff24_%E1%84%80%E1%85%B5%E1%84%87%E1%85%AE%E1%86%AB-%E1%84%87%E1%85%A7%E1%86%AF%E1%84%85%E1%85%A9.png'
+const eatAloneImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808252339_fbd0243e-50d4-4e4b-9b74-7666763cb7eb_Group%20988418.png'
+const eatTogetherImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808546672_f318980a-bb2c-4c1e-86f8-8a98eb5dabdd_%E1%84%8B%E1%85%A7%E1%84%85%E1%85%A7%E1%84%86%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%B5%E1%84%86%E1%85%A5%E1%86%A8%E1%84%8B%E1%85%A5%E1%84%8B%E1%85%AD.png'
+const vegeImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808546686_c01ec2a8-29a2-434b-8252-236dbb9e67ef_%E1%84%87%E1%85%B5%E1%84%80%E1%85%A5%E1%86%AB.png'
+const meatImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808546694_906a83e1-d7d5-4e79-bc28-aabb5c8c4693_%E1%84%80%E1%85%A9%E1%84%80%E1%85%B5.png'
 
 watch(
   () => route.params.qid,
