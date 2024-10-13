@@ -66,16 +66,16 @@ CREATE TABLE choice (
     choice_image TEXT NOT NULL,
     choice_content VARCHAR(255) NOT NULL,
     main_question_id INT NOT NULL,
-    FOREIGN KEY (main_question_id) REFERENCES main_question(main_question_id)
+    FOREIGN KEY (main_question_id) REFERENCES main_question(main_question_id) ON DELETE CASCADE
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='선지' DEFAULT CHARSET=UTF8;
 
 CREATE TABLE inquiry (
     inquiry_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     inquiry_title VARCHAR(255) NOT NULL,
     inquiry_content TEXT NOT NULL,
-    inquiry_status VARCHAR(255) NOT NULL DEFAULT 'ACTIVE' CHECK(inquiry_status IN ('ACTIVE','INACTIVE')),
+    inquiry_status VARCHAR(255) DEFAULT 'ACTIVE' CHECK(inquiry_status IN ('ACTIVE','INACTIVE')),
     inquiry_created_at TIMESTAMP NOT NULL,
-    answers BIGINT NOT NULL DEFAULT 0,
+    answers BIGINT DEFAULT 0,
     user_id BIGINT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES USER(user_id)
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='문의' DEFAULT CHARSET=UTF8;

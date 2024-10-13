@@ -26,14 +26,14 @@ VALUES
     ('이정현', 'password456', 'jung_h', 'jung@example.com', NULL, '2023-09-05 09:30:00', 'KAKAO', CONCAT('KAKAO_', 'jung123'), 'jung123', 'ACTIVE', 'ENTERPRISE', 'Y', 1, 0);  -- 브론즈 (likes >= 0)
 
 -- 추천 요리 데이터 삽입
-INSERT INTO recommended_menu (satisfaction, recommended_menu_status, user_id, recipe_id)
+INSERT INTO recommended_menu (satisfaction, recommended_menu_status, recommended_menu_created_at, user_id, recipe_id)
 VALUES
-	 ('GOOD', 'ACTIVE', 3, 1),
-	 ('GOOD', 'INACTIVE', 3, 2),
-	 ('BAD', 'ACTIVE', 3, 3),
-	 ('BAD', 'INACTIVE', 3, 4),
-	 ('GOOD', 'ACTIVE', 3, 5),
-	 ('GOOD', 'ACTIVE', 3, 6);
+	 ('GOOD', 'ACTIVE', CURRENT_TIMESTAMP(), 3, 1),
+	 ('GOOD', 'INACTIVE', CURRENT_TIMESTAMP(), 3, 2),
+	 ('BAD', 'ACTIVE', CURRENT_TIMESTAMP(), 3, 3),
+	 ('BAD', 'INACTIVE', CURRENT_TIMESTAMP(), 3, 4),
+	 ('GOOD', 'ACTIVE', CURRENT_TIMESTAMP(), 3, 5),
+	 ('GOOD', 'ACTIVE', CURRENT_TIMESTAMP(), 3, 6);
 
 
 -- 데이터 확인

@@ -1,6 +1,8 @@
 <template>
   <div class="result-board" :class="{ flipped: isFlipped }" @click="flipCard">
-    <div class="front"></div>
+    <div class="front">
+      <img :src="bgImg" alt="BackgroundImage" />
+    </div>
     <div class="back">
       <img :src="props.img" alt="Image" />
       <span>{{ props.text }}</span>
@@ -21,6 +23,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const bgImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728805407561_0d689efb-7da9-461f-987a-6996c392361d_%E1%84%89%E1%85%AE%E1%84%8C%E1%85%A5%E1%86%BC.svg';
 
 const emit = defineEmits(['flipped'])
 
@@ -43,28 +47,36 @@ const flipCard = () => {
 .front,
 .back {
   position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
   box-shadow: 0.5rem 0.5rem 0.3rem 0rem rgba(60, 60, 60, 0.5);
   border-radius: 1.8rem;
-  transition: 0.5s ease;
+  transition: 0.8s ease;
   transform-style: preserve-3d;
 }
 
 .front {
-  background: linear-gradient(to bottom, var(--light-yellow-color), var(--white-color));
+  background: var(--white-color);
   transform: rotateY(0deg);
 }
 
+.front img{
+  width: 80%;
+}
+
 .back {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   gap: 4rem;
   background-color: var(--white-color);
   transform: rotateY(180deg);
+}
+
+.back img {
+  height: 22.6rem;
 }
 
 .result-board.flipped .front {
@@ -72,21 +84,24 @@ const flipCard = () => {
 }
 
 .result-board.flipped .back {
+  display: flex;
   transform: rotateY(360deg);
 }
 
-.front:hover {
-  transform: translateY(-0.3rem);
-  transition: transform 0.3s ease-out;
+.front:hover, .back:hover {
   box-shadow: 0.5rem 0.5rem 0.3rem 0.2rem rgba(60, 60, 60, 0.5);
-}
-
-.result-board img {
-  height: 22.6rem;
 }
 
 .result-board span {
   font-size: 4rem;
+}
+
+/* 데스크탑 */
+@media screen and (max-width: 1920px) {
+  .result-board {
+    width: 50rem;
+    height: 56rem;
+  }
 }
 
 /* 노트북 */
@@ -99,7 +114,7 @@ const flipCard = () => {
 
 /* 모바일 */
 @media screen and (max-width: 767px) {
-  .result-board img {
+  .back img {
     height: 20rem;
   }
 }
@@ -110,7 +125,7 @@ const flipCard = () => {
     height: 47rem;
   }
 
-  .result-board img {
+  .back img {
     height: 18rem;
   }
 
@@ -125,7 +140,7 @@ const flipCard = () => {
     height: 45rem;
   }
 
-  .result-board img {
+  .back img {
     height: 16rem;
   }
 
@@ -139,7 +154,7 @@ const flipCard = () => {
     height: 40rem;
   }
 
-  .result-board img {
+  .back img {
     height: 14rem;
   }
 
