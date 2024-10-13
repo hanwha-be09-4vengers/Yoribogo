@@ -26,6 +26,7 @@ const props = defineProps({
   align-items: center;
   width: 44rem;
   height: 53rem;
+  gap: 1.6rem;
   background-color: var(--white-color);
   box-shadow: 0.5rem 0.5rem 0.3rem 0rem rgba(60, 60, 60, 0.5);
   border-radius: 1.8rem;
@@ -54,7 +55,7 @@ const props = defineProps({
   }
 
   .card-board img {
-    height: 22.6rem;
+    height: 20rem;
   }
 
   .card-board span {
@@ -70,7 +71,7 @@ const props = defineProps({
   }
 
   .card-board img {
-    height: 20rem;
+    height: 16rem;
   }
 }
 
@@ -80,12 +81,8 @@ const props = defineProps({
     height: 32rem;
   }
 
-  .card-board img {
-    height: 18rem;
-  }
-
   .card-board span {
-    font-size: 3.3rem;
+    font-size: 3.1rem;
   }
 }
 
@@ -96,11 +93,11 @@ const props = defineProps({
   }
 
   .card-board img {
-    height: 16rem;
+    height: 14rem;
   }
 
   .card-board span {
-    font-size: 3.2rem;
+    font-size: 2.8rem;
   }
 }
 @media screen and (max-width: 320px) {
@@ -110,11 +107,11 @@ const props = defineProps({
   }
 
   .card-board img {
-    height: 14rem;
+    height: 12rem;
   }
 
   .card-board span {
-    font-size: 3rem;
+    font-size: 2.5rem;
   }
 }
 </style>

@@ -5,7 +5,7 @@
       <div class="circle">
         <div class="mini-circle" v-if="currentQid === question.qid"></div>
       </div>
-      <span>{{ question.label }}</span>
+      <span>질문{{ question.qid }}</span>
     </div>
   </div>
 </template>
