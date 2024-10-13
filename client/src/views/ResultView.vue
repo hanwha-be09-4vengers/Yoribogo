@@ -24,7 +24,6 @@
 import ResultNav from '../components/ResultNav.vue'
 import ResultBoard from '../components/ResultBoard.vue'
 import Loading from '@/components/Loading.vue'
-import bibimbapImg from '../assets/bibimbap.svg'
 import { ref, onMounted} from 'vue'
 import axios from 'axios'
 
@@ -32,7 +31,7 @@ const isFlipped = ref(false)
 const isLoading = ref(true)
 
 const menuName = ref('')
-const menuImage = ref(bibimbapImg)
+const menuImage = ref('https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728804967802_a4720492-2dd2-4e59-8f31-79b55e6a169e_%E1%84%80%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.svg')
 const recipeId = ref()
 
 const fetchRecommendedMenu = async () => {
@@ -50,6 +49,7 @@ const fetchRecommendedMenu = async () => {
       menuName.value = response.data.menu_name;
       if(response.data.menu_image) menuImage.value = response.data.menu_image;
       recipeId.value = response.data.recipe_id; 
+      if(response.data.menu_image) menuImage.value = response.data.menu_image;
       isLoading.value = false;
       localStorage.removeItem("question_responses");
     }
@@ -108,7 +108,7 @@ main {
 }
 
 .result-info span {
-  transition: opacity 0.5s ease;
+  transition: opacity 0.7s ease;
   white-space: nowrap;
 }
 
