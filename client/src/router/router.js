@@ -16,6 +16,11 @@ const routes = [
     path: '/question/result',
     name: 'result',
     component: () => import('../views/ResultView.vue')
+  },
+  {
+    path: '/wiki',
+    name: 'wiki',
+    component: () => import('../views/WikiView.vue')
   }
 ]
 
