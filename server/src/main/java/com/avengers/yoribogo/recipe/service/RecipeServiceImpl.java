@@ -214,8 +214,6 @@ public class RecipeServiceImpl implements RecipeService {
                 "요리 이름은 특수문자와 다른 말은 빼고 오직 이름만 알려줘.";
         String aiAnswerMenu = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
 
-        System.out.println(aiAnswerMenu);
-
         // 2단계: 공공데이터 요리 레시피 테이블 조회하기
         PublicDataRecipeDTO publicDataRecipeDTO = publicDataRecipeService.findPublicDataRecipeByMenuName(aiAnswerMenu);
 

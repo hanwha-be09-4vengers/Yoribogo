@@ -26,6 +26,8 @@ public class AIRecipeServiceImpl implements AIRecipeService {
     @Override
     public AIRecipeDTO registAIRecipe(AIRecipeDTO aiRecipeDTO) {
         AIRecipe aiRecipe = modelMapper.map(aiRecipeDTO, AIRecipe.class);
+        aiRecipe.setAiMenuName(aiRecipeDTO.getMenuName());
+        aiRecipe.setAiMenuIngredient(aiRecipeDTO.getMenuIngredient());
         return modelMapper.map(aiRecipeRepository.save(aiRecipe), AIRecipeDTO.class);
     }
 

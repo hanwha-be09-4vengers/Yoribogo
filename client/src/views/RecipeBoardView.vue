@@ -1,7 +1,7 @@
 <template>
   <div class="wiki-view">
     <HomeButton></HomeButton>
-    <MainBoard :cur="'wiki'"></MainBoard>
+    <MainBoard :cur="'recipe-board'"></MainBoard>
   </div>
 </template>
 

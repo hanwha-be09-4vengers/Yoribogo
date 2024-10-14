@@ -8,7 +8,7 @@
         <div class="question-info">
           <span>{{ questions[qid - 1].label }}</span>
         </div>
-        <div class="card-board-container" v-if="qid<5">
+        <div class="card-board-container" v-if="qid < 5">
           <CardBoard
             :img="questions[qid - 1].leftImg"
             :text="questions[qid - 1].leftText"
@@ -22,8 +22,8 @@
           >
           </CardBoard>
         </div>
-        <div class="input-container" v-if="qid===5">
-          <input type="text" placeholder="답변:" v-model="inputText">
+        <div class="input-container" v-if="qid === 5">
+          <input type="text" placeholder="답변:" v-model="inputText" />
           <button class="submit-btn" @click="goNext(null, qid + 1)">추천 결과 보기</button>
         </div>
       </div>
@@ -42,17 +42,25 @@ const router = useRouter()
 
 const qid = ref(parseInt(route.params.qid))
 
-const inputText = ref("");
+const inputText = ref('')
 
 // 얘는 나중에 저희 s3쓰면 바뀔 예정
-const sunnyImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808575580_c6554ceb-96c2-47a3-88b6-8622d067e0c6_%E1%84%82%E1%85%A1%E1%86%AF%E1%84%8A%E1%85%B5-%E1%84%8C%E1%85%A9%E1%87%82%E1%84%8B%E1%85%A1%E1%84%8B%E1%85%AD.png'
-const cloudyImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808575569_fa440027-cbc6-4afa-b736-26e76f8d16d1_%E1%84%82%E1%85%A1%E1%86%AF%E1%84%8A%E1%85%B5-%E1%84%92%E1%85%B3%E1%84%85%E1%85%A7%E1%84%8B%E1%85%AD.png'
-const feelGoodImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808575573_c2a3291e-ea1f-4d7c-892d-5a6543c7530b_%E1%84%80%E1%85%B5%E1%84%87%E1%85%AE%E1%86%AB-%E1%84%8C%E1%85%A9%E1%87%82%E1%84%8B%E1%85%A1%E1%84%8B%E1%85%AD.png'
-const feelBadImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808546668_8a0acfdc-0dfd-48f8-a35d-5126dcbdff24_%E1%84%80%E1%85%B5%E1%84%87%E1%85%AE%E1%86%AB-%E1%84%87%E1%85%A7%E1%86%AF%E1%84%85%E1%85%A9.png'
-const eatAloneImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808252339_fbd0243e-50d4-4e4b-9b74-7666763cb7eb_Group%20988418.png'
-const eatTogetherImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808546672_f318980a-bb2c-4c1e-86f8-8a98eb5dabdd_%E1%84%8B%E1%85%A7%E1%84%85%E1%85%A7%E1%84%86%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%B5%E1%84%86%E1%85%A5%E1%86%A8%E1%84%8B%E1%85%A5%E1%84%8B%E1%85%AD.png'
-const vegeImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808546686_c01ec2a8-29a2-434b-8252-236dbb9e67ef_%E1%84%87%E1%85%B5%E1%84%80%E1%85%A5%E1%86%AB.png'
-const meatImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808546694_906a83e1-d7d5-4e79-bc28-aabb5c8c4693_%E1%84%80%E1%85%A9%E1%84%80%E1%85%B5.png'
+const sunnyImg =
+  'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808575580_c6554ceb-96c2-47a3-88b6-8622d067e0c6_%E1%84%82%E1%85%A1%E1%86%AF%E1%84%8A%E1%85%B5-%E1%84%8C%E1%85%A9%E1%87%82%E1%84%8B%E1%85%A1%E1%84%8B%E1%85%AD.png'
+const cloudyImg =
+  'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808575569_fa440027-cbc6-4afa-b736-26e76f8d16d1_%E1%84%82%E1%85%A1%E1%86%AF%E1%84%8A%E1%85%B5-%E1%84%92%E1%85%B3%E1%84%85%E1%85%A7%E1%84%8B%E1%85%AD.png'
+const feelGoodImg =
+  'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808575573_c2a3291e-ea1f-4d7c-892d-5a6543c7530b_%E1%84%80%E1%85%B5%E1%84%87%E1%85%AE%E1%86%AB-%E1%84%8C%E1%85%A9%E1%87%82%E1%84%8B%E1%85%A1%E1%84%8B%E1%85%AD.png'
+const feelBadImg =
+  'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808546668_8a0acfdc-0dfd-48f8-a35d-5126dcbdff24_%E1%84%80%E1%85%B5%E1%84%87%E1%85%AE%E1%86%AB-%E1%84%87%E1%85%A7%E1%86%AF%E1%84%85%E1%85%A9.png'
+const eatAloneImg =
+  'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808252339_fbd0243e-50d4-4e4b-9b74-7666763cb7eb_Group%20988418.png'
+const eatTogetherImg =
+  'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808546672_f318980a-bb2c-4c1e-86f8-8a98eb5dabdd_%E1%84%8B%E1%85%A7%E1%84%85%E1%85%A7%E1%84%86%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%B5%E1%84%86%E1%85%A5%E1%86%A8%E1%84%8B%E1%85%A5%E1%84%8B%E1%85%AD.png'
+const vegeImg =
+  'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808546686_c01ec2a8-29a2-434b-8252-236dbb9e67ef_%E1%84%87%E1%85%B5%E1%84%80%E1%85%A5%E1%86%AB.png'
+const meatImg =
+  'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728808546694_906a83e1-d7d5-4e79-bc28-aabb5c8c4693_%E1%84%80%E1%85%A9%E1%84%80%E1%85%B5.png'
 
 watch(
   () => route.params.qid,
@@ -97,19 +105,22 @@ const questions = [
   },
   {
     qid: 5,
-    label: '제가 또 알아야 하는게 있을까요?',
+    label: '제가 또 알아야 하는게 있을까요?'
   }
 ]
 
 const goNext = (selectedText, nextQid) => {
-  let responses = JSON.parse(localStorage.getItem('question_responses')) || [];
+  // localStorage에서 question_responses를 가져오고, 없으면 빈 객체로 초기화
+  const responses = JSON.parse(localStorage.getItem('question_responses')) || {}
 
-  if (nextQid <= 5) responses.push({ qid: qid.value, response: selectedText });
-  else responses.push({ qid: qid.value, response: inputText.value });
+  // 현재 질문의 qid 값을 사용하여 응답 저장
+  responses[`question_${qid.value}`] = qid.value < 5 ? selectedText : inputText.value
 
-  localStorage.setItem('question_responses', JSON.stringify(responses));
+  // localStorage에 응답 저장
+  localStorage.setItem('question_responses', JSON.stringify(responses))
 
-  nextQid <= 5 ? router.push(`/question/${nextQid}`) : router.push(`/question/result`)
+  // 다음 질문으로 이동
+  router.push(nextQid <= 5 ? `/question/${nextQid}` : `/question/result`)
 }
 </script>
 
@@ -148,7 +159,7 @@ main {
   height: 8rem;
   background-color: var(--white-color);
   border-radius: 5rem;
-  color: var(--black-color)
+  color: var(--black-color);
 }
 
 .question-info span {
