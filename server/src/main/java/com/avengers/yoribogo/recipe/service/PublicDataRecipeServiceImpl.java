@@ -27,6 +27,9 @@ public class PublicDataRecipeServiceImpl implements PublicDataRecipeService {
     public PublicDataRecipeDTO registPublicDataRecipe(PublicDataRecipeDTO publicDataRecipeDTO) {
         PublicDataRecipe publicDataRecipe =
                 modelMapper.map(publicDataRecipeDTO, PublicDataRecipe.class);
+        publicDataRecipe.setPublicDataMenuName(publicDataRecipeDTO.getMenuName());
+        publicDataRecipe.setPublicDataMenuIngredient(publicDataRecipeDTO.getMenuIngredient());
+        publicDataRecipe.setPublicDataMenuImage(publicDataRecipeDTO.getMenuImage());
         return modelMapper.map(publicDataRecipeRepository.save(publicDataRecipe), PublicDataRecipeDTO.class);
     }
 
