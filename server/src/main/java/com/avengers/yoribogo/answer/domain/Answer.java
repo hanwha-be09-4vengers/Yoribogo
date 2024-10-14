@@ -1,5 +1,6 @@
 package com.avengers.yoribogo.answer.domain;
 
+import com.avengers.yoribogo.common.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,8 +20,9 @@ public class Answer {
     @Column(name = "answer_content")
     private String answerContent;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "writer_type")
-    private String writerType;
+    private Role writerType;
 
     @Column(name = "answer_created_at")
     private LocalDateTime answerCreatedAt;
@@ -31,7 +33,7 @@ public class Answer {
     @Column(name = "inquiry_id")
     private int inquiryId;
 
-    public Answer(String answerContent, String writerType, int userId, int inquiryId) {
+    public Answer(String answerContent, Role writerType, int userId, int inquiryId) {
         this.answerContent = answerContent;
         this.writerType = writerType;
         this.userId = userId;
