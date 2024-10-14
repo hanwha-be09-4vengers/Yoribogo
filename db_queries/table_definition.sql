@@ -37,7 +37,7 @@ CREATE TABLE user (
     user_auth_id VARCHAR(255) NOT NULL, -- 일반 로그인 ID 또는 소셜 로그인 고유번호
     user_name VARCHAR(255) NOT NULL,
     password VARCHAR(255),
-    nickname VARCHAR(255),
+    nickname VARCHAR(255),   
     email VARCHAR(255) NOT NULL,
     user_status VARCHAR(255) NOT NULL DEFAULT 'ACTIVE' CHECK(user_status IN ('ACTIVE','INACTIVE')),
     created_at TIMESTAMP NOT NULL,
