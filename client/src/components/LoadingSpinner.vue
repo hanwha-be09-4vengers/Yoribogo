@@ -1,15 +1,24 @@
 <template>
   <div class="loading-container">
-    <div class="loading"></div>
-    <div class="loading-text">loading..</div>
+    <div class="loading" :style="{ borderColor: 'transparent ' + props.loadingColor }"></div>
+    <div class="loading-text" :style="{ color: props.textColor }">loading..</div>
   </div>
 </template>
 
-<style scoped>
-body {
-  background: #333;
-}
+<script setup>
+const props = defineProps({
+  loadingColor: {
+    type: String,
+    default: '#fff' // 기본 색상을 흰색으로 설정
+  },
+  textColor: {
+    type: String,
+    default: '#fff' // 기본 텍스트 색상을 흰색으로 설정
+  }
+})
+</script>
 
+<style scoped>
 @keyframes rotate-loading {
   0% {
     transform: rotate(0deg);
@@ -20,7 +29,9 @@ body {
 }
 
 @keyframes loading-text-opacity {
-  0%, 20%, 100% {
+  0%,
+  20%,
+  100% {
     opacity: 0;
   }
   50% {
@@ -41,20 +52,17 @@ body {
   width: 20rem;
   height: 20rem;
   border: 0.8rem solid transparent;
-  border-color: transparent #fff;
   border-radius: 50%;
   animation: rotate-loading 1.5s linear infinite;
 }
 
 .loading-container:hover .loading {
-  border-color: transparent #e45635;
   transition: border-color 0.5s ease-in-out;
 }
 
 .loading-text {
   position: absolute;
-  color: #fff;
-  font-family: "Noto Sans";
+  font-family: 'Noto Sans';
   font-size: 2rem;
   font-weight: bold;
   text-transform: uppercase;

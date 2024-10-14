@@ -23,7 +23,9 @@
         >마이페이지</MenuTab
       >
     </div>
-    <div class="board"></div>
+    <div class="board">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
@@ -58,7 +60,7 @@ const goActiveTab = (tab) => {
   min-width: 20rem;
   min-height: 65rem;
   margin-top: 17rem;
-  margin-bottom: 10rem;
+  margin-bottom: 4rem;
 }
 
 .menu-container {
@@ -69,9 +71,12 @@ const goActiveTab = (tab) => {
 }
 
 .board {
-  position: absolute;
-  top: 8rem;
+  position: relative;
+  top: -3rem;
   display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   width: 100%;
   min-height: 60rem;
   background-color: var(--white-color);
