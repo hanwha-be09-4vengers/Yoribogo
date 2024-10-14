@@ -1,6 +1,7 @@
 package com.avengers.yoribogo.inquiry.domain;
 
 import com.avengers.yoribogo.answer.domain.Answer;
+import com.avengers.yoribogo.common.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,8 +25,9 @@ public class Inquiry {
     @Column(name = "inquiry_content")
     private String inquiryContent;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "inquiry_status")
-    private String inquiryStatus;
+    private Status inquiryStatus;
 
     @Column(name = "inquiry_created_at")
     private LocalDateTime inquiryCreatedAt;
@@ -42,13 +44,6 @@ public class Inquiry {
     public Inquiry(String inquiryTitle, String inquiryContent, int userId) {
         this.inquiryTitle = inquiryTitle;
         this.inquiryContent = inquiryContent;
-        this.userId = userId;
-    }
-
-    public Inquiry(String inquiryTitle, String inquiryContent, Integer answers, int userId) {
-        this.inquiryTitle = inquiryTitle;
-        this.inquiryContent = inquiryContent;
-        this.answers = answers;
         this.userId = userId;
     }
 }

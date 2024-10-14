@@ -1,6 +1,6 @@
-package com.avengers.yoribogo.RecipeBoard.service;
+package com.avengers.yoribogo.recipeboard.service;
 
-import com.avengers.yoribogo.RecipeBoard.dto.RecipeBoardDTO;
+import com.avengers.yoribogo.recipeboard.dto.RecipeBoardDTO;
 import org.springframework.data.domain.Page;
 
 public interface RecipeBoardService {

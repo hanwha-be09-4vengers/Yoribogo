@@ -1,8 +1,11 @@
-package com.avengers.yoribogo.RecipeBoard.service;
+package com.avengers.yoribogo.recipeboard.service;
 
-import com.avengers.yoribogo.RecipeBoard.domain.RecipeBoard;
-import com.avengers.yoribogo.RecipeBoard.dto.RecipeBoardDTO;
-import com.avengers.yoribogo.RecipeBoard.repository.RecipeBoardRepository;
+import com.avengers.yoribogo.recipeboard.domain.RecipeBoard;
+import com.avengers.yoribogo.recipeboard.domain.RecipeBoardManual;
+import com.avengers.yoribogo.recipeboard.dto.RecipeBoardDTO;
+import com.avengers.yoribogo.recipeboard.dto.RecipeBoardManualDTO;
+import com.avengers.yoribogo.recipeboard.repository.RecipeBoardManualRepository;
+import com.avengers.yoribogo.recipeboard.repository.RecipeBoardRepository;
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
 import org.modelmapper.ModelMapper;
@@ -11,6 +14,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Transactional
@@ -21,17 +25,34 @@ public class RecipeBoardServiceImpl implements RecipeBoardService {
 
     private final ModelMapper modelMapper;
     private final RecipeBoardRepository recipeBoardRepository;
+    private final RecipeBoardManualRepository recipeBoardManualRepository;
 
     @Autowired
-    public RecipeBoardServiceImpl(ModelMapper modelMapper, RecipeBoardRepository recipeBoardRepository) {
+    public RecipeBoardServiceImpl(ModelMapper modelMapper,
+                                  RecipeBoardRepository recipeBoardRepository,
+                                  RecipeBoardManualRepository recipeBoardManualRepository) {
         this.modelMapper = modelMapper;
         this.recipeBoardRepository = recipeBoardRepository;
+        this.recipeBoardManualRepository = recipeBoardManualRepository;
     }
 
     @Override
     public RecipeBoardDTO registRecipeBoard(RecipeBoardDTO registRecipeBoardDTO) {
+        // 1. RecipeBoard 게시글 저장
         RecipeBoard newRecipeBoard = modelMapper.map(registRecipeBoardDTO, RecipeBoard.class);
         newRecipeBoard = recipeBoardRepository.save(newRecipeBoard);
+
+        // 2. 매뉴얼 저장
+        List<RecipeBoardManualDTO> manualDTOList = registRecipeBoardDTO.getManuals();
+        if (manualDTOList != null && !manualDTOList.isEmpty()) {
+            List<RecipeBoardManual> manualList = new ArrayList<>();
+            for (RecipeBoardManualDTO manualDTO : manualDTOList) {
+                RecipeBoardManual manual = modelMapper.map(manualDTO, RecipeBoardManual.class);
+                manual.setRecipeBoard(newRecipeBoard);
+                manualList.add(manual);
+            }
+            recipeBoardManualRepository.saveAll(manualList);
+        }
 
         return modelMapper.map(newRecipeBoard, RecipeBoardDTO.class);
     }
