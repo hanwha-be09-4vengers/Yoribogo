@@ -5,16 +5,16 @@
     </header>
     <main>
       <div class="result-container">
-        <p v-if="!isLoading">요리보고가 추천하는 요리는!</p>
-        <p v-if="isLoading">요리보고가 추천 중입니다...</p>
-        <div class="result-info" v-if="!isLoading">
+        <p v-show="!isLoading">요리보고가 추천하는 요리는!</p>
+        <p v-show="isLoading">요리보고가 추천 중입니다...</p>
+        <div class="result-info" v-show="!isLoading">
           <span :style="{ opacity: isFlipped ? 1 : 0 }">{{ menuName }}</span>
         </div>
-        <div class="card-board-container" v-if="!isLoading">
+        <div class="card-board-container" v-show="!isLoading">
           <ResultBoard :img="menuImage" :text="menuName" @flipped="isFlipped = !isFlipped">
           </ResultBoard>
         </div>
-        <LoadingSpinner v-if="isLoading"></LoadingSpinner>
+        <LoadingSpinner v-show="isLoading"></LoadingSpinner>
       </div>
     </main>
   </div>

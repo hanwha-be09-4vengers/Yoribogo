@@ -1,5 +1,5 @@
 <template>
-  <div class="wiki-view">
+  <div class="mypage-view">
     <HomeButton></HomeButton>
     <MainBoard :cur="'mypage'"></MainBoard>
   </div>
@@ -11,7 +11,7 @@ import MainBoard from '@/components/MainBoard.vue'
 </script>
 
 <style scoped>
-.wiki-view {
+.mypage-view {
   position: relative;
   display: flex;
   flex-direction: column;

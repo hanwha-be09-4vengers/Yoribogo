@@ -1,20 +1,34 @@
 <template>
-  <div class="menu-item">
+  <LoadingSpinner
+    v-show="isLoading"
+    :loadingColor="'var(--pink-color)'"
+    :textColor="'var(--pink-color)'"
+  ></LoadingSpinner>
+  <div class="menu-item" v-show="!isLoading">
     <div class="menu-img-wrapper">
-      <img :src="props.menuImage || defaultImage" loading="lazy" alt="MenuImage" />
+      <img
+        :src="menuImageSrc"
+        alt="MenuImage"
+        :class="imgClass"
+        @load="handleImageLoad"
+        @error="handleImageError"
+      />
     </div>
     <div class="menu-name-wrapper">
-      <span class="menu-name">{{ props.menuName }}</span>
+      <span class="menu-name">{{ formattedMenuName }}</span>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import { ref, computed } from 'vue'
+
 const props = defineProps({
   menuImage: {
     type: String,
-    required: true
+    required: true,
+    default: ''
   },
   menuName: {
     type: String,
@@ -25,6 +39,34 @@ const props = defineProps({
 const defaultImage = ref(
   'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728804967802_a4720492-2dd2-4e59-8f31-79b55e6a169e_%E1%84%80%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.svg'
 )
+
+const isLoading = ref(true)
+
+// computed 속성으로 이미지 소스 처리
+const menuImageSrc = computed(() => {
+  return props.menuImage || defaultImage.value
+})
+
+// 메뉴 이름 처리
+const formattedMenuName = computed(() => {
+  return props.menuName.trim() || 'Unknown Menu'
+})
+
+// 이미지 로딩 오류 처리 함수
+const handleImageError = () => {
+  isLoading.value = false // 로딩 중지
+  menuImageSrc.value = defaultImage.value
+}
+
+// 이미지 로드 완료 처리 함수
+const handleImageLoad = () => {
+  isLoading.value = false // 로딩 중지
+}
+
+// 이미지 클래스 처리
+const imgClass = computed(() => {
+  return menuImageSrc.value === defaultImage.value ? 'default-image' : ''
+})
 </script>
 
 <style scoped>
@@ -38,6 +80,7 @@ const defaultImage = ref(
   border-radius: 0.5rem;
   box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.1);
   transition: 0.3s ease;
+  overflow: hidden;
 }
 
 .menu-item:hover {
@@ -52,6 +95,7 @@ const defaultImage = ref(
   height: 80%;
   overflow: hidden;
   border-radius: 1.6rem;
+  overflow: hidden;
 }
 
 .menu-img-wrapper img {
@@ -66,6 +110,7 @@ const defaultImage = ref(
   align-items: center;
   height: 20%;
   width: 100%;
+  overflow: hidden;
 }
 
 .menu-name {

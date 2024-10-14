@@ -26,6 +26,7 @@ const props = defineProps({
   width: 19rem;
   height: 12rem;
   border-radius: 0.8rem;
+  cursor: pointer;
 }
 
 .text-wrapper {

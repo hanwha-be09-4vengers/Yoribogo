@@ -1,5 +1,5 @@
 <template>
-  <div class="wiki-view">
+  <div class="recipe-board-view">
     <HomeButton></HomeButton>
     <MainBoard :cur="'recipe-board'"></MainBoard>
   </div>
@@ -11,7 +11,7 @@ import MainBoard from '@/components/MainBoard.vue'
 </script>
 
 <style scoped>
-.wiki-view {
+.recipe-board-view {
   position: relative;
   display: flex;
   flex-direction: column;

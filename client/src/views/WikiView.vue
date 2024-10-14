@@ -4,18 +4,12 @@
     <MainBoard :cur="'wiki'">
       <div class="wiki-container">
         <SearchBar></SearchBar>
-        <LoadingSpinner
-          v-if="isLoading"
-          :loadingColor="'var(--pink-color)'"
-          :textColor="'var(--pink-color)'"
-        >
-        </LoadingSpinner>
-        <div class="wiki-list" v-if="!isLoading">
+        <div class="wiki-list">
           <MenuItem
             v-for="item in menuList"
             :key="item.recipe_id"
             :menuName="item.menu_name"
-            :menuImage="item.menu_image"
+            :menuImage="item.menu_image || ''"
           ></MenuItem>
         </div>
       </div>
@@ -29,24 +23,23 @@ import HomeButton from '@/components/HomeButton.vue'
 import MainBoard from '@/components/MainBoard.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import MenuItem from '@/components/MenuItem.vue'
-import LoadingSpinner from '@/components/LoadingSpinner.vue'
 import PaginationComponent from '@/components/PaginationComponent.vue'
 import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router' // Vue Router 사용
 import axios from 'axios'
 
-const isLoading = ref(true)
+const route = useRoute() // 현재 경로 정보 가져오기
+const router = useRouter() // 라우터 인스턴스 가져오기
+
 const menuList = ref([])
-const currentPage = ref(1)
 const pageInfo = ref({})
 
-const fetchData = async () => {
+const fetchData = async (page) => {
   try {
-    const response = (await axios.get(`/api/recipes?page=${currentPage.value}`)).data
+    const response = (await axios.get(`/api/recipes?page=${page}`)).data
     if (response.success) {
-      console.log(response.data)
       menuList.value = response.data.content
       pageInfo.value = response.data.page
-      isLoading.value = false
     }
   } catch (error) {
     console.error('Failed to fetch data:', error)
@@ -54,13 +47,14 @@ const fetchData = async () => {
 }
 
 const handlePageChange = (newPage) => {
-  currentPage.value = newPage
-  fetchData()
+  fetchData(newPage)
+  router.push({ path: '/wiki', query: { page: newPage } })
   window.scrollTo({ top: 0 })
 }
 
 onMounted(() => {
-  fetchData()
+  const page = parseInt(route.query.page) || 1 // 페이지 번호를 가져오고 기본값은 1
+  fetchData(page)
 })
 </script>
 
@@ -71,7 +65,6 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  min-height: 100vh;
   background-color: var(--yellow-color);
 }
 

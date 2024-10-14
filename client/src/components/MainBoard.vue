@@ -60,7 +60,7 @@ const goActiveTab = (tab) => {
   min-width: 20rem;
   min-height: 65rem;
   margin-top: 17rem;
-  margin-bottom: 10rem;
+  margin-bottom: 4rem;
 }
 
 .menu-container {
