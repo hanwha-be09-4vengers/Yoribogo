@@ -34,9 +34,51 @@ VALUES
 	 ('BAD', 'INACTIVE', CURRENT_TIMESTAMP(), 3, 4),
 	 ('GOOD', 'ACTIVE', CURRENT_TIMESTAMP(), 3, 5),
 	 ('GOOD', 'ACTIVE', CURRENT_TIMESTAMP(), 3, 6);
+	 
+-- 질문
+INSERT INTO main_question (choice_image, choice_content, main_question_id)
+VALUES
+("1번 질문 내용", 1),
+("2번 질문 내용", 2),
+("3번 질문 내용", 3),
+("4번 질문 내용", 4),
+("5번 질문 내용", 5);
+
+-- 선택지
+INSERT INTO choice (choice_image, choice_content, main_question_id)
+VALUES
+("image_11", "선택 1", 1),
+("image_12", "선택 2", 1),
+("image_21", "선택 1", 2),
+("image_22", "선택 2", 2),
+("image_31", "선택 1", 3),
+("image_32", "선택 2", 3),
+("image_41", "선택 1", 4),
+("image_42", "선택 2", 4),
+("image_51", "선택 1", 5),
+("image_52", "선택 2", 5);
+
+-- 문의
+INSERT INTO inquiry (inquiry_content, inquiry_created_at, user_id)
+VALUES
+("3번 회원 문의", "3번 회원 문의 내용", "2024-10-01 10:00:00", 3),
+("4번 회원 문의", "4번 회원 문의 내용", "2024-10-02 12:00:00", 4),
+("5번 회원 문의", "5번 회원 문의 내용", "2024-10-03 17:00:00", 5);
+
+-- 답변
+INSERT INTO answer (answer_content, wirter_type, answer_created_at, user_id, inquiry_id)
+VALUES
+("3번 회원 문의의 답변", "ADMIN", "2024-10-04 10:00:00", 1, 1),
+("4번 회원 문의의 답변", "ADMIN", "2024-10-05 02:00:00", 1, 2),
+("5번 회원 문의의 답변", "ADMIN", "2024-10-06 18:00:00", 1, 3),
+("4번 회원 재문의", "ENTERPRISE", "2024-10-07 19:00:00", 1, 2);
 
 
 -- 데이터 확인
 SELECT * FROM tier;
 SELECT * FROM user;
+SELECT * FROM main_question;
+SELECT * FROM choice;
+SELECT * FROM inquiry;
+SELECT * FROM answer;
 -- 그 뒤 테이블 조회
