@@ -1,4 +1,4 @@
-package com.avengers.yoribogo.RecipeBoard.domain;
+package com.avengers.yoribogo.recipeboard.domain;
 
 public enum RecipeBoardStatus {
     ACTIVE, INACTIVE

@@ -1,4 +1,4 @@
-package com.avengers.yoribogo.RecipeBoard.domain;
+package com.avengers.yoribogo.recipeboard.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table
+@Table(name = "RECIPE_BOARD")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

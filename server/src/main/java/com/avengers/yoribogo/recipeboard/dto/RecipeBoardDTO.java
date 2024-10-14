@@ -1,12 +1,13 @@
-package com.avengers.yoribogo.RecipeBoard.dto;
+package com.avengers.yoribogo.recipeboard.dto;
 
-import com.avengers.yoribogo.RecipeBoard.domain.RecipeBoardStatus;
+import com.avengers.yoribogo.recipeboard.domain.RecipeBoardStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,4 +37,8 @@ public class RecipeBoardDTO {
 
     @JsonProperty("user_id")
     private Long userId;
+
+    // 매뉴얼 리스트 dto에만 추가
+    @JsonProperty("manuals")
+    private List<RecipeBoardManualDTO> manuals;
 }
