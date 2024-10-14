@@ -34,9 +34,9 @@ VALUES
 	 ('BAD', 'INACTIVE', CURRENT_TIMESTAMP(), 3, 4),
 	 ('GOOD', 'ACTIVE', CURRENT_TIMESTAMP(), 3, 5),
 	 ('GOOD', 'ACTIVE', CURRENT_TIMESTAMP(), 3, 6);
-	 
+
 -- 질문
-INSERT INTO main_question (choice_image, choice_content, main_question_id)
+INSERT INTO main_question (main_question_content, user_id)
 VALUES
 ("1번 질문 내용", 1),
 ("2번 질문 내용", 2),
@@ -59,14 +59,14 @@ VALUES
 ("image_52", "선택 2", 5);
 
 -- 문의
-INSERT INTO inquiry (inquiry_content, inquiry_created_at, user_id)
+INSERT INTO inquiry (inquiry_title, inquiry_content, inquiry_created_at, user_id)
 VALUES
 ("3번 회원 문의", "3번 회원 문의 내용", "2024-10-01 10:00:00", 3),
 ("4번 회원 문의", "4번 회원 문의 내용", "2024-10-02 12:00:00", 4),
 ("5번 회원 문의", "5번 회원 문의 내용", "2024-10-03 17:00:00", 5);
 
 -- 답변
-INSERT INTO answer (answer_content, wirter_type, answer_created_at, user_id, inquiry_id)
+INSERT INTO answer (answer_content, writer_type, answer_created_at, user_id, inquiry_id)
 VALUES
 ("3번 회원 문의의 답변", "ADMIN", "2024-10-04 10:00:00", 1, 1),
 ("4번 회원 문의의 답변", "ADMIN", "2024-10-05 02:00:00", 1, 2),
