@@ -19,7 +19,7 @@ import java.util.*;
 @Service
 public class RecipeServiceImpl implements RecipeService {
 
-    private final Integer ELEMENTS_PER_PAGE = 10;
+    private final Integer ELEMENTS_PER_PAGE = 12;
 
     private final ModelMapper modelMapper;
     private final RecipeRepository recipeRepository;
