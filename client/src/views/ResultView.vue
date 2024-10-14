@@ -14,7 +14,7 @@
           <ResultBoard :img="menuImage" :text="menuName" @flipped="isFlipped = !isFlipped">
           </ResultBoard>
         </div>
-        <Loading v-if="isLoading"></Loading>
+        <LoadingSpinner v-if="isLoading"></LoadingSpinner>
       </div>
     </main>
   </div>
@@ -23,7 +23,7 @@
 <script setup>
 import ResultNav from '../components/ResultNav.vue'
 import ResultBoard from '../components/ResultBoard.vue'
-import Loading from '@/components/Loading.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
