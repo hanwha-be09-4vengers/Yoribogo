@@ -1,5 +1,6 @@
 package com.avengers.yoribogo.inquiry.service;
 
+import com.avengers.yoribogo.common.Status;
 import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.common.exception.ExceptionDTO;
 import com.avengers.yoribogo.inquiry.domain.Inquiry;
@@ -88,7 +89,7 @@ public class InquiryServiceImpl implements InquiryService {
     @Override
     public Inquiry insertInquiry(InquiryDTO newInquiry) {
         try {
-            newInquiry.setInquiryStatus("ACTIVE");
+            newInquiry.setInquiryStatus(Status.ACTIVE);
             newInquiry.setInquiryCreatedAt(LocalDateTime.now());
             newInquiry.setAnswers(0);
             return inquiryRepository.save(modelMapper.map(newInquiry, Inquiry.class));
@@ -113,7 +114,7 @@ public class InquiryServiceImpl implements InquiryService {
     public boolean removeInquiry(int id) {
         try {
             Inquiry del = inquiryRepository.findById(id).get();
-            del.setInquiryStatus("INACTIVE");
+            del.setInquiryStatus(Status.INACTIVE);
             inquiryRepository.saveAndFlush(del);
             return true;
         } catch (Exception e) {
