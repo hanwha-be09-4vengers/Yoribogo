@@ -1,5 +1,6 @@
 package com.avengers.yoribogo.inquiry.dto;
 
+import com.avengers.yoribogo.common.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ public class InquiryOnlyDTO {
     private Integer inquiryId;
     private String inquiryTitle;
     private String inquiryContent;
-    private String inquiryStatus;
+    private Status inquiryStatus;
     private LocalDateTime inquiryCreatedAt;
     private Integer answers;
     private int userId;
@@ -21,13 +22,6 @@ public class InquiryOnlyDTO {
     public InquiryOnlyDTO(String inquiryTitle, String inquiryContent, int userId) {
         this.inquiryTitle = inquiryTitle;
         this.inquiryContent = inquiryContent;
-        this.userId = userId;
-    }
-
-    public InquiryOnlyDTO(String inquiryTitle, String inquiryContent, Integer answers, int userId) {
-        this.inquiryTitle = inquiryTitle;
-        this.inquiryContent = inquiryContent;
-        this.answers = answers;
         this.userId = userId;
     }
 }
