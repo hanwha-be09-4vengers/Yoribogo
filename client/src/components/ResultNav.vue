@@ -10,14 +10,6 @@
   </div>
 </template>
 
-<script setup>
-import { useRoute } from 'vue-router'
-import { ref } from 'vue'
-
-// 현재 경로에서 qid를 추출하고 숫자로 변환
-const route = useRoute()
-</script>
-
 <style scoped>
 .result-nav {
   display: flex;

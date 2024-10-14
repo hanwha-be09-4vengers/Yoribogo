@@ -3,7 +3,7 @@
     <img class="bg-circle" src="/src/assets/Intersect.png" alt="Background Circle" />
     <img class="chicken" src="/src/assets/chicken.png" alt="Chicken" />
     <header>
-      <MainNav></MainNav>
+      <HomeNav></HomeNav>
     </header>
     <main>
       <section id="start-section" class="start-section">
@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import MainNav from '@/components/MainNav.vue'
+import HomeNav from '@/components/HomeNav.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -84,11 +84,11 @@ const goQuestion = () => {
 }
 
 .f-red {
-  color: var(--red-color);
+  color: var(--text-red-color);
 }
 
 .normal div span {
-  color: var(--red-color);
+  color: var(--text-red-color);
 }
 
 .indent {

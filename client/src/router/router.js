@@ -16,6 +16,21 @@ const routes = [
     path: '/question/result',
     name: 'result',
     component: () => import('../views/ResultView.vue')
+  },
+  {
+    path: '/wiki',
+    name: 'wiki',
+    component: () => import('../views/WikiView.vue')
+  },
+  {
+    path: '/recipe-board',
+    name: 'recipe-board',
+    component: () => import('../views/RecipeBoardView.vue')
+  },
+  {
+    path: '/mypage',
+    name: 'mypage',
+    component: () => import('../views/MyPageView.vue')
   }
 ]
 
