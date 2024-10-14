@@ -1,7 +1,7 @@
-package com.avengers.yoribogo.RecipeBoard.controller;
+package com.avengers.yoribogo.recipeboard.controller;
 
-import com.avengers.yoribogo.RecipeBoard.dto.RecipeBoardDTO;
-import com.avengers.yoribogo.RecipeBoard.service.RecipeBoardService;
+import com.avengers.yoribogo.recipeboard.dto.RecipeBoardDTO;
+import com.avengers.yoribogo.recipeboard.service.RecipeBoardService;
 import com.avengers.yoribogo.common.ResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
