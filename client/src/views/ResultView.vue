@@ -81,13 +81,13 @@ onMounted(() => {
 .profile-btn {
   position: absolute;
   top: 14rem;
-  right: 20rem;
+  right: 12rem;
 }
 
 .home-btn {
   position: absolute;
   top: 14rem;
-  right: 12rem;
+  right: 20rem;
 }
 
 main {
@@ -135,11 +135,11 @@ main {
 
 @media screen and (max-width: 768px) {
   .profile-btn {
-    right: 14rem;
+    right: 6rem;
   }
 
   .home-btn {
-    right: 6rem;
+    right: 14rem;
   }
 }
 

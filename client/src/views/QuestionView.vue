@@ -141,13 +141,13 @@ const goNext = (selectedText, nextQid) => {
 .profile-btn {
   position: absolute;
   top: 14rem;
-  right: 20rem;
+  right: 12rem;
 }
 
 .home-btn {
   position: absolute;
   top: 14rem;
-  right: 12rem;
+  right: 20rem;
 }
 
 main {
@@ -234,26 +234,26 @@ main {
 
 @media screen and (max-width: 768px) {
   .profile-btn {
-    right: 14rem;
+    right: 6rem;
   }
 
   .home-btn {
-    right: 6rem;
+    right: 14rem;
   }
 }
 
 @media screen and (max-width: 425px) {
   .profile-btn {
-    right: 12.4rem;
+    right: 4.4rem;
   }
 
   .home-btn {
-    right: 4.4rem;
+    right: 12.4rem;
   }
 }
 
 @media screen and (max-width: 320px) {
-  .home-btn {
+  .profile-btn {
     right: 5rem;
   }
 }

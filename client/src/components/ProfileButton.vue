@@ -7,7 +7,7 @@
       />
     </div>
     <ul class="menu-list" v-show="isMenuVisible">
-      <li class="menu">
+      <li class="menu" @click="goMyPage">
         <i class="fa-solid fa-user"></i>
         <span>마이페이지</span>
       </li>
@@ -21,11 +21,18 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const isMenuVisible = ref(false)
 
 const toggleMenu = () => {
   isMenuVisible.value = !isMenuVisible.value
+}
+
+const goMyPage = () => {
+  router.push('/mypage')
 }
 </script>
 
