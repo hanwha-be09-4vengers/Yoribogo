@@ -74,13 +74,13 @@ onMounted(() => {
 .profile-btn {
   position: absolute;
   top: 7rem;
-  right: 7rem;
+  right: 12rem;
 }
 
 .home-btn {
   position: absolute;
   top: 7rem;
-  right: 12rem;
+  right: 20rem;
 }
 
 .wiki-container {
@@ -112,31 +112,31 @@ onMounted(() => {
 
 @media screen and (max-width: 480px) {
   .profile-btn {
-    right: 5rem;
+    right: 10rem;
   }
 
   .home-btn {
-    right: 10rem;
+    right: 18rem;
   }
 }
 
 @media screen and (max-width: 425px) {
   .profile-btn {
-    right: 4rem;
+    right: 9rem;
   }
 
   .home-btn {
-    right: 9rem;
+    right: 17rem;
   }
 }
 
 @media screen and (max-width: 375px) {
   .profile-btn {
-    right: 3rem;
+    right: 8rem;
   }
 
   .home-btn {
-    right: 8rem;
+    right: 16rem;
   }
 }
 </style>

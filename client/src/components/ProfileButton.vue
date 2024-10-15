@@ -33,7 +33,8 @@ const toggleMenu = () => {
 .profile-btn {
   display: flex;
   flex-direction: column;
-  width: 20rem;
+  align-items: flex-end;
+  width: 25rem;
   gap: 1rem;
 }
 
@@ -67,7 +68,7 @@ const toggleMenu = () => {
   display: flex;
   flex-direction: column;
   background-color: var(--white-color);
-  width: 20rem;
+  width: 28rem;
   padding: 1rem;
   border-radius: 1.2rem;
   box-shadow: 0.1rem 0.35rem 0.35rem 0rem rgba(60, 60, 60, 0.5);
@@ -78,13 +79,13 @@ const toggleMenu = () => {
   display: flex;
   align-items: center;
   width: 100%;
-  height: 4rem;
+  height: 5rem;
   padding-left: 1rem;
   gap: 1rem;
   cursor: pointer;
   border: none;
   border-radius: 1rem;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 500;
   color: var(--black-color);
 }
