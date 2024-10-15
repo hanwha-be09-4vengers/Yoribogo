@@ -1,5 +1,6 @@
 <template>
   <div class="wiki-view">
+    <ProfileButton></ProfileButton>
     <HomeButton></HomeButton>
     <MainBoard :cur="'wiki'">
       <div class="wiki-container">
@@ -20,6 +21,7 @@
 
 <script setup>
 import HomeButton from '@/components/HomeButton.vue'
+import ProfileButton from '@/components/ProfileButton.vue'
 import MainBoard from '@/components/MainBoard.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import MenuItem from '@/components/MenuItem.vue'
@@ -69,6 +71,12 @@ onMounted(() => {
   background-color: var(--yellow-color);
 }
 
+.profile-btn {
+  position: absolute;
+  top: 7rem;
+  right: 7rem;
+}
+
 .home-btn {
   position: absolute;
   top: 7rem;
@@ -99,6 +107,36 @@ onMounted(() => {
 @media screen and (max-width: 960px) {
   .wiki-list {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .profile-btn {
+    right: 5rem;
+  }
+
+  .home-btn {
+    right: 10rem;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .profile-btn {
+    right: 4rem;
+  }
+
+  .home-btn {
+    right: 9rem;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .profile-btn {
+    right: 3rem;
+  }
+
+  .home-btn {
+    right: 8rem;
   }
 }
 </style>
