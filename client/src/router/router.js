@@ -23,9 +23,19 @@ const routes = [
     component: () => import('../views/WikiView.vue')
   },
   {
+    path: '/wiki/:recipeId',
+    name: 'wiki-detail',
+    component: () => import('../views/WikiDetailView.vue')
+  },
+  {
     path: '/recipe-board',
     name: 'recipe-board',
     component: () => import('../views/RecipeBoardView.vue')
+  },
+  {
+    path: '/mypage',
+    name: 'mypage',
+    component: () => import('../views/MyPageView.vue')
   },
   {
     path: '/mypage',
