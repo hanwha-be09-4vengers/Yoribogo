@@ -91,9 +91,10 @@ ul li {
   color: var(--yellow-color);
 }
 
-@media screen and (max-width: 320px) {
+@media screen and (max-width: 425px) {
   .menu {
-    gap: 2.6rem;
+    font-size: 1.9rem;
+    gap: 2.5rem;
   }
 }
 </style>

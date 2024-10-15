@@ -1,27 +1,18 @@
 <template>
   <div class="pagination">
-    <button
-      class="prev"
-      @click="prevPage"
-      :disabled="props.data.number + 1 === 1 || typeof props.data.number + 1 === 'undefined'"
-    >
+    <button class="prev" @click="prevPage" :disabled="currentPage <= 1">
       <i class="fa-solid fa-caret-left"></i>
     </button>
-    <span>{{ props.data.number + 1 }} / {{ props.data.totalPages }}</span>
-    <button
-      class="next"
-      @click="nextPage"
-      :disabled="
-        props.data.number + 1 === props.data.totalPages ||
-        typeof props.data.number + 1 === 'undefined'
-      "
-    >
+    <span>{{ currentPage }} / {{ totalPages }}</span>
+    <button class="next" @click="nextPage" :disabled="currentPage >= totalPages">
       <i class="fa-solid fa-caret-right"></i>
     </button>
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
 const props = defineProps({
   data: {
     type: Object,
@@ -31,16 +22,25 @@ const props = defineProps({
 
 const emit = defineEmits(['changePage'])
 
+// 페이지 계산을 위한 유효성 검사
+const totalPages = computed(() => {
+  return props.data.totalPages > 0 ? props.data.totalPages : 1 // 최소 1 페이지로 설정
+})
+
+const currentPage = computed(() => {
+  return props.data.number + 1 // 현재 페이지 (0부터 시작하므로 +1)
+})
+
 // 페이지 이동 함수
 const nextPage = () => {
-  if (props.data.number + 1 < props.data.totalPages) {
-    emit('changePage', props.data.number + 1 + 1) // 페이지를 변경하라는 이벤트를 emit
+  if (currentPage.value < totalPages.value) {
+    emit('changePage', currentPage.value + 1) // 페이지를 변경하라는 이벤트를 emit
   }
 }
 
 const prevPage = () => {
-  if (props.data.number + 1 > 1) {
-    emit('changePage', props.data.number + 1 - 1) // 페이지를 변경하라는 이벤트를 emit
+  if (currentPage.value > 1) {
+    emit('changePage', currentPage.value - 1) // 페이지를 변경하라는 이벤트를 emit
   }
 }
 </script>
@@ -59,10 +59,16 @@ const prevPage = () => {
 
 .prev,
 .next {
+  transform: translateY(0.3rem);
   border: none;
   background-color: transparent;
   color: var(--red-color);
   cursor: pointer;
+}
+
+.prev:disabled,
+.next:disabled {
+  cursor: text;
 }
 
 .pagination i {

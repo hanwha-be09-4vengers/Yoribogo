@@ -1,12 +1,11 @@
 <template>
   <div class="menu-item">
     <div class="menu-img-wrapper">
-      <img v-show="isLoading" :src="defaultImage" alt="MenuImage" :class="imgClass" />
+      <img v-show="isLoading" :src="defaultImage" alt="MenuImage" />
       <img
         v-show="!isLoading"
         :src="menuImageSrc"
         alt="MenuImage"
-        :class="imgClass"
         @load="handleImageLoad"
         @error="handleImageError"
       />
@@ -72,6 +71,7 @@ const handleImageLoad = () => {
   box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.1);
   transition: 0.3s ease;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .menu-item:hover {

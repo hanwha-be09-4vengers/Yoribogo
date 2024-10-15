@@ -23,8 +23,10 @@ const goHome = () => {
   height: 6.3rem;
   border: none;
   border-radius: 50%;
+  background-color: var(--white-color);
   box-shadow: 0rem 0.35rem 0.35rem 0rem rgba(60, 60, 60, 0.5);
   cursor: pointer;
+  z-index: 9999;
 }
 
 .home-btn i {
