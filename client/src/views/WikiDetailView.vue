@@ -16,11 +16,11 @@
         />
       </div>
       <div class="menu-name-wrapper">
-        <span class="menu-name">{{ menuInfo.menu_name || '알 수 없는 메뉴' }}</span>
+        <span class="menu-name">{{ menuInfo.menu_name }}</span>
       </div>
       <div class="menu-ingredient-container">
         <div class="info">재료</div>
-        <p class="menu-ingredient">{{ menuInfo.menu_ingredient || '알 수 없는 재료' }}</p>
+        <p class="menu-ingredient">{{ menuInfo.menu_ingredient }}</p>
       </div>
       <div class="menu-manual-container">
         <div class="info">조리 순서</div>
