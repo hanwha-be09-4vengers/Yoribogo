@@ -13,25 +13,21 @@ import lombok.NoArgsConstructor;
 public class RecipeBoardManual {
 
     @Id
-    @Column(name = "RECIPE_BOARD_MANUAL_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "RECIPE_BOARD_MANUAL_ID")
     private long recipeBoardManualId;
 
-    @Column(name = "RECIPE_BOARD_MANUAL_STEP")
+    @Column(name = "RECIPE_BOARD_MANUAL_STEP", nullable = false)
     private int recipeBoardManualStep;
 
     @Column(name = "RECIPE_BOARD_MANUAL_IMAGE")
     private String recipeBoardManualImage;
 
-    @Column(name = "RECIPE_BOARD_MANUAL_CONTENT")
+    @Column(name = "RECIPE_BOARD_MANUAL_CONTENT", nullable = false)
     private String recipeBoardManualContent;
 
-    // ManyToOne 관계 설정
+    // ManyToOne 관계 설정 (보드와 매뉴얼 연결)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "RECIPE_BOARD_ID", insertable = false, updatable = false)
+    @JoinColumn(name = "RECIPE_BOARD_ID", nullable = false)
     private RecipeBoard recipeBoard;
-
-    @Column(name = "RECIPE_BOARD_ID")
-    private long recipeBoardId;
-
 }
