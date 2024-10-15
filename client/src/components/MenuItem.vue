@@ -1,12 +1,11 @@
 <template>
   <div class="menu-item">
     <div class="menu-img-wrapper">
-      <img v-show="isLoading" :src="defaultImage" alt="MenuImage" :class="imgClass" />
+      <img v-show="isLoading" :src="defaultImage" alt="MenuImage" />
       <img
         v-show="!isLoading"
         :src="menuImageSrc"
         alt="MenuImage"
-        :class="imgClass"
         @load="handleImageLoad"
         @error="handleImageError"
       />
