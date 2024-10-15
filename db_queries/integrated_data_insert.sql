@@ -3,14 +3,14 @@ USE yoribogodb;
 -- 사용자 정보는 파이썬 스크립트에 추가
 
 -- 티어 데이터 삽입
-INSERT INTO tier (tier_name, tier_criteria)
+INSERT INTO tier (tier_name, tier_criteria,tier_image)
 VALUES
-    ('브론즈', 0),    -- likes >= 0
-    ('실버', 1),      -- likes >= 1
-    ('골드', 5),      -- likes >= 5
-    ('플레티넘', 10), -- likes >= 10
-    ('다이아', 20),   -- likes >= 20
-    ('챌린저', 50);   -- likes >= 50
+    ('브론즈', 0,'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/bronze_tier.png'),    -- likes >= 0
+    ('실버', 1,'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/silver_tier.png'),      -- likes >= 1
+    ('골드', 5,'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/gold_tier.png'),      -- likes >= 5
+    ('플레티넘', 10,'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/platinum_tier.png'), -- likes >= 10
+    ('다이아', 20,'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/diamond_tier.png'),   -- likes >= 20
+    ('챌린저', 50,'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/challenger_tier.png');   -- likes >= 50
 
 -- 회원 데이터 삽입 (likes에 따라 tier_id 자동 할당)
 INSERT INTO user (user_name, password, nickname, email, profile_image, created_at, signup_path, user_identifier, user_auth_id, user_status, user_role, accept_status, tier_id, user_likes)
@@ -25,6 +25,70 @@ VALUES
     ('이소라', 'password789', 'eve_123', 'eve@example.com', NULL, '2023-08-05 14:20:00', 'KAKAO', CONCAT('KAKAO_', 'kakao98765'), 'kakao98765', 'ACTIVE', 'ENTERPRISE', 'Y', 3, 8),  -- 골드 (likes >= 5)
     ('박민수', 'password123', 'minsu_p', 'minsu@example.com', NULL, '2023-09-01 10:00:00', 'NORMAL', CONCAT('NORMAL_', 'minsu123'), 'minsu123', 'ACTIVE', 'ENTERPRISE', 'Y', 2, 3),  -- 실버 (likes >= 1)
     ('이정현', 'password456', 'jung_h', 'jung@example.com', NULL, '2023-09-05 09:30:00', 'KAKAO', CONCAT('KAKAO_', 'jung123'), 'jung123', 'ACTIVE', 'ENTERPRISE', 'Y', 1, 0);  -- 브론즈 (likes >= 0)
+
+
+-- 질문
+INSERT INTO main_question (main_question_content, user_id)
+VALUES
+("1번 질문 내용", 1),
+("2번 질문 내용", 2),
+("3번 질문 내용", 3),
+("4번 질문 내용", 4),
+("5번 질문 내용", 5);
+
+-- 선택지
+INSERT INTO choice (choice_image, choice_content, main_question_id)
+VALUES
+("image_11", "선택 1", 1),
+("image_12", "선택 2", 1),
+("image_21", "선택 1", 2),
+("image_22", "선택 2", 2),
+("image_31", "선택 1", 3),
+("image_32", "선택 2", 3),
+("image_41", "선택 1", 4),
+("image_42", "선택 2", 4),
+("image_51", "선택 1", 5),
+("image_52", "선택 2", 5);
+
+-- 문의 데이터 삽입
+INSERT INTO inquiry (inquiry_title, inquiry_content, inquiry_created_at, inquiry_visibility, user_id)
+VALUES
+("3번 회원 문의", "3번 회원 문의 내용", "2024-10-01 10:00:00", "PRIVATE", 3),
+("4번 회원 문의", "4번 회원 문의 내용", "2024-10-02 12:00:00", "PRIVATE", 4),
+("5번 회원 문의", "5번 회원 문의 내용", "2024-10-03 17:00:00", "PRIVATE", 5);
+
+
+-- 답변
+INSERT INTO answer (answer_content, writer_type, answer_created_at, user_id, inquiry_id)
+VALUES
+("3번 회원 문의의 답변", "ADMIN", "2024-10-04 10:00:00", 1, 1),
+("4번 회원 문의의 답변", "ADMIN", "2024-10-05 02:00:00", 1, 2),
+("5번 회원 문의의 답변", "ADMIN", "2024-10-06 18:00:00", 1, 3),
+("4번 회원 재문의", "ENTERPRISE", "2024-10-07 19:00:00", 1, 2);
+
+
+-- 알림
+
+
+-- 나만의 레시피 게시판
+
+
+
+-- 나만의 레시피 좋아요
+
+
+
+-- 나만의 레시피 즐겨찾기
+
+
+
+-- 나만의 레시피 댓글 
+
+
+
+-- 나만의 레시피 대댓글
+
+
 
 -- 요리 레시피 데이터 삽입
 INSERT INTO `recipe` (`recipe_id`, `menu_name`, `menu_ingredient`, `menu_image`, `menu_type`, `user_id`) VALUES (1, '새우 두부 계란찜', '새우두부계란찜\n연두부 75g(3/4모), 칵테일새우 20g(5마리), 달걀 30g(1/2개), 생크림 13g(1큰술), 설탕 5g(1작은술), 무염버터 5g(1작은술)\n고명\n시금치 10g(3줄기)', 'http://www.foodsafetykorea.go.kr/uploadimg/cook/10_00028_2.png', 'PUBLIC', 1);
@@ -7159,45 +7223,6 @@ VALUES
 	 ('BAD', 'INACTIVE', CURRENT_TIMESTAMP(), 3, 4),
 	 ('GOOD', 'ACTIVE', CURRENT_TIMESTAMP(), 3, 5),
 	 ('GOOD', 'ACTIVE', CURRENT_TIMESTAMP(), 3, 6);
-
--- 질문
-INSERT INTO main_question (main_question_content, user_id)
-VALUES
-("1번 질문 내용", 1),
-("2번 질문 내용", 2),
-("3번 질문 내용", 3),
-("4번 질문 내용", 4),
-("5번 질문 내용", 5);
-
--- 선택지
-INSERT INTO choice (choice_image, choice_content, main_question_id)
-VALUES
-("image_11", "선택 1", 1),
-("image_12", "선택 2", 1),
-("image_21", "선택 1", 2),
-("image_22", "선택 2", 2),
-("image_31", "선택 1", 3),
-("image_32", "선택 2", 3),
-("image_41", "선택 1", 4),
-("image_42", "선택 2", 4),
-("image_51", "선택 1", 5),
-("image_52", "선택 2", 5);
-
--- 문의
-INSERT INTO inquiry (inquiry_title, inquiry_content, inquiry_created_at, user_id)
-VALUES
-("3번 회원 문의", "3번 회원 문의 내용", "2024-10-01 10:00:00", 3),
-("4번 회원 문의", "4번 회원 문의 내용", "2024-10-02 12:00:00", 4),
-("5번 회원 문의", "5번 회원 문의 내용", "2024-10-03 17:00:00", 5);
-
--- 답변
-INSERT INTO answer (answer_content, writer_type, answer_created_at, user_id, inquiry_id)
-VALUES
-("3번 회원 문의의 답변", "ADMIN", "2024-10-04 10:00:00", 1, 1),
-("4번 회원 문의의 답변", "ADMIN", "2024-10-05 02:00:00", 1, 2),
-("5번 회원 문의의 답변", "ADMIN", "2024-10-06 18:00:00", 1, 3),
-("4번 회원 재문의", "ENTERPRISE", "2024-10-07 19:00:00", 1, 2);
-
 
 -- 데이터 확인
 SELECT * FROM tier;
