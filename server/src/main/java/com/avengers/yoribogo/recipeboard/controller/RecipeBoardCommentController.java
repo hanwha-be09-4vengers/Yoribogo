@@ -61,7 +61,7 @@ public class RecipeBoardCommentController {
 
 
     // 댓글 게시글별 조회
-    @GetMapping("")
+    @GetMapping("/comments")
     public ResponseEntity<List<RecipeBoardCommentDTO>> getCommentsByRecipeBoardId(@PathVariable Long recipeBoardId){
 
         List<RecipeBoardCommentDTO> commentsByRecipeBoardId = recipeBoardCommentService.getCommentsByRecipeBoardId(recipeBoardId);
