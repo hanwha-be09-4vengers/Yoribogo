@@ -18,13 +18,23 @@ public class InquiryDTO {
     private String inquiryContent;
     private Status inquiryStatus;
     private LocalDateTime inquiryCreatedAt;
-    private Integer answers;
+    private int answers;
     private int userId;
     private List<Inquiry> answer;
 
     public InquiryDTO(String inquiryTitle, String inquiryContent, int userId) {
         this.inquiryTitle = inquiryTitle;
         this.inquiryContent = inquiryContent;
+        this.userId = userId;
+    }
+
+    public InquiryDTO(Integer inquiryId, String inquiryTitle, String inquiryContent, Status inquiryStatus, LocalDateTime inquiryCreatedAt, int answers, int userId) {
+        this.inquiryId = inquiryId;
+        this.inquiryTitle = inquiryTitle;
+        this.inquiryContent = inquiryContent;
+        this.inquiryStatus = inquiryStatus;
+        this.inquiryCreatedAt = inquiryCreatedAt;
+        this.answers = answers;
         this.userId = userId;
     }
 }

@@ -25,4 +25,10 @@ public interface InquiryService {
 
     // 문의 삭제(상태 변경: 'ACTIVE' -> 'INACTIVE')
     boolean removeInquiry(int id);
+
+    // 질문 수 +1
+    void plusAnswers(int id);
+
+    // 질문 수 -1
+    void minusAnswers(int id);
 }

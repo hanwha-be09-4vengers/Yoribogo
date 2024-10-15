@@ -1,6 +1,8 @@
 package com.avengers.yoribogo.inquiry.service;
 
+import com.avengers.yoribogo.common.ResponseDTO;
 import com.avengers.yoribogo.common.Status;
+import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.common.exception.ExceptionDTO;
 import com.avengers.yoribogo.inquiry.domain.Inquiry;
@@ -12,6 +14,7 @@ import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,14 +42,14 @@ public class InquiryServiceImpl implements InquiryService {
             if (userId == null) {
                 return  modelMapper.map(inquiryRepository.findAll()
                         .stream()
-                        .filter(row -> row.getInquiryStatus().equals("ACTIVE"))
+                        .filter(row -> row.getInquiryStatus().equals(Status.ACTIVE.toString()))
                         .toList(), new TypeToken<List<InquiryOnlyDTO>>() {}.getType());
 
             } else {
                 return modelMapper.map(inquiryRepository.findAll()
                         .stream()
                         .filter(row -> row.getUserId() == userId &&
-                                row.getInquiryStatus().equals("ACTIVE"))
+                                row.getInquiryStatus().equals(Status.ACTIVE.toString()))
                         .toList(), new TypeToken<List<InquiryOnlyDTO>>() {}.getType());
             }
         } catch (Exception e) {
@@ -61,13 +64,13 @@ public class InquiryServiceImpl implements InquiryService {
             if (userId == null) {
                 return inquiryRepository.findAll()
                         .stream()
-                        .filter(row -> row.getInquiryStatus().equals("ACTIVE"))
+                        .filter(row -> row.getInquiryStatus().equals(Status.ACTIVE.toString()))
                         .toList();
             } else {
                 return inquiryRepository.findAll()
                         .stream()
                         .filter(row -> row.getUserId() == userId &&
-                                row.getInquiryStatus().equals("ACTIVE"))
+                                row.getInquiryStatus().equals(Status.ACTIVE.toString()))
                         .toList();
             }
         } catch (Exception e) {
@@ -120,6 +123,29 @@ public class InquiryServiceImpl implements InquiryService {
         } catch (Exception e) {
             ExceptionDTO.of(ErrorCode.NOT_FOUND_CHOICE);
             return false;
+        }
+    }
+
+    @Transactional
+    @Override
+    public void plusAnswers(int id) {
+        try {
+            Inquiry tmp = inquiryRepository.findById(id).get();
+            tmp.setAnswers(tmp.getAnswers() + 1);
+            inquiryRepository.saveAndFlush(tmp);
+        } catch (Exception e) {
+            ResponseDTO.fail((CommonException) e);
+        }
+    }
+
+    @Override
+    public void minusAnswers(int id) {
+        try {
+            Inquiry tmp = inquiryRepository.findById(id).get();
+            tmp.setAnswers(tmp.getAnswers() - 1);
+            inquiryRepository.saveAndFlush(tmp);
+        } catch (Exception e) {
+            ResponseDTO.fail((CommonException) e);
         }
     }
 }

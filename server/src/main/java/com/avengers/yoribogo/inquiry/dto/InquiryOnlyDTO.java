@@ -16,7 +16,7 @@ public class InquiryOnlyDTO {
     private String inquiryContent;
     private Status inquiryStatus;
     private LocalDateTime inquiryCreatedAt;
-    private Integer answers;
+    private int answers;
     private int userId;
 
     public InquiryOnlyDTO(String inquiryTitle, String inquiryContent, int userId) {
