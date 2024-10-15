@@ -72,6 +72,7 @@ const handleImageLoad = () => {
   box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.1);
   transition: 0.3s ease;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .menu-item:hover {

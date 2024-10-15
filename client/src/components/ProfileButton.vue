@@ -1,21 +1,16 @@
 <template>
-  <button class="home-btn" @click="goHome">
-    <i class="fa-solid fa-house"></i>
+  <button class="profile-btn">
+    <img
+      src="https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1720072494119_21792adc-7e3e-4d3e-8e69-3b55fa58615c_IMG_2316.jpeg"
+      alt="Logo"
+    />
   </button>
 </template>
 
-<script setup>
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-
-const goHome = () => {
-  router.push('/')
-}
-</script>
+<script setup></script>
 
 <style scoped>
-.home-btn {
+.profile-btn {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23,17 +18,20 @@ const goHome = () => {
   height: 6.3rem;
   border: none;
   border-radius: 50%;
-  background-color: var(--white-color);
+  overflow: hidden;
+  background-color: var(--light-yellow-color);
   box-shadow: 0rem 0.35rem 0.35rem 0rem rgba(60, 60, 60, 0.5);
   cursor: pointer;
   z-index: 9999;
 }
 
-.home-btn i {
-  font-size: 3rem;
+.profile-btn img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
 }
 
-.home-btn:hover {
+.profile-btn:hover {
   transition: 0.3s ease;
   box-shadow: 0rem 0.4rem 0.4rem 0.1rem rgba(60, 60, 60, 0.5);
 }

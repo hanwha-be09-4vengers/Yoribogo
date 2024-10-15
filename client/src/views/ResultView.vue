@@ -1,5 +1,7 @@
 <template>
   <div class="result-view">
+    <ProfileButton></ProfileButton>
+    <HomeButton></HomeButton>
     <header>
       <ResultNav></ResultNav>
     </header>
@@ -24,6 +26,8 @@
 import ResultNav from '../components/ResultNav.vue'
 import ResultBoard from '../components/ResultBoard.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import HomeButton from '@/components/HomeButton.vue'
+import ProfileButton from '@/components/ProfileButton.vue'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
@@ -74,6 +78,18 @@ onMounted(() => {
   background-color: var(--yellow-color);
 }
 
+.profile-btn {
+  position: absolute;
+  top: 14rem;
+  right: 20rem;
+}
+
+.home-btn {
+  position: absolute;
+  top: 14rem;
+  right: 12rem;
+}
+
 main {
   justify-content: center;
   align-items: center;
@@ -115,5 +131,27 @@ main {
 .card-board-container {
   display: flex;
   flex-direction: row;
+}
+
+@media screen and (max-width: 768px) {
+  .profile-btn {
+    right: 14rem;
+  }
+
+  .home-btn {
+    right: 6rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .profile-btn {
+    top: 14rem;
+    right: 3rem;
+  }
+
+  .home-btn {
+    top: 22rem;
+    right: 3rem;
+  }
 }
 </style>
