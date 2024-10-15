@@ -29,7 +29,8 @@ SET FOREIGN_KEY_CHECKS = 1;
 CREATE TABLE tier (
     tier_id INT PRIMARY KEY AUTO_INCREMENT,
     tier_name VARCHAR(255) NOT NULL,
-    tier_criteria BIGINT NOT NULL
+    tier_criteria BIGINT NOT NULL,
+    tier_image TEXT NOT NULL
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='티어' DEFAULT CHARSET=UTF8;
 
 CREATE TABLE user (
@@ -74,21 +75,13 @@ CREATE TABLE inquiry (
     inquiry_title VARCHAR(255) NOT NULL,
     inquiry_content TEXT NOT NULL,
     inquiry_status VARCHAR(255) DEFAULT 'ACTIVE' CHECK(inquiry_status IN ('ACTIVE','INACTIVE')),
+    inquiry_visibility VARCHAR(255) DEFAULT 'PUBLIC' CHECK(inquiry_visibility IN ('PUBLIC','PRIVATE')), -- 공개 여부
     inquiry_created_at TIMESTAMP NOT NULL,
     answers BIGINT DEFAULT 0,
+    answer_status VARCHAR(255) DEFAULT 'PENDING' CHECK(answer_status IN ('PENDING', 'ANSWERED')), -- 문의 상태
     user_id BIGINT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES USER(user_id)
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='문의' DEFAULT CHARSET=UTF8;
-
-CREATE TABLE notification (
-    notification_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    notification_read_status VARCHAR(255) NOT NULL DEFAULT 'WAIT' CHECK(notification_read_status IN ('READ', 'WAIT')),
-    notification_created_at TIMESTAMP NOT NULL,
-    notification_read_at TIMESTAMP,
-    notification_content TEXT NOT NULL,
-    user_id BIGINT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES USER(user_id)
-) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='알림' DEFAULT CHARSET=UTF8;
 
 CREATE TABLE answer (
     answer_id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -100,6 +93,18 @@ CREATE TABLE answer (
     FOREIGN KEY (user_id) REFERENCES USER(user_id),
     FOREIGN KEY (inquiry_id) REFERENCES inquiry(inquiry_id)
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='답변' DEFAULT CHARSET=UTF8;
+
+
+CREATE TABLE notification (
+    notification_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    notification_read_status VARCHAR(255) NOT NULL DEFAULT 'WAIT' CHECK(notification_read_status IN ('READ', 'WAIT')),
+    notification_created_at TIMESTAMP NOT NULL,
+    notification_read_at TIMESTAMP,
+    notification_content TEXT NOT NULL,
+    user_id BIGINT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES USER(user_id)
+) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='알림' DEFAULT CHARSET=UTF8;
+
 
 CREATE TABLE recipe (
     recipe_id BIGINT PRIMARY KEY AUTO_INCREMENT,

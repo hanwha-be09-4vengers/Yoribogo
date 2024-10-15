@@ -87,19 +87,21 @@ class User(Base):
     tier_id = Column(Integer, ForeignKey("tier.tier_id"))
     accept_status = Column(String(255), nullable=False, default="N")
 
+
 # 레시피가 이미 있는지 확인하는 함수
 def find_recipe_by_name(menu_name):
     return session.query(Recipe).filter_by(menu_name=menu_name).first()
 
+
 # 데이터 삽입 함수
 def insert_data(data):
     # 기본 사용자를 설정합니다 (예: user_id=1이 실제로 존재하는지 확인)
-    default_user = session.query(User).filter_by(user_name='조찬국').first()
-    
+    default_user = session.query(User).filter_by(user_name="조찬국").first()
+
     if not default_user:
         print("기본 사용자가 존재하지 않습니다. 레시피를 삽입할 수 없습니다.")
         return
-    
+
     for item in data:
         if item["RCP_PAT2"] != "후식":  # '후식' 제외
             existing_recipe = find_recipe_by_name(item["RCP_NM"])
@@ -134,7 +136,9 @@ def insert_data(data):
                         session.add(recipe_manual)
                 session.commit()
             else:
-                print(f"레시피 '{item['RCP_NM']}'가 이미 존재합니다. 삽입하지 않습니다.")
+                print(
+                    f"레시피 '{item['RCP_NM']}'가 이미 존재합니다. 삽입하지 않습니다."
+                )
 
 
 # 티어 데이터 삽입 함수
