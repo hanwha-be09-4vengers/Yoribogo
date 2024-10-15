@@ -46,4 +46,6 @@ public class Inquiry {
         this.inquiryContent = inquiryContent;
         this.userId = userId;
     }
+
+
 }
