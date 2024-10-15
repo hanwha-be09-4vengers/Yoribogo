@@ -24,7 +24,8 @@ const props = defineProps({
   }
 })
 
-const bgImg = 'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728805407561_0d689efb-7da9-461f-987a-6996c392361d_%E1%84%89%E1%85%AE%E1%84%8C%E1%85%A5%E1%86%BC.svg';
+const bgImg =
+  'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728805407561_0d689efb-7da9-461f-987a-6996c392361d_%E1%84%89%E1%85%AE%E1%84%8C%E1%85%A5%E1%86%BC.svg'
 
 const emit = defineEmits(['flipped'])
 
@@ -65,7 +66,7 @@ const flipCard = () => {
   transform: rotateY(0deg);
 }
 
-.front img{
+.front img {
   width: 80%;
 }
 
@@ -88,7 +89,8 @@ const flipCard = () => {
   transform: rotateY(360deg);
 }
 
-.front:hover, .back:hover {
+.front:hover,
+.back:hover {
   box-shadow: 0.5rem 0.5rem 0.3rem 0.2rem rgba(60, 60, 60, 0.5);
 }
 

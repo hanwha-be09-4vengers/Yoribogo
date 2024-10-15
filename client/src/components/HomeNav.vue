@@ -20,10 +20,10 @@
 <script setup>
 import { useRouter } from 'vue-router'
 
-const router = useRouter();
+const router = useRouter()
 
 const goWiki = () => {
-  router.push('/wiki');
+  router.push('/wiki')
 }
 </script>
 
