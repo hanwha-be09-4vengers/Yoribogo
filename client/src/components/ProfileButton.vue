@@ -2,7 +2,7 @@
   <button class="profile-btn">
     <img
       src="https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1720072494119_21792adc-7e3e-4d3e-8e69-3b55fa58615c_IMG_2316.jpeg"
-      alt="Logo"
+      alt="Profile"
     />
   </button>
 </template>
