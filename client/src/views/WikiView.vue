@@ -5,7 +5,10 @@
     <MainBoard :cur="'wiki'">
       <div class="wiki-container">
         <SearchBar @search="handleSearch"></SearchBar>
-        <div class="wiki-list">
+        <div class="not-found" v-if="isEmpty">
+          <span>요리가 존재하지 않습니다.</span>
+        </div>
+        <div class="wiki-list" v-if="!isEmpty">
           <MenuItem
             v-for="item in menuList"
             :key="item.recipe_id"
@@ -37,6 +40,8 @@ const router = useRouter() // 라우터 인스턴스 가져오기
 const menuList = ref([])
 const pageInfo = ref({})
 
+const isEmpty = ref(true)
+
 const fetchData = async (name, page) => {
   try {
     let response
@@ -46,6 +51,11 @@ const fetchData = async (name, page) => {
     if (response.success) {
       menuList.value = response.data.content
       pageInfo.value = response.data.page
+      isEmpty.value = false
+    } else {
+      menuList.value = []
+      pageInfo.value = {}
+      isEmpty.value = true
     }
   } catch (error) {
     console.error('Failed to fetch data:', error)
@@ -102,6 +112,16 @@ watch(
   position: absolute;
   top: 7rem;
   right: 20rem;
+}
+
+.not-found {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 4rem;
+  font-size: 2.4rem;
+  color: var(--black-color);
 }
 
 .wiki-container {
