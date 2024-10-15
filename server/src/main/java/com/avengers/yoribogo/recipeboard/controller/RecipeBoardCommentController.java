@@ -44,7 +44,7 @@ public class RecipeBoardCommentController {
             @RequestBody RecipeBoardCommentDTO commentDTO){
 
         RecipeBoardCommentDTO updatedComment = recipeBoardCommentService.modifyComment(id, commentDTO);
-        return new ResponseEntity<RecipeBoardCommentDTO>(updatedComment, HttpStatus.OK);
+        return new ResponseEntity<>(updatedComment, HttpStatus.OK);
     }
 
 
@@ -61,18 +61,18 @@ public class RecipeBoardCommentController {
 
 
     // 댓글 게시글별 조회
-    @GetMapping("/api/recipe-board/{recipeId}/comments")
-    public ResponseEntity<List<RecipeBoardCommentDTO>> getCommentsByRecipeBoardId(@PathVariable Long recipeId){
+    @GetMapping("")
+    public ResponseEntity<List<RecipeBoardCommentDTO>> getCommentsByRecipeBoardId(@PathVariable Long recipeBoardId){
 
-        List<RecipeBoardCommentDTO> commentsByRecipeBoardId = recipeBoardCommentService.getCommentsByRecipeBoardId(recipeId);
+        List<RecipeBoardCommentDTO> commentsByRecipeBoardId = recipeBoardCommentService.getCommentsByRecipeBoardId(recipeBoardId);
         return new ResponseEntity<>(commentsByRecipeBoardId, HttpStatus.OK);
     }
 
 
 
     // 댓글 회원별 조회
-    @GetMapping("/api/recipe-board/{userId}/comments")
-    public ResponseEntity<List<RecipeBoardCommentDTO>> getCommentsByUserId(@PathVariable Long userId){
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<RecipeBoardCommentDTO>> getCommentsByUserId(@PathVariable Long userId,  @PathVariable Long recipeBoardId){
 
         List<RecipeBoardCommentDTO> commentsByUserId = recipeBoardCommentService.getCommentsByUserId(userId);
         return new ResponseEntity<>(commentsByUserId, HttpStatus.OK);

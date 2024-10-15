@@ -63,20 +63,25 @@ public class RecipeBoardCommentServiceImpl implements RecipeBoardCommentService 
             throw new IllegalArgumentException("수정할 댓글 내용이 비어있습니다.");
         }
 
+        // 기존 댓글을 ID로 찾음
         RecipeBoardComment existingComment = commentRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
 
-        // DTO의 내용을 엔티티에 매핑
-        modelMapper.map(commentDTO, existingComment);
+        // 엔티티의 ID를 변경하지 않고, 나머지 필드만 수동으로 매핑
+        existingComment.setRecipeBoardCommentContent(commentDTO.getRecipeBoardCommentContent());
+//        existingComment.setRecipeBoardCommentStatus(commentDTO.getRecipeBoardCommentStatus());
 
+        // 댓글 수정 및 저장
         try {
             RecipeBoardComment updatedComment = commentRepository.save(existingComment);
             // 수정된 엔티티를 DTO로 변환하여 반환
             return modelMapper.map(updatedComment, RecipeBoardCommentDTO.class);
         } catch (Exception e) {
-            throw new RuntimeException("댓글 수정에 실패했습니다." + e);
+            throw new RuntimeException("댓글 수정에 실패했습니다. " + e);
         }
     }
+
+
 
     /* 댓글 삭제 */
     @Override
