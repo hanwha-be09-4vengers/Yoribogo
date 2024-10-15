@@ -30,7 +30,7 @@ const routes = [
   {
     path: '/mypage',
     name: 'mypage',
-    component: () => import('../views/MyPageView.vue')
+    component: () => import('../views/user/MyPageView.vue')
   }
 ]
 

@@ -57,7 +57,6 @@ VALUES
 ("4번 회원 문의", "4번 회원 문의 내용", "2024-10-02 12:00:00", "PRIVATE", 4),
 ("5번 회원 문의", "5번 회원 문의 내용", "2024-10-03 17:00:00", "PRIVATE", 5);
 
-
 -- 답변
 INSERT INTO answer (answer_content, writer_type, answer_created_at, user_id, inquiry_id)
 VALUES

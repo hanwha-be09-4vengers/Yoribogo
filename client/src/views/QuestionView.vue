@@ -36,7 +36,7 @@
 <script setup>
 import QuestionNav from '../components/QuestionNav.vue'
 import CardBoard from '../components/CardBoard.vue'
-import HomeButton from '@/components/HomeButton.vue'
+import HomeButton from '@/components/home/HomeButton.vue'
 import ProfileButton from '@/components/ProfileButton.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ref, watch } from 'vue'

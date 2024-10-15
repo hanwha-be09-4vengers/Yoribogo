@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import HomeButton from '@/components/HomeButton.vue'
+import HomeButton from '@/components/home/HomeButton.vue'
 import ProfileButton from '@/components/ProfileButton.vue'
 import MainBoard from '@/components/MainBoard.vue'
 import SearchBar from '@/components/SearchBar.vue'

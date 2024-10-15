@@ -78,7 +78,7 @@ CREATE TABLE inquiry (
     inquiry_visibility VARCHAR(255) DEFAULT 'PUBLIC' CHECK(inquiry_visibility IN ('PUBLIC','PRIVATE')), -- 공개 여부
     inquiry_created_at TIMESTAMP NOT NULL,
     answers BIGINT DEFAULT 0,
-    answer_status VARCHAR(255) DEFAULT 'PENDING' CHECK(answer_status IN ('PENDING', 'ANSWERED')), -- 문의 상태
+    answer_status VARCHAR(255) DEFAULT 'PENDING' CHECK(answer_status IN ('PENDING', 'ANSWERED')), -- 답변 상태
     user_id BIGINT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES USER(user_id)
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='문의' DEFAULT CHARSET=UTF8;
