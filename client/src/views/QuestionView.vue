@@ -1,5 +1,7 @@
 <template>
   <div class="question-view">
+    <ProfileButton></ProfileButton>
+    <HomeButton></HomeButton>
     <header>
       <QuestionNav :questions="questions"></QuestionNav>
     </header>
@@ -34,6 +36,8 @@
 <script setup>
 import QuestionNav from '../components/QuestionNav.vue'
 import CardBoard from '../components/CardBoard.vue'
+import HomeButton from '@/components/HomeButton.vue'
+import ProfileButton from '@/components/ProfileButton.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ref, watch } from 'vue'
 
@@ -134,6 +138,18 @@ const goNext = (selectedText, nextQid) => {
   background-color: var(--yellow-color);
 }
 
+.profile-btn {
+  position: absolute;
+  top: 14rem;
+  right: 12rem;
+}
+
+.home-btn {
+  position: absolute;
+  top: 14rem;
+  right: 20rem;
+}
+
 main {
   justify-content: center;
   align-items: center;
@@ -214,5 +230,31 @@ main {
 .submit-btn:hover {
   transform: translateY(-0.2rem);
   box-shadow: 0.5rem 0.3rem 0.3rem 0.1rem rgba(60, 60, 60, 0.5);
+}
+
+@media screen and (max-width: 768px) {
+  .profile-btn {
+    right: 6rem;
+  }
+
+  .home-btn {
+    right: 14rem;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .profile-btn {
+    right: 4.4rem;
+  }
+
+  .home-btn {
+    right: 12.4rem;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .profile-btn {
+    right: 5rem;
+  }
 }
 </style>

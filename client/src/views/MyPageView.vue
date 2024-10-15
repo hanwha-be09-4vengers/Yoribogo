@@ -1,5 +1,6 @@
 <template>
   <div class="mypage-view">
+    <ProfileButton></ProfileButton>
     <HomeButton></HomeButton>
     <MainBoard :cur="'mypage'"></MainBoard>
   </div>
@@ -8,6 +9,7 @@
 <script setup>
 import HomeButton from '@/components/HomeButton.vue'
 import MainBoard from '@/components/MainBoard.vue'
+import ProfileButton from '@/components/ProfileButton.vue'
 </script>
 
 <style scoped>
@@ -21,9 +23,51 @@ import MainBoard from '@/components/MainBoard.vue'
   background-color: var(--yellow-color);
 }
 
-.home-btn {
+.profile-btn {
   position: absolute;
   top: 7rem;
   right: 12rem;
+}
+
+.home-btn {
+  position: absolute;
+  top: 7rem;
+  right: 20rem;
+}
+
+@media screen and (max-width: 960px) {
+  .wiki-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .profile-btn {
+    right: 10rem;
+  }
+
+  .home-btn {
+    right: 18rem;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .profile-btn {
+    right: 9rem;
+  }
+
+  .home-btn {
+    right: 17rem;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .profile-btn {
+    right: 8rem;
+  }
+
+  .home-btn {
+    right: 16rem;
+  }
 }
 </style>

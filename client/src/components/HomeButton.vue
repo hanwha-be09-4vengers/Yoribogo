@@ -10,7 +10,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const goHome = () => {
-  router.push('/');
+  router.push('/')
 }
 </script>
 
@@ -23,8 +23,10 @@ const goHome = () => {
   height: 6.3rem;
   border: none;
   border-radius: 50%;
-  box-shadow: 0rem 0.35rem 0.35rem 0rem rgba(60,60,60,0.5);
+  background-color: var(--white-color);
+  box-shadow: 0rem 0.35rem 0.35rem 0rem rgba(60, 60, 60, 0.5);
   cursor: pointer;
+  z-index: 9999;
 }
 
 .home-btn i {
@@ -33,6 +35,6 @@ const goHome = () => {
 
 .home-btn:hover {
   transition: 0.3s ease;
-  box-shadow: 0rem 0.4rem 0.4rem 0.1rem rgba(60,60,60,0.5);
+  box-shadow: 0rem 0.4rem 0.4rem 0.1rem rgba(60, 60, 60, 0.5);
 }
 </style>

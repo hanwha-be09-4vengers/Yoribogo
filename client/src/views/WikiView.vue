@@ -1,9 +1,10 @@
 <template>
   <div class="wiki-view">
+    <ProfileButton></ProfileButton>
     <HomeButton></HomeButton>
     <MainBoard :cur="'wiki'">
       <div class="wiki-container">
-        <SearchBar></SearchBar>
+        <SearchBar @search="handleSearch"></SearchBar>
         <div class="wiki-list">
           <MenuItem
             v-for="item in menuList"
@@ -20,11 +21,12 @@
 
 <script setup>
 import HomeButton from '@/components/HomeButton.vue'
+import ProfileButton from '@/components/ProfileButton.vue'
 import MainBoard from '@/components/MainBoard.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import MenuItem from '@/components/MenuItem.vue'
 import PaginationComponent from '@/components/PaginationComponent.vue'
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router' // Vue Router 사용
 import axios from 'axios'
 
@@ -34,9 +36,12 @@ const router = useRouter() // 라우터 인스턴스 가져오기
 const menuList = ref([])
 const pageInfo = ref({})
 
-const fetchData = async (page) => {
+const fetchData = async (name, page) => {
   try {
-    const response = (await axios.get(`/api/recipes?page=${page}`)).data
+    let response
+    name === ''
+      ? (response = (await axios.get(`/api/recipes?page=${page}`)).data)
+      : (response = (await axios.get(`/api/recipes/search?name=${name}&page=${page}`)).data)
     if (response.success) {
       menuList.value = response.data.content
       pageInfo.value = response.data.page
@@ -46,16 +51,29 @@ const fetchData = async (page) => {
   }
 }
 
-const handlePageChange = (newPage) => {
-  fetchData(newPage)
-  router.push({ path: '/wiki', query: { page: newPage } })
-  window.scrollTo({ top: 0 })
+// 검색 핸들러
+const handleSearch = (searchQuery) => {
+  router.push({ path: '/wiki', query: { q: searchQuery, page: 1 } }) // 쿼리 파라미터 업데이트
 }
 
-onMounted(() => {
-  const page = parseInt(route.query.page) || 1 // 페이지 번호를 가져오고 기본값은 1
-  fetchData(page)
-})
+// 페이지 변경 핸들러
+const handlePageChange = (newPage) => {
+  const name = route.query.q || ''
+  name === ''
+    ? router.push({ path: '/wiki', query: { page: newPage } })
+    : router.push({ path: '/wiki', query: { q: name, page: newPage } }) // 페이지 변경 시 쿼리 업데이트
+}
+
+// URL 쿼리 변화를 감지하는 watcher
+watch(
+  () => route.query,
+  (newQuery) => {
+    const name = newQuery.q || ''
+    const page = parseInt(newQuery.page) || 1 // 기본값은 1
+    fetchData(name, page)
+  },
+  { immediate: true } // 즉시 호출
+)
 </script>
 
 <style scoped>
@@ -69,10 +87,16 @@ onMounted(() => {
   background-color: var(--yellow-color);
 }
 
-.home-btn {
+.profile-btn {
   position: absolute;
   top: 7rem;
   right: 12rem;
+}
+
+.home-btn {
+  position: absolute;
+  top: 7rem;
+  right: 20rem;
 }
 
 .wiki-container {
@@ -89,8 +113,8 @@ onMounted(() => {
 
 .wiki-list {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3개의 열로 구성 */
-  gap: 2rem; /* 각 아이템 간의 간격 */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
   width: 80%;
   margin-top: 6rem;
   margin-bottom: 8rem;
@@ -98,7 +122,37 @@ onMounted(() => {
 
 @media screen and (max-width: 960px) {
   .wiki-list {
-    grid-template-columns: repeat(2, 1fr); /* 3개의 열로 구성 */
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .profile-btn {
+    right: 10rem;
+  }
+
+  .home-btn {
+    right: 18rem;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .profile-btn {
+    right: 9rem;
+  }
+
+  .home-btn {
+    right: 17rem;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .profile-btn {
+    right: 8rem;
+  }
+
+  .home-btn {
+    right: 16rem;
   }
 }
 </style>

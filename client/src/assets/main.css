@@ -11,7 +11,7 @@
   --light-pink-color: #fff5f5;
 
   font-weight: normal;
-  font-family: 'Noto Sans';
+  font-family: 'Noto Sans KR', 'Noto Sans';
   font-size: 10px;
 }
 
@@ -35,7 +35,6 @@ header {
 main {
   display: flex;
   width: 100%;
-  z-index: 2;
 }
 
 body,
