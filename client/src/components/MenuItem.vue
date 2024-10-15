@@ -1,12 +1,9 @@
 <template>
-  <LoadingSpinner
-    v-show="isLoading"
-    :loadingColor="'var(--pink-color)'"
-    :textColor="'var(--pink-color)'"
-  ></LoadingSpinner>
-  <div class="menu-item" v-show="!isLoading">
+  <div class="menu-item">
     <div class="menu-img-wrapper">
+      <img v-show="isLoading" :src="defaultImage" alt="MenuImage" :class="imgClass" />
       <img
+        v-show="!isLoading"
         :src="menuImageSrc"
         alt="MenuImage"
         :class="imgClass"
@@ -21,7 +18,6 @@
 </template>
 
 <script setup>
-import LoadingSpinner from '@/components/LoadingSpinner.vue'
 import { ref, computed } from 'vue'
 
 const props = defineProps({
@@ -62,11 +58,6 @@ const handleImageError = () => {
 const handleImageLoad = () => {
   isLoading.value = false // 로딩 중지
 }
-
-// 이미지 클래스 처리
-const imgClass = computed(() => {
-  return menuImageSrc.value === defaultImage.value ? 'default-image' : ''
-})
 </script>
 
 <style scoped>
@@ -75,7 +66,7 @@ const imgClass = computed(() => {
   flex-direction: column;
   align-items: center;
   height: 32rem;
-  background-color: var(--white-color); /* 배경색을 추가하여 구분 */
+  background-color: var(--white-color);
   padding: 1rem;
   border-radius: 0.5rem;
   box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.1);

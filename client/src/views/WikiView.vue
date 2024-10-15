@@ -89,8 +89,8 @@ onMounted(() => {
 
 .wiki-list {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3개의 열로 구성 */
-  gap: 2rem; /* 각 아이템 간의 간격 */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
   width: 80%;
   margin-top: 6rem;
   margin-bottom: 8rem;
@@ -98,7 +98,7 @@ onMounted(() => {
 
 @media screen and (max-width: 960px) {
   .wiki-list {
-    grid-template-columns: repeat(2, 1fr); /* 3개의 열로 구성 */
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 </style>
