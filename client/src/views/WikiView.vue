@@ -11,6 +11,7 @@
             :key="item.recipe_id"
             :menuName="item.menu_name"
             :menuImage="item.menu_image || ''"
+            @click="goDetail(item.recipe_id)"
           ></MenuItem>
         </div>
       </div>
@@ -62,6 +63,10 @@ const handlePageChange = (newPage) => {
   name === ''
     ? router.push({ path: '/wiki', query: { page: newPage } })
     : router.push({ path: '/wiki', query: { q: name, page: newPage } }) // 페이지 변경 시 쿼리 업데이트
+}
+
+const goDetail = (recipeId) => {
+  router.push(`/wiki/${recipeId}`) // 상세 페이지로 이동
 }
 
 // URL 쿼리 변화를 감지하는 watcher
