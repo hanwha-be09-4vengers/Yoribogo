@@ -31,9 +31,9 @@ public class MainQuestion {
         this.userId = userId;
     }
 
-    public MainQuestion(String mainQuestionContent, int userId, List<Choice> choice) {
+    public MainQuestion(int mainQuestionId, String mainQuestionContent, int userId) {
+        this.mainQuestionId = mainQuestionId;
         this.mainQuestionContent = mainQuestionContent;
         this.userId = userId;
-        this.choice = choice;
     }
 }

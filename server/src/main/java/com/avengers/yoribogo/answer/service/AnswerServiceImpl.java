@@ -5,8 +5,6 @@ import com.avengers.yoribogo.answer.dto.AnswerDTO;
 import com.avengers.yoribogo.answer.repository.AnswerRepository;
 import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.common.exception.ExceptionDTO;
-import com.avengers.yoribogo.inquiry.domain.Inquiry;
-import com.avengers.yoribogo.inquiry.dto.InquiryDTO;
 import com.avengers.yoribogo.inquiry.service.InquiryService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 
 @Service
 public class AnswerServiceImpl implements AnswerService {
@@ -55,9 +52,7 @@ public class AnswerServiceImpl implements AnswerService {
         try {
             newAnswer.setAnswerCreatedAt(LocalDateTime.now());
             Answer result = answerRepository.save(modelMapper.map(newAnswer, Answer.class));
-            Inquiry inquiry = inquiryService.findInquiryById(newAnswer.getInquiryId());
-            inquiry.setAnswers(inquiry.getAnswers()+1);
-            inquiryService.updateInquiry(modelMapper.map(inquiry, InquiryDTO.class));
+            inquiryService.plusAnswers(newAnswer.getInquiryId());
             return result;
         } catch (Exception e) {
             ExceptionDTO.of(ErrorCode.NOT_FOUND_CHOICE);
@@ -80,9 +75,7 @@ public class AnswerServiceImpl implements AnswerService {
     public boolean removeAnswer(int id) {
         try {
             int inquiryId = answerRepository.findById(id).get().getInquiryId();
-            Inquiry inquiry = inquiryService.findInquiryById(inquiryId);
-            inquiry.setAnswers(inquiry.getAnswers()-1);
-            inquiryService.updateInquiry(modelMapper.map(inquiry, InquiryDTO.class));
+            inquiryService.minusAnswers(inquiryId);
             answerRepository.deleteById(id);
             return true;
         } catch (Exception e) {

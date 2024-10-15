@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class MainQuestionDTO {
-    private Integer mainQuestionId;
+    private int mainQuestionId;
     private String mainQuestionContent;
     private int userId;
     private List<Choice> choice;
@@ -21,9 +21,9 @@ public class MainQuestionDTO {
         this.userId = userId;
     }
 
-    public MainQuestionDTO(String mainQuestionContent, int userId, List<Choice> choice) {
+    public MainQuestionDTO(int mainQuestionId, String mainQuestionContent, int userId) {
+        this.mainQuestionId = mainQuestionId;
         this.mainQuestionContent = mainQuestionContent;
         this.userId = userId;
-        this.choice = choice;
     }
 }
