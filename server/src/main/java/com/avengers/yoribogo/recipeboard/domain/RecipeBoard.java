@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "RECIPE_BOARD")
@@ -32,15 +34,19 @@ public class RecipeBoard {
     private int recipeBoardLikes;
 
     @Column(name = "RECIPE_BOARD_COMMENTS")
-    private String recipeBoardComments;
+    private int recipeBoardComments;
 
     @Column(name = "RECIPE_BOARD_CREATED_AT")
     private LocalDateTime recipeBoardCreatedAt;
 
-    @Column(name ="RECIPE_BOARD_STATUS")
+    @Column(name = "RECIPE_BOARD_STATUS")
     @Enumerated(EnumType.STRING)
     private RecipeBoardStatus recipeBoardStatus;
 
     @Column(name = "USER_ID")
     private long userId;
+
+    // OneToMany 관계 설정 (보드가 여러 매뉴얼을 가질 수 있음)
+    @OneToMany(mappedBy = "recipeBoard", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RecipeBoardManual> manuals = new ArrayList<>();
 }

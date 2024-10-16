@@ -13,7 +13,7 @@
           <span :style="{ opacity: isFlipped ? 1 : 0 }">{{ menuName }}</span>
         </div>
         <div class="card-board-container" v-show="!isLoading">
-          <ResultBoard :img="menuImage" :text="menuName" @flipped="isFlipped = !isFlipped">
+          <ResultBoard :img="menuImage" :text="menuName" :recipeId="recipeId" @flipped="isFlipped = !isFlipped">
           </ResultBoard>
         </div>
         <LoadingSpinner v-show="isLoading"></LoadingSpinner>
