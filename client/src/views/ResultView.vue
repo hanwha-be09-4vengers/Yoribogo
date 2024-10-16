@@ -29,7 +29,10 @@ import LoadingSpinner from '@/components/LoadingSpinner.vue'
 import HomeButton from '@/components/HomeButton.vue'
 import ProfileButton from '@/components/ProfileButton.vue'
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
+
+const router = useRouter()
 
 const isFlipped = ref(false)
 const isLoading = ref(true)
@@ -38,7 +41,7 @@ const menuName = ref('')
 const menuImage = ref(
   'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728804967802_a4720492-2dd2-4e59-8f31-79b55e6a169e_%E1%84%80%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.svg'
 )
-const recipeId = ref()
+const recipeId = ref(1)
 
 const fetchRecommendedMenu = async () => {
   try {
@@ -60,6 +63,8 @@ const fetchRecommendedMenu = async () => {
     }
   } catch (error) {
     console.error('요리를 추천받는데 실패했습니다.', error)
+    alert("세션이 만료되었습니다.")
+    router.push('/');
   }
 }
 
