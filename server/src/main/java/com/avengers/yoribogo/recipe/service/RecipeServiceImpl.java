@@ -218,20 +218,24 @@ public class RecipeServiceImpl implements RecipeService {
                 "요리 이름은 특수문자와 다른 말은 빼고 오직 이름만 알려줘.";
         String aiAnswerMenu = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
 
+        // 앞뒤 특수문자 제거
+        String trimmedAiAnswerMenu = trimSpecialCharacters(aiAnswerMenu);
+
         // 2단계: 공공데이터 요리 레시피 테이블 조회하기
-        PublicDataRecipeDTO publicDataRecipeDTO = publicDataRecipeService.findPublicDataRecipeByMenuName(aiAnswerMenu);
+        PublicDataRecipeDTO publicDataRecipeDTO =
+                publicDataRecipeService.findPublicDataRecipeByMenuName(trimmedAiAnswerMenu);
 
         // 조회되었을 경우
         if (publicDataRecipeDTO != null) return publicDataRecipeDTO;
 
         // 4단계: AI 요리 레시피 테이블 조회하기
-        AIRecipeDTO aiRecipeDTO = aiRecipeService.findAIRecipeByMenuName(aiAnswerMenu);
+        AIRecipeDTO aiRecipeDTO = aiRecipeService.findAIRecipeByMenuName(trimmedAiAnswerMenu);
 
         // 조회되었을 경우
         if (aiRecipeDTO != null) return aiRecipeDTO;
 
         // 5단계: AI가 추천한 요리의 재료를 물어보기
-        String ingredientsPrompt = "다음 요리를 만들 때 필요한 재료를 자세하게 설명해줘: " + aiAnswerMenu +
+        String ingredientsPrompt = "다음 요리를 만들 때 필요한 재료를 자세하게 설명해줘: " + trimmedAiAnswerMenu +
                 "를 만들기 위한 재료를 꼭 ','로 구분하여 양을 포함하고, '설탕 2스푼' 형식으로 작성해줘. " +
                 "단, 앞과 뒤에 특수문자와 다른 말은 빼고 오직 재료 내용만 제공해줘.";
         String aiAnswerIngredients = openAIService.getRecommend(ingredientsPrompt).getChoices().get(0).getMessage().getContent();
@@ -239,9 +243,12 @@ public class RecipeServiceImpl implements RecipeService {
         // ':'가 있는 경우, ':' 이후의 문자열만 남기기
         aiAnswerIngredients = parseString(aiAnswerIngredients);
 
+        // 앞뒤 특수문자 제거
+        String trimmedAiAnswerIngredients = trimSpecialCharacters(aiAnswerIngredients);
+
         // 6단계: AI가 추천한 요리의 레시피를 물어보기
-        String recipePrompt = aiAnswerMenu + "를 만들기 위한 재료가 " + aiAnswerIngredients +
-                "일 때, " + aiAnswerMenu + "의 레시피를 단계별로 자세하게 설명해줘:\n" +
+        String recipePrompt = trimmedAiAnswerMenu + "를 만들기 위한 재료가 " + trimmedAiAnswerIngredients +
+                "일 때, " + trimmedAiAnswerMenu + "의 레시피를 단계별로 자세하게 설명해줘:\n" +
                 "레시피는 각 단계에 번호를 붙여서 '1. 파를 썹니다.'와 같은 형식으로 작성해줘. " +
                 "단, 한자 사용을 피하고, 앞과 뒤에 특수문자와 다른 말은 빼고 오직 레시피 내용만 제공해줘.";
         String aiAnswerRecipe = openAIService.getRecommend(recipePrompt).getChoices().get(0).getMessage().getContent();
@@ -283,12 +290,22 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     // ':'가 있는 경우, ':' 이후의 문자열만 남기는 메소드
-    private static String parseString(String aiAnswer) {
+    private String parseString(String aiAnswer) {
         int colonIndex = aiAnswer.indexOf(":");
         if (colonIndex != -1) {
             aiAnswer = aiAnswer.substring(colonIndex + 1).trim();
         }
         return aiAnswer;
+    }
+
+    // 문자열의 앞뒤에 있는 모든 특수문자를 제거하는 메소드
+    private String trimSpecialCharacters(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+
+        // 정규식을 사용하여 문자열의 앞뒤에서 특수문자를 제거
+        return input.replaceAll("^[^a-zA-Z0-9가-힣]+|[^a-zA-Z0-9가-힣]+$", "");
     }
 
     // Recipe -> RecipeDTO 변환 및 Page 반환 메소드
