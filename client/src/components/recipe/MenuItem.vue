@@ -1,9 +1,9 @@
 <template>
   <div class="menu-item">
-    <div class="menu-img-wrapper">
-      <img v-show="isLoading" :src="defaultImage" alt="MenuImage" />
+    <div class="menu-img-wrapper" v-show="isLoading">
+    </div>
+    <div class="menu-img-wrapper" v-show="!isLoading">
       <img
-        v-show="!isLoading"
         :src="menuImageSrc"
         alt="MenuImage"
         @load="handleImageLoad"
@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 const props = defineProps({
   menuImage: {
@@ -36,11 +36,9 @@ const defaultImage = ref(
 )
 
 const isLoading = ref(true)
+const imageError = ref(false)
 
-// computed 속성으로 이미지 소스 처리
-const menuImageSrc = computed(() => {
-  return props.menuImage || defaultImage.value
-})
+const menuImageSrc = ref('')
 
 // 메뉴 이름 처리
 const formattedMenuName = computed(() => {
@@ -49,14 +47,20 @@ const formattedMenuName = computed(() => {
 
 // 이미지 로딩 오류 처리 함수
 const handleImageError = () => {
-  isLoading.value = false // 로딩 중지
   menuImageSrc.value = defaultImage.value
+  isLoading.value = false // 로딩 중지
+  imageError.value = true
 }
 
 // 이미지 로드 완료 처리 함수
 const handleImageLoad = () => {
   isLoading.value = false // 로딩 중지
+  imageError.value = false
 }
+
+onMounted(() => {
+  menuImageSrc.value = props.menuImage || defaultImage.value
+})
 </script>
 
 <style scoped>
@@ -84,6 +88,7 @@ const handleImageLoad = () => {
   align-items: center;
   width: 100%;
   height: 80%;
+  background-color: #aaaaaa;
   overflow: hidden;
   border-radius: 1.6rem;
 }
