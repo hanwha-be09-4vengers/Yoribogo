@@ -12,7 +12,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -41,43 +40,6 @@ public class RecommendedMenuServiceImpl implements RecommendedMenuService {
         }
 
         return recommendedMenuList;
-    }
-
-    // 추천 요리 등록
-    @Override
-    public RecommendedMenuDTO registRecommendedMenu(RecommendedMenuDTO registRecommendedMenuDTO) {
-        RecommendedMenuDTO newRecommendedMenuDTO = RecommendedMenuDTO
-                .builder()
-                .satisfaction(registRecommendedMenuDTO.getSatisfaction())
-                .recommendedMenuStatus(RecommendedMenuStatus.ACTIVE)
-                .recommendedMenuCreatedAt(LocalDateTime.now().withNano(0))
-                .userId(registRecommendedMenuDTO.getUserId())
-                .recipeId(registRecommendedMenuDTO.getRecipeId())
-                .build();
-
-        RecommendedMenu recommendedMenu =
-            recommendedMenuRepository.save(modelMapper.map(newRecommendedMenuDTO, RecommendedMenu.class));
-
-        return modelMapper.map(recommendedMenu, RecommendedMenuDTO.class);
-    }
-
-    // 추천 요리 삭제
-    @Override
-    public void removeRecommendedMenu(Long recommendedMenuId) {
-        // 기존 엔티티 조회
-        RecommendedMenu recommendedMenu = recommendedMenuRepository.findById(recommendedMenuId)
-                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECOMMENDED_MENU));
-
-        // 이미 삭제 처리된 엔티티인 경우 예외 처리
-        if(recommendedMenu.getRecommendedMenuStatus() == RecommendedMenuStatus.INACTIVE) {
-            throw new CommonException(ErrorCode.NOT_FOUND_RECOMMENDED_MENU);
-        }
-
-        // INACTIVE 처리(SOFT DELETE)
-        recommendedMenu.setRecommendedMenuStatus(RecommendedMenuStatus.INACTIVE);
-
-        // 변경 사항 저장
-        recommendedMenuRepository.save(recommendedMenu);
     }
 
 }

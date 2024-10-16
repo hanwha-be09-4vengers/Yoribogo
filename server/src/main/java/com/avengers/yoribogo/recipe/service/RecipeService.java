@@ -1,8 +1,6 @@
 package com.avengers.yoribogo.recipe.service;
 
-import com.avengers.yoribogo.recipe.dto.BaseRecipeDTO;
 import com.avengers.yoribogo.recipe.dto.RecipeDTO;
-import com.avengers.yoribogo.recipe.dto.RequestRecommendDTO;
 import org.springframework.data.domain.Page;
 
 public interface RecipeService {
@@ -24,8 +22,5 @@ public interface RecipeService {
 
     // 요리 레시피 삭제
     void removeRecipe(Long recipeId);
-
-    // 요리 추천하기
-    BaseRecipeDTO registRecommendRecipe(RequestRecommendDTO requestRecommendDTO);
 
 }
