@@ -20,7 +20,7 @@
       </div>
       <div class="menu-ingredient-container">
         <div class="info">재료</div>
-        <p class="menu-ingredient">{{ menuInfo.menu_ingredient }}</p>
+        <span class="menu-ingredient">{{ menuInfo.menu_ingredient }}</span>
       </div>
       <div class="menu-manual-container">
         <div class="info">조리 순서</div>
@@ -124,7 +124,7 @@ onMounted(() => {
 
 .go-top-btn {
   position: fixed;
-  top: 70%;
+  top: 84%;
   right: 8rem;
 }
 
@@ -168,6 +168,7 @@ onMounted(() => {
 }
 
 .menu-ingredient {
+  text-align: center;
   width: 68%;
   font-size: 2.4rem;
   font-weight: 500;
