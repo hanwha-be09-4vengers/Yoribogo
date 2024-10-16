@@ -66,38 +66,56 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
+            // 1. 요청 데이터 파싱
+            log.info("로그인 요청 데이터 수신 중...");
             RequestLoginVO creds = new ObjectMapper().readValue(request.getInputStream(), RequestLoginVO.class);
+            log.info("로그인 요청 데이터: {}", creds);
 
             String userIdentifier = creds.getSignupPath() + "_" + creds.getUserAuthId();
+            log.info("생성된 userIdentifier: {}", userIdentifier);
 
-            //필기. 검증 사용자 아이디 비번 실패시 핸들링
+            // 2. 사용자 조회
+            log.info("사용자 조회 중: userIdentifier = {}", userIdentifier);
             UserEntity loginUser = userSerivce.findByUserIdentifier(userIdentifier);
 
-            // 아이디 체크
+            // 3. 아이디 체크
             if (loginUser == null) {
+                log.error("아이디가 잘못되었습니다. userIdentifier = {}", userIdentifier);
                 throw new BadCredentialsException("아이디가 잘못되었습니다."); // 아이디가 없을 경우 예외 처리
             }
+            log.info("사용자 조회 성공: {}", loginUser);
 
-            // 사용자 비활성화 상태 확인
+            // 4. 사용자 비활성화 상태 확인
             if (loginUser.getUserStatus() != ActiveStatus.ACTIVE) {
+                log.error("비활성화 상태의 사용자입니다. userIdentifier = {}", userIdentifier);
                 throw new BadCredentialsException("비활성화 회원입니다."); // 비활성화 상태 예외
             }
 
-            // 비밀번호 체크
+            // 5. 비밀번호 체크
+            log.info("비밀번호 검증 중...");
             if (!bCryptPasswordEncoder.matches(creds.getPassword(), loginUser.getEncryptedPwd())) {
+                log.error("비밀번호가 틀렸습니다. userIdentifier = {}", userIdentifier);
                 throw new BadCredentialsException("비밀번호가 틀렸습니다."); // 비밀번호가 틀린 경우 예외 처리
             }
 
+            // 6. 인증 토큰 생성
+            log.info("인증 토큰 생성 중...");
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(userIdentifier, creds.getPassword(), new ArrayList<>());
 
             authToken.setDetails(creds);
 
+            log.info("인증 토큰 생성 완료. 인증 처리 중...");
             return getAuthenticationManager().authenticate(authToken);
         } catch (IOException e) {
+            log.error("요청 데이터를 읽는 중 오류 발생", e);
             throw new AuthenticationServiceException("요청 데이터를 읽는 중 오류 발생", e);
+        } catch (AuthenticationException e) {
+            log.error("인증 처리 중 오류 발생: {}", e.getMessage());
+            throw e;
         }
     }
+
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request,

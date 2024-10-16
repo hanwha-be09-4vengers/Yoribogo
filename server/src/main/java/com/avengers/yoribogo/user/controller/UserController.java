@@ -14,6 +14,7 @@ import com.avengers.yoribogo.user.domain.vo.login.AuthTokens;
 import com.avengers.yoribogo.user.domain.vo.login.ResponseOAuthLoginVO;
 import com.avengers.yoribogo.user.domain.vo.login.TokenRefreshRequest;
 import com.avengers.yoribogo.user.domain.vo.naver.NaverAuthorizationCode;
+import com.avengers.yoribogo.user.domain.vo.signup.RequestResistEnterpriseUserVO;
 import com.avengers.yoribogo.user.dto.UserDTO;
 import com.avengers.yoribogo.user.dto.email.EmailVerificationUserIdRequestDTO;
 import com.avengers.yoribogo.user.dto.email.EmailVerificationUserPasswordRequestDTO;
@@ -155,7 +156,6 @@ public class UserController {
     }
     // 설명. 4 사용자 정보 조회
 
-
     // 설명. 사용자 식별자(userIdentifier)로 조회한 후 UserDTO로 변환하여 반환
     @GetMapping("/identifier")
     public ResponseDTO<UserDTO> getUserByUserIdentifier(@RequestParam("user_identifier") String userIdentifier) {
@@ -173,6 +173,17 @@ public class UserController {
         // 서비스 계층에 로직 위임
         AuthTokens authTokens = jwtUtil.refreshAccessToken(request.getRefreshToken());
         return ResponseDTO.ok(authTokens);
+    }
+
+
+    /* 설명. 5. 일반 회원 가입 기능 */
+    @PostMapping("/signup/normal")
+    public ResponseDTO<UserDTO> registNormalUser(@RequestBody RequestResistEnterpriseUserVO newUser) {
+        // UserService 호출
+        UserDTO savedUserDTO = userService.registUser(newUser); // 저장된 DTO 반환
+
+        // ResponseUserVO로 변환하는 대신 UserDTO를 직접 응답으로 사용
+        return ResponseDTO.ok(savedUserDTO);
     }
 
 }
