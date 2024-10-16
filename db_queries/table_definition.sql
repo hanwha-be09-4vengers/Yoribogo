@@ -105,7 +105,6 @@ CREATE TABLE recipe (
     menu_ingredient TEXT NOT NULL,
     menu_image TEXT,
     menu_type VARCHAR(255) NOT NULL DEFAULT 'PUBLIC' CHECK(menu_type IN ('PUBLIC', 'AI')),
-    recipe_status VARCHAR(255) NOT NULL DEFAULT 'ACTIVE' CHECK(recipe_status IN ('ACTIVE','INACTIVE')),
     user_id BIGINT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES USER(user_id)
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='요리레시피' DEFAULT CHARSET=UTF8;
@@ -147,10 +146,11 @@ CREATE TABLE recipe_board_recomment (
 CREATE TABLE recommended_menu (
     recommended_menu_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     satisfaction VARCHAR(255) NOT NULL CHECK(satisfaction IN ('GOOD','BAD')),
+    recommended_menu_status VARCHAR(255) NOT NULL DEFAULT 'ACTIVE' CHECK(recommended_menu_status IN ('ACTIVE','INACTIVE')),
     user_id BIGINT NOT NULL,
     recipe_id BIGINT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES USER(user_id),
-    FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id)
+    FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id) ON DELETE CASCADE
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='추천요리' DEFAULT CHARSET=UTF8;
 
 CREATE TABLE recipe_board_like (
@@ -175,7 +175,7 @@ CREATE TABLE ai_recipe (
     ai_menu_name VARCHAR(255) NOT NULL,
     ai_menu_ingredient TEXT NOT NULL,
     recipe_id BIGINT NOT NULL,
-    FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id)
+    FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id) ON DELETE CASCADE 
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='AI요리레시피' DEFAULT CHARSET=UTF8;
 
 CREATE TABLE public_data_recipe (
@@ -184,19 +184,21 @@ CREATE TABLE public_data_recipe (
     public_data_menu_ingredient TEXT NOT NULL,
     public_data_menu_image TEXT,
     recipe_id BIGINT NOT NULL,
-    FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id)
+    FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id) ON DELETE CASCADE
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='공공데이터요리레시피' DEFAULT CHARSET=UTF8;
 
 CREATE TABLE recipe_manual (
     recipe_manual_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    recipe_manual_step INT NOT NULL,
     manual_menu_image TEXT,
     manual_content TEXT NOT NULL,
     recipe_id BIGINT NOT NULL,
-    FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id)
+    FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id) ON DELETE CASCADE
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='요리메뉴얼' DEFAULT CHARSET=UTF8;
 
 CREATE TABLE recipe_board_manual (
     recipe_board_manual_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    recipe_board_manual_step INT NOT NULL,
     recipe_board_manual_image TEXT,
     recipe_board_manual_content TEXT NOT NULL,
     recipe_board_id BIGINT NOT NULL,

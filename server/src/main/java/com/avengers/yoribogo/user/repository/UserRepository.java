@@ -1,4 +1,11 @@
 package com.avengers.yoribogo.user.repository;
 
-//public interface UserRepository extends JpaRepository<UserEntity,Long> {
-//}
+import com.avengers.yoribogo.user.dto.UserEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
+}
+
+

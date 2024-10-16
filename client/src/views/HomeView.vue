@@ -16,6 +16,11 @@
         </div>
         <button id="start-btn" class="start-btn" @click="goQuestion">시작하기</button>
       </section>
+
+      <div>
+    <button @click="likePost">좋아요 추가</button>
+  </div>
+
     </main>
   </div>
 </template>
@@ -24,11 +29,47 @@
 import MainNav from '@/components/MainNav.vue'
 import { useRouter } from 'vue-router'
 
+import axios from 'axios';  // 추후 삭제 요망
+
 const router = useRouter()
 
 const goQuestion = () => {
   router.push('/question/1')
 }
+
+// 이하 JS 코드 추후 삭제 - 로그인 후 반응형으로 수정해야함 
+const likePost = async () => {
+  try {
+    const likeRequestDTO = {
+      userId: 1,
+      postId: 4
+    };
+
+    const response = await axios.post('http://localhost:8080/api/likes/like', likeRequestDTO);
+
+    console.log(response.data);
+    alert("좋아요가 추가되었습니다!");
+
+  } catch (error) {
+    console.error(error);
+    alert("좋아요 추가 중 오류가 발생했습니다.");
+  }
+}
+
+// SSE 연결 코드
+console.log("eventsource 연결 전");
+const eventSource = new EventSource('http://localhost:8080/notifications');
+console.log("eventsource 연결 후");
+
+eventSource.onmessage = function(event) {
+    console.log('알림:', event.data);
+};
+
+eventSource.addEventListener('notification', function(event) {
+    console.log('이벤트 알림:', event.data);
+});
+
+
 </script>
 
 <style scoped>
