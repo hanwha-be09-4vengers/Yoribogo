@@ -56,6 +56,12 @@ public class RecipeBoardController {
     }
 
     // 요리 이름으로 게시글 전체 조회
+    @GetMapping("/search")
+    public ResponseDTO<?> search(@RequestParam String recipeBoardMenuName,
+                                 @RequestParam Integer pageNo) {
+        Page<RecipeBoardDTO> recipeBoardDTOPage = recipeBoardService.findRecipeBoardByMenuName(recipeBoardMenuName, pageNo);
+        return ResponseDTO.ok(recipeBoardDTOPage);
+    }
 
     // 게시글 수정
     @PutMapping("/update/{recipeBoardId}")
@@ -71,6 +77,13 @@ public class RecipeBoardController {
                                                   @RequestBody List<RecipeBoardManualDTO> updateRecipeBoardManualDTOs) {
         ResponseBoardDTO responseBoardDTO = recipeBoardService.updateRecipeBoardManual(recipeBoardId, updateRecipeBoardManualDTOs);
         return ResponseDTO.ok(responseBoardDTO);
+    }
+
+    // 매뉴얼 삭제
+    @DeleteMapping("/delete/{recipeBoardId}")
+    public ResponseDTO<?> deleteRecipeBoard(@PathVariable Long recipeBoardId) {
+        recipeBoardService.removeRecipeBoard(recipeBoardId);
+        return ResponseDTO.ok(null);
     }
 
 }

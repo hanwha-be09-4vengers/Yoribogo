@@ -25,7 +25,7 @@ import java.util.List;
 @Transactional
 public class RecipeBoardServiceImpl implements RecipeBoardService {
 
-    public final Integer ELEMENTS_PER_PAGE = 10;
+    public final Integer ELEMENTS_PER_PAGE = 12;
 
     private final ModelMapper modelMapper;
     private final RecipeBoardRepository recipeBoardRepository;
@@ -144,6 +144,36 @@ public class RecipeBoardServiceImpl implements RecipeBoardService {
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD));
 
         return modelMapper.map(recipeBoard, RecipeBoardDTO.class);
+    }
+
+    @Override
+    public Page<RecipeBoardDTO> findRecipeBoardByMenuName(String recipeBoardMenuName, Integer pageNo) {
+        // 페이지 번호 유효성 검사
+        if (pageNo == null || pageNo < 1) {
+            throw new CommonException(ErrorCode.INVALID_PARAMETER_FORMAT);
+        }
+
+        Pageable pageable = PageRequest.of(
+                pageNo - 1,
+                ELEMENTS_PER_PAGE,
+                Sort.by(Sort.Direction.DESC, "recipeBoardId")
+        );
+
+        Page<RecipeBoard> recipeBoardPage = recipeBoardRepository.findByRecipeBoardMenuNameContaining(recipeBoardMenuName, pageable);
+
+        if (recipeBoardPage.getContent().isEmpty()) {
+            throw new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD);
+        }
+
+        return convertEntityPageToDTOPage(recipeBoardPage);
+    }
+
+    @Override
+    public void removeRecipeBoard(Long recipeBoardId) {
+        RecipeBoard existingBoard = recipeBoardRepository.findById(recipeBoardId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD));
+
+        recipeBoardRepository.delete(existingBoard);
     }
 
     private Page<RecipeBoardDTO> convertEntityPageToDTOPage(Page<RecipeBoard> recipeBoardPage) {
