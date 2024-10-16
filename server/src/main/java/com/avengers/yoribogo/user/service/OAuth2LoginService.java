@@ -109,7 +109,7 @@ public class OAuth2LoginService {
                 "Bearer",
                 accessTokenExpiry.getTime(),
                 refreshTokenExpiry.getTime(),
-                user.getUserIdentifier()
+                user.getUserAuthId()
         );
     }
 

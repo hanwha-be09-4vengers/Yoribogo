@@ -3,13 +3,11 @@ package com.avengers.yoribogo.user.service;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
-import com.avengers.yoribogo.security.JwtUtil;
 import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.domain.enums.AcceptStatus;
 import com.avengers.yoribogo.user.domain.enums.ActiveStatus;
 import com.avengers.yoribogo.user.domain.enums.SignupPath;
 import com.avengers.yoribogo.user.domain.enums.UserRole;
-import com.avengers.yoribogo.user.domain.vo.login.AuthTokens;
 import com.avengers.yoribogo.user.domain.vo.signup.RequestResistEnterpriseUserVO;
 import com.avengers.yoribogo.user.dto.UserDTO;
 import com.avengers.yoribogo.user.repository.UserRepository;
@@ -91,12 +89,20 @@ public class UserService implements UserDetailsService {
         return userEntity;
     }
 
+    // 설명. userAuthId로 사용자 조회
+    public UserEntity findByUserAuthId(String userAuthId) {
+        UserEntity userEntity =userRepository.findByUserAuthId(userAuthId);
+        if (userEntity == null) {
+            throw new CommonException(ErrorCode.NOT_FOUND_USER);
+        }
+        return userEntity;
+    }
 
     /* 설명. 로그인 시 security가 자동으로 호출하는 메소드 */
     @Override
-    public UserDetails loadUserByUsername(String userIdentifier) throws UsernameNotFoundException {
-        // 1. 사용자 조회
-        UserEntity loginUser = userRepository.findByUserIdentifier(userIdentifier);
+    public UserDetails loadUserByUsername(String userAuthId) throws UsernameNotFoundException {
+        // 1. userAuthId를 기준으로 사용자 조회
+        UserEntity loginUser = userRepository.findByUserAuthId(userAuthId);
         if (loginUser == null) {
             throw new CommonException(ErrorCode.NOT_FOUND_USER);
         }
@@ -104,7 +110,7 @@ public class UserService implements UserDetailsService {
         // 2. 비밀번호 처리 (소셜 로그인 시 비밀번호가 없을 경우 기본값 설정)
         String encryptedPwd = loginUser.getEncryptedPwd();
         if (encryptedPwd == null) {
-            encryptedPwd = "{noop}";
+            encryptedPwd = "{noop}";  // 비밀번호가 없을 경우 기본값 설정
         }
 
         // 3. 권한 정보를 userRole 필드에서 가져와서 변환
@@ -117,6 +123,8 @@ public class UserService implements UserDetailsService {
                 true, true, true, true,
                 grantedAuthorities);
     }
+
+
     /* 설명. 일반 회원가입 메서드  */
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public synchronized UserDTO registUser(RequestResistEnterpriseUserVO newUser) {
@@ -145,7 +153,7 @@ public class UserService implements UserDetailsService {
         }
 
         // 4. 기본 프로필 이미지 설정 (추후 S3로 교체 가능)
-        String defaultProfileImageUrl = "https://example.com/default-profile.png";
+        String defaultProfileImageUrl = "https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/default_profile.png";
 
         // 5. UserDTO 생성
         UserDTO newUserDTO = UserDTO.builder()
@@ -158,6 +166,8 @@ public class UserService implements UserDetailsService {
                 .userStatus(ActiveStatus.ACTIVE)
                 .nickname(newUser.getNickname())
                 .profileImage(defaultProfileImageUrl)
+                .tierId(1L)
+                .userLikes(0L)
                 .userIdentifier("NORMAL_" + newUser.getUserAuthId())  // user_identifier 생성
                 .userRole(UserRole.ENTERPRISE)  // 일반 사용자로 설정
                 .build();

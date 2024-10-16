@@ -131,7 +131,7 @@ public class UserController {
                 new Date(tokens.getAccessTokenExpiry()),
                 tokens.getRefreshToken(),
                 new Date(tokens.getRefreshTokenExpiry()),
-                tokens.getUserIdentifier()
+                tokens.getUserAuthId()
 
         );
 
@@ -149,14 +149,14 @@ public class UserController {
                 new Date(tokens.getAccessTokenExpiry()),
                 tokens.getRefreshToken(),
                 new Date(tokens.getRefreshTokenExpiry()),
-                tokens.getUserIdentifier()
+                tokens.getUserAuthId()
         );
 
         return ResponseDTO.ok(loginResponseVO);
     }
     // 설명. 4 사용자 정보 조회
 
-    // 설명. 사용자 식별자(userIdentifier)로 조회한 후 UserDTO로 변환하여 반환
+    // 설명. 4.1 사용자 식별자(userIdentifier)로 조회한 후 UserDTO로 변환하여 반환
     @GetMapping("/identifier")
     public ResponseDTO<UserDTO> getUserByUserIdentifier(@RequestParam("user_identifier") String userIdentifier) {
         UserEntity userEntity = userService.findByUserIdentifier(userIdentifier);
@@ -167,7 +167,19 @@ public class UserController {
         return ResponseDTO.ok(userDTO);
     }
 
-    // 설명. 리프레시 토큰으로 액세스 토큰 재발급
+    // 설명. 4.2 회원 정보 조회 (user_auth_id로 사용자 조회)
+    @GetMapping("/userAuthId")
+    public ResponseDTO<UserDTO> getUserByUserAuthId(@RequestParam("user_auth_id") String userAuthId) {
+        // userAuthId로 사용자 조회
+        UserEntity userEntity = userService.findByUserAuthId(userAuthId);
+
+        // UserEntity -> UserDTO로 변환
+        UserDTO userDTO = modelMapper.map(userEntity, UserDTO.class);
+
+        return ResponseDTO.ok(userDTO);
+    }
+
+    // 설명. 5. 리프레시 토큰으로 액세스 토큰 재발급
     @PostMapping("/auth/refresh-token")
     public ResponseDTO<AuthTokens> refreshToken(@RequestBody TokenRefreshRequest request) {
         // 서비스 계층에 로직 위임
@@ -176,7 +188,7 @@ public class UserController {
     }
 
 
-    /* 설명. 5. 일반 회원 가입 기능 */
+    /* 설명. 6. 일반 회원 가입 기능 */
     @PostMapping("/signup/normal")
     public ResponseDTO<UserDTO> registNormalUser(@RequestBody RequestResistEnterpriseUserVO newUser) {
         // UserService 호출

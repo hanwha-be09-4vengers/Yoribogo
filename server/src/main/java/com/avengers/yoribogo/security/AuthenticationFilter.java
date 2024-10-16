@@ -3,7 +3,6 @@ package com.avengers.yoribogo.security;
 import com.avengers.yoribogo.common.ResponseDTO;
 import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.domain.enums.ActiveStatus;
-import com.avengers.yoribogo.user.domain.enums.SignupPath;
 import com.avengers.yoribogo.user.domain.vo.login.RequestLoginVO;
 import com.avengers.yoribogo.user.domain.vo.login.ResponseNormalLoginVO;
 import com.avengers.yoribogo.user.service.UserService;
@@ -71,37 +70,37 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             RequestLoginVO creds = new ObjectMapper().readValue(request.getInputStream(), RequestLoginVO.class);
             log.info("로그인 요청 데이터: {}", creds);
 
-            String userIdentifier = creds.getSignupPath() + "_" + creds.getUserAuthId();
-            log.info("생성된 userIdentifier: {}", userIdentifier);
+            // 설명. userAuthId로 조회
+            String userAuthId = creds.getUserAuthId();
+            log.info("사용자 조회 중: userAuthId = {}", userAuthId);
 
-            // 2. 사용자 조회
-            log.info("사용자 조회 중: userIdentifier = {}", userIdentifier);
-            UserEntity loginUser = userSerivce.findByUserIdentifier(userIdentifier);
+            // 2. 사용자 조회 (userAuthId를 기준으로 조회)
+            UserEntity loginUser = userSerivce.findByUserAuthId(userAuthId);
 
             // 3. 아이디 체크
             if (loginUser == null) {
-                log.error("아이디가 잘못되었습니다. userIdentifier = {}", userIdentifier);
+                log.error("아이디가 잘못되었습니다. userIdentifier = {}", userAuthId);
                 throw new BadCredentialsException("아이디가 잘못되었습니다."); // 아이디가 없을 경우 예외 처리
             }
             log.info("사용자 조회 성공: {}", loginUser);
 
             // 4. 사용자 비활성화 상태 확인
             if (loginUser.getUserStatus() != ActiveStatus.ACTIVE) {
-                log.error("비활성화 상태의 사용자입니다. userIdentifier = {}", userIdentifier);
+                log.error("비활성화 상태의 사용자입니다. userIdentifier = {}", userAuthId);
                 throw new BadCredentialsException("비활성화 회원입니다."); // 비활성화 상태 예외
             }
 
             // 5. 비밀번호 체크
             log.info("비밀번호 검증 중...");
             if (!bCryptPasswordEncoder.matches(creds.getPassword(), loginUser.getEncryptedPwd())) {
-                log.error("비밀번호가 틀렸습니다. userIdentifier = {}", userIdentifier);
+                log.error("비밀번호가 틀렸습니다. userIdentifier = {}", userAuthId);
                 throw new BadCredentialsException("비밀번호가 틀렸습니다."); // 비밀번호가 틀린 경우 예외 처리
             }
 
             // 6. 인증 토큰 생성
             log.info("인증 토큰 생성 중...");
             UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(userIdentifier, creds.getPassword(), new ArrayList<>());
+                    new UsernamePasswordAuthenticationToken(userAuthId, creds.getPassword(), new ArrayList<>());
 
             authToken.setDetails(creds);
 
@@ -116,7 +115,6 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         }
     }
 
-
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
@@ -127,11 +125,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         // 사용자 인증 정보 및 식별자 생성
         String userAuthId = ((User) authResult.getPrincipal()).getUsername();
-        SignupPath signupPath = ((RequestLoginVO) authResult.getDetails()).getSignupPath();
-        String userIdentifier = signupPath + "_" + userAuthId;
 
         // Claims 및 역할 정보 설정
-        Claims claims = Jwts.claims().setSubject(userIdentifier);
+        Claims claims = Jwts.claims().setSubject(userAuthId);
         List<String> roles = authResult.getAuthorities().stream()
                 .map(role -> role.getAuthority())
                 .collect(Collectors.toList());
@@ -155,24 +151,24 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .signWith(SignatureAlgorithm.HS512, env.getProperty("token.secret"))
                 .compact();
 
-        //  ResponseNormalLoginVO 객체 생성
+        // 로그인 응답 객체 생성
         ResponseNormalLoginVO loginResponseVO = new ResponseNormalLoginVO(
                 accessToken,
                 new Date(accessExpiration),
                 refreshToken,
                 new Date(refreshExpiration),
-                userIdentifier
+                userAuthId
         );
 
-        // ResponseDTO 객체 생성
+        // 응답 객체를 JSON 형태로 반환
         ResponseDTO<ResponseNormalLoginVO> responseDTO = ResponseDTO.ok(loginResponseVO);
-
-        // JSON 응답 생성
         String jsonResponse = new ObjectMapper().writeValueAsString(responseDTO);
+
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(jsonResponse);
     }
+
 
     private long getExpirationTime(String expirationTime) {
         if (expirationTime == null) {

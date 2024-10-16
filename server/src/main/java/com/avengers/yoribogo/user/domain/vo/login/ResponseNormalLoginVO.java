@@ -12,6 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResponseNormalLoginVO {
+
     @JsonProperty("access_token")
     private String accessToken;
 
@@ -26,6 +27,6 @@ public class ResponseNormalLoginVO {
     @JsonProperty("refresh_token_expiry")
     private Date refreshTokenExpiry;
 
-    @JsonProperty("user_identifier")
-    private String userIdentifier;
+    @JsonProperty("user_auth_id")  // 기존의 user_identifier를 user_auth_id로 변경
+    private String userAuthId;
 }

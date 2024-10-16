@@ -43,12 +43,6 @@ public class JwtUtil {
         this.userService = userService;
     }
 
-    // 설명. getSecretKey 메서드 추가
-    public Key getSecretKey() {
-        return this.secretKey;
-    }
-
-
     // 설명. 리프레시 토큰으로 액세스 토큰 재발급하는 로직 처리
     public AuthTokens refreshAccessToken(String refreshToken) {
         // 1. 리프레시 토큰의 유효성 검사
@@ -57,27 +51,26 @@ public class JwtUtil {
         }
 
         // 2. 리프레시 토큰에서 사용자 정보 추출
-        String userIdentifier = getUserId(refreshToken);
-        UserEntity user = userService.findByUserIdentifier(userIdentifier);
+        String userAuthId = getUserId(refreshToken);  // 이제 userAuthId로 사용자를 식별
+        UserEntity user = userService.findByUserAuthId(userAuthId);  // 변경된 메서드 호출
 
         if (user == null) {
             throw new CommonException(ErrorCode.NOT_FOUND_USER);
         }
 
         // 3. 새로운 액세스 토큰 생성
-        // 단일 UserRole을 문자열로 변환
-        String role = user.getUserRole().name();  // Enum의 이름을 문자열로 변환 (예: "ADMIN")
+        String role = user.getUserRole().name();  // 역할 가져오기
 
         String newAccessToken = generateToken(user, Collections.singletonList(role));
 
         // 리프레시 토큰은 그대로 유지
         return new AuthTokens(
                 newAccessToken,
-                refreshToken, // 기존 리프레시 토큰 유지
+                refreshToken,  // 기존 리프레시 토큰 유지
                 "Bearer",
                 getAccessTokenExpiration(),
                 getRefreshTokenExpiration(),
-                userIdentifier
+                userAuthId  // 이제 userAuthId로 반환
         );
     }
 
@@ -103,8 +96,8 @@ public class JwtUtil {
 
     // 설명. Token에서 인증 객체 추출
     public Authentication getAuthentication(String token) {
-        String userIdentifier = this.getUserId(token);
-        UserDetails userDetails = userService.loadUserByUsername(userIdentifier);
+        String userAuthId = this.getUserId(token);  // 이제 userAuthId로 변경
+        UserDetails userDetails = userService.loadUserByUsername(userAuthId);  // 사용자 조회
 
         Claims claims = parseClaims(token);
         log.info("넘어온 AccessToken claims 확인: {}", claims);
@@ -129,18 +122,18 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
     }
 
-    // 설명. Token에서 사용자 식별자 추출
+    // 설명. Token에서 userAuthId 추출 (이전의 getUserId는 userIdentifier였음)
     public String getUserId(String token) {
-        return parseClaims(token).getSubject();
+        return parseClaims(token).getSubject();  // 이제 userAuthId가 subject에 저장됨
     }
 
     // 설명. 액세스 토큰 생성 메소드
     public String generateToken(UserEntity user, List<String> roles) {
         return Jwts.builder()
-                .setSubject(user.getUserIdentifier()) // 사용자 식별자 설정
+                .setSubject(user.getUserAuthId()) // 사용자 식별자 변경 (userAuthId 사용)
                 .claim("email", user.getEmail()) // 이메일 클레임 추가
                 .claim("auth", roles) // 역할 정보 클레임 추가
-                .claim("userIdentifier", user.getUserIdentifier()) // 사용자 식별자 클레임 추가
+                .claim("userAuthId", user.getUserAuthId()) // user_auth_id 클레임 추가
                 .setIssuedAt(new Date()) // 발행 시간 설정
                 .setExpiration(new Date(System.currentTimeMillis() + accessExpirationTime)) // 액세스 토큰 만료 시간 설정
                 .signWith(secretKey, SignatureAlgorithm.HS512) // 서명 알고리즘과 시크릿 키 설정
@@ -150,10 +143,10 @@ public class JwtUtil {
     // 설명. 리프레시 토큰 생성 메소드
     public String generateRefreshToken(UserEntity user, List<String> roles) {
         return Jwts.builder()
-                .setSubject(user.getUserIdentifier()) // 사용자 식별자 설정
+                .setSubject(user.getUserAuthId()) // 사용자 식별자 변경 (userAuthId 사용)
                 .claim("email", user.getEmail()) // 이메일 클레임 추가
                 .claim("auth", roles) // 역할 정보 클레임 추가
-                .claim("userIdentifier", user.getUserIdentifier()) // 사용자 식별자 클레임 추가
+                .claim("userAuthId", user.getUserAuthId()) // user_auth_id 클레임 추가
                 .setIssuedAt(new Date()) // 발행 시간 설정
                 .setExpiration(new Date(System.currentTimeMillis() + refreshExpirationTime)) // 리프레시 토큰 만료 시간 설정
                 .signWith(secretKey, SignatureAlgorithm.HS512) // 서명 알고리즘과 시크릿 키 설정
@@ -169,5 +162,4 @@ public class JwtUtil {
     public long getRefreshTokenExpiration() {
         return System.currentTimeMillis() + refreshExpirationTime;
     }
-
 }
