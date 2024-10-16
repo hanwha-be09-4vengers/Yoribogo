@@ -61,7 +61,15 @@ public class PublicDataRecipeServiceImpl implements PublicDataRecipeService {
                 .orElse(null);
 
         if (publicDataRecipe == null) return null;
-        return modelMapper.map(publicDataRecipe, PublicDataRecipeDTO.class);
+
+        return PublicDataRecipeDTO
+                .builder()
+                .publicDataRecipeId(publicDataRecipe.getPublicDataRecipeId())
+                .menuName(publicDataRecipe.getPublicDataMenuName())
+                .menuIngredient(publicDataRecipe.getPublicDataMenuIngredient())
+                .menuImage(publicDataRecipe.getPublicDataMenuImage())
+                .recipeId(publicDataRecipe.getRecipeId())
+                .build();
     }
 
 }

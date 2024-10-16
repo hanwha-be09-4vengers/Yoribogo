@@ -54,8 +54,16 @@ public class AIRecipeServiceImpl implements AIRecipeService {
     @Override
     public AIRecipeDTO findAIRecipeByMenuName(String aiAnswer) {
         AIRecipe aiRecipe = aiRecipeRepository.findByAiMenuName(aiAnswer).orElse(null);
+
         if (aiRecipe == null) return null;
-        return modelMapper.map(aiRecipe, AIRecipeDTO.class);
+
+        return AIRecipeDTO
+                .builder()
+                .aiRecipeId(aiRecipe.getAiRecipeId())
+                .menuName(aiRecipe.getAiMenuName())
+                .menuIngredient(aiRecipe.getAiMenuIngredient())
+                .recipeId(aiRecipe.getRecipeId())
+                .build();
     }
 
 }
