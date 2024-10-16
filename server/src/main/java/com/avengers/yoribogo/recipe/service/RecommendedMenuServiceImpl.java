@@ -11,6 +11,7 @@ import com.avengers.yoribogo.recipe.repository.RecommendedMenuRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,6 +46,7 @@ public class RecommendedMenuServiceImpl implements RecommendedMenuService {
 
     // 추천 요리 등록
     @Override
+    @Transactional
     public RecommendedMenuDTO registRecommendedMenu(RecommendedMenuDTO registRecommendedMenuDTO) {
         RecommendedMenuDTO newRecommendedMenuDTO = RecommendedMenuDTO
                 .builder()
@@ -63,6 +65,7 @@ public class RecommendedMenuServiceImpl implements RecommendedMenuService {
 
     // 추천 요리 삭제
     @Override
+    @Transactional
     public void removeRecommendedMenu(Long recommendedMenuId) {
         // 기존 엔티티 조회
         RecommendedMenu recommendedMenu = recommendedMenuRepository.findById(recommendedMenuId)

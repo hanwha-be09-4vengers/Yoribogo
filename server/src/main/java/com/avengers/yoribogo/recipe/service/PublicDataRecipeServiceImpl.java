@@ -8,6 +8,7 @@ import com.avengers.yoribogo.recipe.repository.PublicDataRecipeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PublicDataRecipeServiceImpl implements PublicDataRecipeService {
@@ -24,6 +25,7 @@ public class PublicDataRecipeServiceImpl implements PublicDataRecipeService {
 
     // 공공데이터 요리 레시피 등록
     @Override
+    @Transactional
     public PublicDataRecipeDTO registPublicDataRecipe(PublicDataRecipeDTO publicDataRecipeDTO) {
         PublicDataRecipe publicDataRecipe =
                 modelMapper.map(publicDataRecipeDTO, PublicDataRecipe.class);
@@ -35,6 +37,7 @@ public class PublicDataRecipeServiceImpl implements PublicDataRecipeService {
 
     // 공공데이터 요리 레시피 수정
     @Override
+    @Transactional
     public PublicDataRecipeDTO modifyPublicDataRecipe(PublicDataRecipeDTO publicDataRecipeDTO) {
         // 기존 엔티티 조회
         PublicDataRecipe publicDataRecipe =

@@ -108,6 +108,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     // 요리 레시피 등록
     @Override
+    @Transactional
     public RecipeDTO registRecipe(RecipeDTO registRecipeDTO) {
         // 요리 레시피 테이블에 저장
         Recipe newRecipe = modelMapper.map(registRecipeDTO, Recipe.class);
@@ -147,6 +148,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     // 요리 레시피 수정
     @Override
+    @Transactional
     public RecipeDTO modifyRecipe(Long recipeId, RecipeDTO modifyRecipeDTO) {
         // 기존 엔티티 조회
         Recipe existingRecipe = recipeRepository.findById(recipeId)
@@ -192,6 +194,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     // 요리 레시피 삭제
     @Override
+    @Transactional
     public void removeRecipe(Long recipeId) {
         // 기존 엔티티 조회
         Recipe existingRecipe = recipeRepository.findById(recipeId)
@@ -202,6 +205,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     // 요리 추천하기
     @Override
+    @Transactional
     public BaseRecipeDTO registRecommendRecipe(RequestRecommendDTO requestRecommendDTO) {
         // 1단계: AI에게 추천하는 요리 이름 물어보기
         String prompt = "다음 정보를 바탕으로 알맞은 요리를 하나만 추천해줘: " +
