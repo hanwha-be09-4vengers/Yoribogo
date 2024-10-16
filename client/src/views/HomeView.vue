@@ -35,7 +35,7 @@ import { ref } from 'vue'
 
 const router = useRouter()
 
-const isLoginModalVisible = ref(true); // 로그인 모달 상태
+const isLoginModalVisible = ref(false); // 로그인 모달 상태
 
 // 로그인 모달 열기
 const openLoginModal = () => {
