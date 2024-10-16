@@ -40,15 +40,15 @@
 </template>
 
 <script setup>
-import HomeButton from '@/components/HomeButton.vue'
-import ProfileButton from '@/components/ProfileButton.vue'
-import MainBoard from '@/components/MainBoard.vue'
-import BackButton from '@/components/BackButton.vue'
+import HomeButton from '@/components/common/HomeButton.vue'
+import ProfileButton from '@/components/common/ProfileButton.vue'
+import MainBoard from '@/components/common/MainBoard.vue'
+import BackButton from '@/components/common/BackButton.vue'
+import RecipeManual from '@/components/recipe/RecipeManual.vue'
+import GoTopButton from '@/components/common/GoTopButton.vue'
 import axios from 'axios'
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import RecipeManual from '@/components/RecipeManual.vue'
-import GoTopButton from '@/components/GoTopButton.vue'
 
 const isImageLoading = ref(true)
 

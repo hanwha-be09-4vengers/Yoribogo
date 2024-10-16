@@ -25,11 +25,11 @@
 </template>
 
 <script setup>
-import ResultNav from '../components/ResultNav.vue'
-import ResultBoard from '../components/ResultBoard.vue'
-import LoadingSpinner from '@/components/LoadingSpinner.vue'
-import HomeButton from '@/components/HomeButton.vue'
-import ProfileButton from '@/components/ProfileButton.vue'
+import ResultNav from '../components/mainquestion/ResultNav.vue'
+import ResultBoard from '../components/mainquestion/ResultBoard.vue'
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
+import HomeButton from '@/components/common/HomeButton.vue'
+import ProfileButton from '@/components/common/ProfileButton.vue'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'

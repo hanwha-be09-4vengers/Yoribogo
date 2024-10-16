@@ -32,7 +32,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import MenuTab from '@/components/MenuTab.vue'
+import MenuTab from '@/components/common/MenuTab.vue'
 
 const props = defineProps({
   cur: {

@@ -9,9 +9,9 @@
 </template>
 
 <script setup>
-import HomeButton from '@/components/HomeButton.vue'
-import MainBoard from '@/components/MainBoard.vue'
-import ProfileButton from '@/components/ProfileButton.vue'
+import HomeButton from '@/components/common/HomeButton.vue'
+import MainBoard from '@/components/common/MainBoard.vue'
+import ProfileButton from '@/components/common/ProfileButton.vue'
 </script>
 
 <style scoped>

@@ -26,12 +26,12 @@
 </template>
 
 <script setup>
-import HomeButton from '@/components/HomeButton.vue'
-import ProfileButton from '@/components/ProfileButton.vue'
-import MainBoard from '@/components/MainBoard.vue'
-import SearchBar from '@/components/SearchBar.vue'
-import MenuItem from '@/components/MenuItem.vue'
-import PaginationComponent from '@/components/PaginationComponent.vue'
+import HomeButton from '@/components/common/HomeButton.vue'
+import ProfileButton from '@/components/common/ProfileButton.vue'
+import MainBoard from '@/components/common/MainBoard.vue'
+import SearchBar from '@/components/common/SearchBar.vue'
+import MenuItem from '@/components/common/MenuItem.vue'
+import PaginationComponent from '@/components/common/PaginationComponent.vue'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router' // Vue Router 사용
 import axios from 'axios'

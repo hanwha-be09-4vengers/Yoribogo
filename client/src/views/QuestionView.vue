@@ -9,18 +9,18 @@
           <span>{{ questions[qid - 1].label }}</span>
         </div>
         <div class="card-board-container" v-if="qid < 5">
-          <CardBoard
+          <ChoiceBoard
             :img="questions[qid - 1].leftImg"
             :text="questions[qid - 1].leftText"
             @click="goNext(questions[qid - 1].leftText, qid + 1)"
           >
-          </CardBoard>
-          <CardBoard
+          </ChoiceBoard>
+          <ChoiceBoard
             :img="questions[qid - 1].rightImg"
             :text="questions[qid - 1].rightText"
             @click="goNext(questions[qid - 1].rightText, qid + 1)"
           >
-          </CardBoard>
+          </ChoiceBoard>
         </div>
         <form 
           class="input-container" 
@@ -40,10 +40,10 @@
 </template>
 
 <script setup>
-import QuestionNav from '../components/QuestionNav.vue'
-import CardBoard from '../components/CardBoard.vue'
-import HomeButton from '@/components/HomeButton.vue'
-import ProfileButton from '@/components/ProfileButton.vue'
+import QuestionNav from '../components/mainquestion/QuestionNav.vue'
+import ChoiceBoard from '../components/mainquestion/ChoiceBoard.vue'
+import HomeButton from '@/components/common/HomeButton.vue'
+import ProfileButton from '@/components/common/ProfileButton.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ref, watch } from 'vue'
 
