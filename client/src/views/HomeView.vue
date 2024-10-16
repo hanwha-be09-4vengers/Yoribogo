@@ -21,6 +21,7 @@
 </template>
 
 <script setup>
+
 import HomeNav from '@/components/top_nav/HomeNav.vue'
 import { useRouter } from 'vue-router'
 
@@ -62,8 +63,8 @@ const goQuestion = () => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-top: 12rem;
-  margin-left: 15rem;
+  margin-top: 18rem;
+  margin-left: 20rem;
   margin-bottom: 10rem;
   gap: 9.6rem;
 }
@@ -115,18 +116,18 @@ const goQuestion = () => {
 }
 
 /* 노트북 */
-@media screen and (max-width: 1683px) {
+@media screen and (max-width: 1684px) {
   .start-section {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin-top: 12rem;
-    margin-left: 15rem;
+    margin-top: 14rem;
+    margin-left: 20rem;
     gap: 9.6rem;
   }
 }
 
-@media screen and (max-width: 1439px) {
+@media screen and (max-width: 1440px) {
   .chicken {
     top: 22rem;
     right: 15rem;
@@ -140,8 +141,22 @@ const goQuestion = () => {
   }
 }
 
+@media screen and (max-width: 1280px) {
+  .chicken {
+    top: 22rem;
+    right: 15rem;
+    width: 60rem;
+    height: 30rem;
+  }
+
+  .bg-circle {
+    width: 50rem;
+    height: 45rem;
+  }
+}
+
 /* 태블릿 */
-@media screen and (max-width: 1023px) {
+@media screen and (max-width: 1024px) {
   .chicken {
     top: 22rem;
     right: 15rem;
@@ -164,7 +179,7 @@ const goQuestion = () => {
 }
 
 /* 모바일 */
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 768px) {
   .chicken {
     left: 50%;
     transform: translateX(-50%);

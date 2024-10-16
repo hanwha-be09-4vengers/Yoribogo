@@ -9,6 +9,7 @@ import com.avengers.yoribogo.recipe.repository.RecipeManualRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ public class RecipeManualServiceImpl implements RecipeManualService {
 
     // 요리 레시피 매뉴얼 등록
     @Override
+    @Transactional
     public List<RecipeManualDTO> registRecipeManual(Long recipeId, RequestRecipeManualDTO requestRecipeManualDTO) {
         List<RecipeManual> recipeManualList = new ArrayList<>();
 
@@ -68,6 +70,7 @@ public class RecipeManualServiceImpl implements RecipeManualService {
 
     // 요리 레시피 매뉴얼 수정
     @Override
+    @Transactional
     public List<RecipeManualDTO> modifyRecipeManual(Long recipeId, RequestRecipeManualDTO requestRecipeManualDTO) {
         // 기존 엔티티 목록 조회
         List<RecipeManual> recipeManualList =

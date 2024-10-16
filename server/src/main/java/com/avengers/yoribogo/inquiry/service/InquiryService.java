@@ -9,13 +9,13 @@ import java.util.List;
 public interface InquiryService {
 
     // 전체 문의 or 회원의 문의 조회
-    List<InquiryOnlyDTO> findInquiryOnly(Integer userId);
+    List<InquiryOnlyDTO> findInquiryOnly(Integer userId, String status);
 
     // 전체 문의(+답변) or 회원의 문의(+답변) 조회
-    List<Inquiry> findInquiry(Integer userId);
+    List<Inquiry> findInquiry(Integer userId, String status);
 
-    // 문의 번호로 조회
-    Inquiry findInquiryById(Integer id);
+    // 한 개 문의(+답변) 조회
+    Inquiry findInquiryById(Integer inquiryId);
 
     // 문의 생성
     Inquiry insertInquiry(InquiryDTO newInquiry);
@@ -24,11 +24,9 @@ public interface InquiryService {
     Inquiry updateInquiry(InquiryDTO modifyInquiry);
 
     // 문의 삭제(상태 변경: 'ACTIVE' -> 'INACTIVE')
-    boolean removeInquiry(int id);
+    Inquiry removeInquiry(int id);
 
-    // 질문 수 +1
-    void plusAnswers(int id);
+    // 문의 상태 변경
+    void changeStatus(int inquiryId);
 
-    // 질문 수 -1
-    void minusAnswers(int id);
 }

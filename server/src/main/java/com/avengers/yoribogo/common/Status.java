@@ -1,5 +1,5 @@
 package com.avengers.yoribogo.common;
 
 public enum Status {
-    ACTIVE, INACTIVE
+    ACTIVE, INACTIVE, PENDING, ANSWERED
 }

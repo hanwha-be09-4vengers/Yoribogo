@@ -1,15 +1,23 @@
 <template>
   <div class="recipe-board-view">
-    <ProfileButton></ProfileButton>
-    <HomeButton></HomeButton>
+    <header>
+      <ProfileButton></ProfileButton>
+      <HomeButton></HomeButton>
+    </header>
     <MainBoard :cur="'recipe-board'"></MainBoard>
   </div>
 </template>
 
 <script setup>
+<<<<<<< HEAD
 import HomeButton from '@/components/top_nav/HomeButton.vue'
 import MainBoard from '@/components/MainBoard.vue'
 import ProfileButton from '@/components/ProfileButton.vue'
+=======
+import HomeButton from '@/components/common/HomeButton.vue'
+import MainBoard from '@/components/common/MainBoard.vue'
+import ProfileButton from '@/components/common/ProfileButton.vue'
+>>>>>>> 42713b21f0ee8f0aeca18f13638fd649cb4b9e08
 </script>
 
 <style scoped>

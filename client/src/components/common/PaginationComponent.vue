@@ -28,7 +28,7 @@ const totalPages = computed(() => {
 })
 
 const currentPage = computed(() => {
-  return props.data.number + 1 // 현재 페이지 (0부터 시작하므로 +1)
+  return props.data.number >= 0 ? props.data.number + 1 : 1 // 현재 페이지 (0부터 시작하므로 +1)
 })
 
 // 페이지 이동 함수

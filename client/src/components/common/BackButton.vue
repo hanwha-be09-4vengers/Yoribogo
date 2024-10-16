@@ -1,6 +1,6 @@
 <template>
-  <button class="home-btn" @click="goHome">
-    <i class="fa-solid fa-house"></i>
+  <button class="back-btn" @click="goBack">
+    <i class="fa-solid fa-arrow-left"></i>
   </button>
 </template>
 
@@ -9,13 +9,13 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const goHome = () => {
-  router.push('/')
+const goBack = () => {
+  router.go(-1)
 }
 </script>
 
 <style scoped>
-.home-btn {
+.back-btn {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23,18 +23,18 @@ const goHome = () => {
   height: 6.3rem;
   border: none;
   border-radius: 50%;
-  background-color: var(--white-color);
-  color: var(--black-color);
+  background-color: var(--black-color);
+  color: var(--white-color);
   box-shadow: 0rem 0.35rem 0.35rem 0rem rgba(60, 60, 60, 0.5);
   cursor: pointer;
   z-index: 9999;
 }
 
-.home-btn i {
+.back-btn i {
   font-size: 3rem;
 }
 
-.home-btn:hover {
+.back-btn:hover {
   transition: 0.3s ease;
   box-shadow: 0rem 0.4rem 0.4rem 0.1rem rgba(60, 60, 60, 0.5);
 }

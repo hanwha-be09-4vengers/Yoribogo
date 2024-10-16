@@ -1,16 +1,22 @@
 <template>
   <div class="wiki-view">
-    <ProfileButton></ProfileButton>
-    <HomeButton></HomeButton>
+    <header>
+      <ProfileButton></ProfileButton>
+      <HomeButton></HomeButton>
+    </header>
     <MainBoard :cur="'wiki'">
       <div class="wiki-container">
         <SearchBar @search="handleSearch"></SearchBar>
-        <div class="wiki-list">
+        <div class="not-found" v-if="isEmpty">
+          <span>요리가 존재하지 않습니다.</span>
+        </div>
+        <div class="wiki-list" v-if="!isEmpty">
           <MenuItem
             v-for="item in menuList"
             :key="item.recipe_id"
             :menuName="item.menu_name"
             :menuImage="item.menu_image || ''"
+            @click="goDetail(item.recipe_id)"
           ></MenuItem>
         </div>
       </div>
@@ -21,11 +27,11 @@
 
 <script setup>
 import HomeButton from '@/components/top_nav/HomeButton.vue'
-import ProfileButton from '@/components/ProfileButton.vue'
-import MainBoard from '@/components/MainBoard.vue'
-import SearchBar from '@/components/SearchBar.vue'
-import MenuItem from '@/components/MenuItem.vue'
-import PaginationComponent from '@/components/PaginationComponent.vue'
+import ProfileButton from '@/components/common/ProfileButton.vue'
+import MainBoard from '@/components/common/MainBoard.vue'
+import SearchBar from '@/components/common/SearchBar.vue'
+import MenuItem from '@/components/recipe/MenuItem.vue'
+import PaginationComponent from '@/components/common/PaginationComponent.vue'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router' // Vue Router 사용
 import axios from 'axios'
@@ -36,6 +42,8 @@ const router = useRouter() // 라우터 인스턴스 가져오기
 const menuList = ref([])
 const pageInfo = ref({})
 
+const isEmpty = ref(true)
+
 const fetchData = async (name, page) => {
   try {
     let response
@@ -45,6 +53,11 @@ const fetchData = async (name, page) => {
     if (response.success) {
       menuList.value = response.data.content
       pageInfo.value = response.data.page
+      isEmpty.value = false
+    } else {
+      menuList.value = []
+      pageInfo.value = {}
+      isEmpty.value = true
     }
   } catch (error) {
     console.error('Failed to fetch data:', error)
@@ -62,6 +75,10 @@ const handlePageChange = (newPage) => {
   name === ''
     ? router.push({ path: '/wiki', query: { page: newPage } })
     : router.push({ path: '/wiki', query: { q: name, page: newPage } }) // 페이지 변경 시 쿼리 업데이트
+}
+
+const goDetail = (recipeId) => {
+  router.push(`/wiki/${recipeId}`) // 상세 페이지로 이동
 }
 
 // URL 쿼리 변화를 감지하는 watcher
@@ -97,6 +114,16 @@ watch(
   position: absolute;
   top: 7rem;
   right: 20rem;
+}
+
+.not-found {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 4rem;
+  font-size: 2.4rem;
+  color: var(--black-color);
 }
 
 .wiki-container {

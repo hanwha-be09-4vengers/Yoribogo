@@ -86,7 +86,6 @@ const handleImageLoad = () => {
   height: 80%;
   overflow: hidden;
   border-radius: 1.6rem;
-  overflow: hidden;
 }
 
 .menu-img-wrapper img {

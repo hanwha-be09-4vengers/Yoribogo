@@ -2,6 +2,7 @@
   <div class="search-bar">
     <form class="search-form" @submit.prevent="submitSearch">
       <input
+        id="search-input"
         v-model="searchQuery"
         @focus="removePlaceholder"
         @blur="restorePlaceholder"
