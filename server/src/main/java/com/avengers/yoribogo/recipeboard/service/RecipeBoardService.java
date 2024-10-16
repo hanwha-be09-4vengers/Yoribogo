@@ -4,6 +4,7 @@ import com.avengers.yoribogo.recipeboard.dto.RecipeBoardDTO;
 import com.avengers.yoribogo.recipeboard.dto.RecipeBoardManualDTO;
 import com.avengers.yoribogo.recipeboard.dto.ResponseBoardDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -20,4 +21,8 @@ public interface RecipeBoardService {
     ResponseBoardDTO updateRecipeBoard(Long recipeBoardId, RecipeBoardDTO updateRecipeBoardDTO);
 
     ResponseBoardDTO updateRecipeBoardManual(Long recipeBoardId, List<RecipeBoardManualDTO> updateRecipeBoardManualDTOs);
+
+    void removeRecipeBoard(Long recipeBoardId);
+
+    Page<RecipeBoardDTO> findRecipeBoardByMenuName(String recipeBoardName, Integer pageNo);
 }
