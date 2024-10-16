@@ -58,7 +58,7 @@ public class UserEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role", length = 255)
-    private UserRole user_role;
+    private UserRole userRole;
 
     @Column(name = "user_likes")
     private Long userLikes;
@@ -93,4 +93,5 @@ public class UserEntity {
             this.profileImage = profileImage;
         }
     }
+
 }

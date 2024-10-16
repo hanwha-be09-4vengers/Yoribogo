@@ -3,6 +3,7 @@ package com.avengers.yoribogo.security;
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.user.domain.UserEntity;
+import com.avengers.yoribogo.user.domain.vo.login.AuthTokens;
 import com.avengers.yoribogo.user.service.UserService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -17,10 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -43,6 +41,44 @@ public class JwtUtil {
         this.accessExpirationTime = accessExpirationTime;
         this.refreshExpirationTime = refreshExpirationTime;
         this.userService = userService;
+    }
+
+    // 설명. getSecretKey 메서드 추가
+    public Key getSecretKey() {
+        return this.secretKey;
+    }
+
+
+    // 설명. 리프레시 토큰으로 액세스 토큰 재발급하는 로직 처리
+    public AuthTokens refreshAccessToken(String refreshToken) {
+        // 1. 리프레시 토큰의 유효성 검사
+        if (!validateToken(refreshToken)) {
+            throw new CommonException(ErrorCode.EXPIRED_TOKEN_ERROR);
+        }
+
+        // 2. 리프레시 토큰에서 사용자 정보 추출
+        String userIdentifier = getUserId(refreshToken);
+        UserEntity user = userService.findByUserIdentifier(userIdentifier);
+
+        if (user == null) {
+            throw new CommonException(ErrorCode.NOT_FOUND_USER);
+        }
+
+        // 3. 새로운 액세스 토큰 생성
+        // 단일 UserRole을 문자열로 변환
+        String role = user.getUserRole().name();  // Enum의 이름을 문자열로 변환 (예: "ADMIN")
+
+        String newAccessToken = generateToken(user, Collections.singletonList(role));
+
+        // 리프레시 토큰은 그대로 유지
+        return new AuthTokens(
+                newAccessToken,
+                refreshToken, // 기존 리프레시 토큰 유지
+                "Bearer",
+                getAccessTokenExpiration(),
+                getRefreshTokenExpiration(),
+                userIdentifier
+        );
     }
 
     // 설명. Token 검증 메소드
@@ -123,4 +159,15 @@ public class JwtUtil {
                 .signWith(secretKey, SignatureAlgorithm.HS512) // 서명 알고리즘과 시크릿 키 설정
                 .compact();
     }
+
+    // 설명. 액세스 토큰 만료 시간 가져오기
+    public long getAccessTokenExpiration() {
+        return System.currentTimeMillis() + accessExpirationTime;
+    }
+
+    // 설명. 리프레시 토큰 만료 시간 가져오기
+    public long getRefreshTokenExpiration() {
+        return System.currentTimeMillis() + refreshExpirationTime;
+    }
+
 }

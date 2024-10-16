@@ -3,6 +3,7 @@ package com.avengers.yoribogo.user.controller;
 import com.avengers.yoribogo.common.ResponseDTO;
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
+import com.avengers.yoribogo.security.JwtUtil;
 import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.domain.enums.SignupPath;
 import com.avengers.yoribogo.user.domain.vo.email.EmailVerificationSignupVO;
@@ -11,6 +12,7 @@ import com.avengers.yoribogo.user.domain.vo.email.ResponseEmailMessageVO;
 import com.avengers.yoribogo.user.domain.vo.kakao.KakaoAuthorizationCode;
 import com.avengers.yoribogo.user.domain.vo.login.AuthTokens;
 import com.avengers.yoribogo.user.domain.vo.login.ResponseOAuthLoginVO;
+import com.avengers.yoribogo.user.domain.vo.login.TokenRefreshRequest;
 import com.avengers.yoribogo.user.domain.vo.naver.NaverAuthorizationCode;
 import com.avengers.yoribogo.user.dto.UserDTO;
 import com.avengers.yoribogo.user.dto.email.EmailVerificationUserIdRequestDTO;
@@ -32,15 +34,17 @@ public class UserController {
     private final Environment env;
     private final UserService userService;
     private final ModelMapper modelMapper;
-
     private final OAuth2LoginService oAuth2LoginService;
+    private final JwtUtil jwtUtil;
+
     @Autowired
-    public UserController(Environment env, UserService userService,ModelMapper modelMapper,
-                          OAuth2LoginService oAuth2LoginService) {
+    public UserController(Environment env, UserService userService, ModelMapper modelMapper,
+                          OAuth2LoginService oAuth2LoginService, JwtUtil jwtUtil) {
         this.env = env;
         this.userService = userService;
-        this.modelMapper=modelMapper;
+        this.modelMapper = modelMapper;
         this.oAuth2LoginService = oAuth2LoginService;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping("/health")
@@ -163,17 +167,12 @@ public class UserController {
         return ResponseDTO.ok(userDTO);
     }
 
-    // 리프레시 토큰으로 액세스 토큰 재발급
-//    @PostMapping("/refresh")
-//    public ResponseEntity<?> refreshAccessToken(@RequestBody TokenRefreshRequest request) {
-//        String requestRefreshToken = request.getRefreshToken();
-//
-//        if (tokenProvider.validateRefreshToken(requestRefreshToken)) {
-//            String newAccessToken = tokenProvider.generateAccessTokenFromRefreshToken(requestRefreshToken);
-//            return ResponseEntity.ok(new JwtResponse(newAccessToken, requestRefreshToken));
-//        } else {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid refresh token");
-//        }
-//    }
+    // 설명. 리프레시 토큰으로 액세스 토큰 재발급
+    @PostMapping("/auth/refresh-token")
+    public ResponseDTO<AuthTokens> refreshToken(@RequestBody TokenRefreshRequest request) {
+        // 서비스 계층에 로직 위임
+        AuthTokens authTokens = jwtUtil.refreshAccessToken(request.getRefreshToken());
+        return ResponseDTO.ok(authTokens);
+    }
 
 }

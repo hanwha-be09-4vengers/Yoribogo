@@ -3,9 +3,10 @@ package com.avengers.yoribogo.user.service;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
+import com.avengers.yoribogo.security.JwtUtil;
 import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.domain.enums.SignupPath;
-import com.avengers.yoribogo.user.dto.EnterpriseUserDTO;
+import com.avengers.yoribogo.user.domain.vo.login.AuthTokens;
 import com.avengers.yoribogo.user.dto.UserDTO;
 import com.avengers.yoribogo.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +22,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -36,7 +40,8 @@ public class UserService implements UserDetailsService {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserService(UserRepository userRepository
+    public UserService(
+             UserRepository userRepository
             , AmazonS3Client s3Client
             , StringRedisTemplate stringRedisTemplate  // Redis template 추가
             , ModelMapper modelMapper
@@ -78,6 +83,7 @@ public class UserService implements UserDetailsService {
         }
         return userEntity;
     }
+
 
     /* 설명. 로그인 시 security가 자동으로 호출하는 메소드 */
     @Override
