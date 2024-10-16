@@ -4,24 +4,30 @@ import com.avengers.yoribogo.answer.domain.Answer;
 import com.avengers.yoribogo.answer.dto.AnswerDTO;
 import com.avengers.yoribogo.answer.service.AnswerService;
 import com.avengers.yoribogo.common.Role;
-import lombok.extern.slf4j.Slf4j;
+import com.avengers.yoribogo.common.Status;
+import com.avengers.yoribogo.inquiry.service.InquiryService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-@Slf4j
 @SpringBootTest
 public class AnswerTests {
 
-    @Autowired
     private AnswerService answerService;
+    private InquiryService inquiryService;
+
+    @Autowired
+    public AnswerTests(AnswerService answerService, InquiryService inquiryService) {
+        this.answerService = answerService;
+        this.inquiryService = inquiryService;
+    }
 
     @DisplayName("문의의 답변 목록 조회 확인 테스트")
     @ParameterizedTest
@@ -32,35 +38,27 @@ public class AnswerTests {
     }
 
     @DisplayName("답변 생성 확인 테스트")
-    @Test
-    public void testAddAnswer() {
-        Answer result = answerService.insertAnswer(
-                new AnswerDTO("답변 생성 테스트", Role.ADMIN, 1, 1));
-        log.info("result: {}", result);
-        Assertions.assertNotNull(result);
-    }
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"ADMIN", "ENTERPRISE"})
+    public void testAddAnswer(Role writer) {
+        int userId = 0;
 
-    @DisplayName("답변(재문의) 생성 확인 테스트")
-    @Test
-    public void testAddAnswer2() {
-        Answer result = answerService.insertAnswer(
-                new AnswerDTO("답변(재문의) 생성 테스트", Role.ENTERPRISE, 3, 1));
-        log.info("result: {}", result);
-        Assertions.assertNotNull(result);
-    }
+        if (writer == Role.ADMIN) userId = 1;
+        else userId = 5;
 
-    @DisplayName("답변 수정 확인 테스트")
-    @Test
-    public void testModifyAnswer() {
-        Answer result = answerService.updateAnswer(
-                new AnswerDTO(13, "답변 수정 테스트", Role.ENTERPRISE, LocalDateTime.now(), 1, 1));
-        Assertions.assertNotNull(result);
+        Answer result = answerService.insertAnswer(
+                new AnswerDTO("답변 생성 테스트", writer, userId, 1));
+
+        Status status = inquiryService.findInquiryById(1).getAnswerStatus();
+
+        if (writer == Role.ADMIN) Assertions.assertTrue(status == Status.ANSWERED);
+        else Assertions.assertTrue(status == Status.PENDING);
     }
 
     @DisplayName("답변 삭제 확인 테스트")
     @Test
     public void testDeleteAnswer() {
-        boolean result = answerService.removeAnswer(13);
+        boolean result = answerService.removeAnswer(3);
         Assertions.assertTrue(result);
     }
 }

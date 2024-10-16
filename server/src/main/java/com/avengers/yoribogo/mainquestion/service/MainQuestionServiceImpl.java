@@ -36,7 +36,7 @@ public class MainQuestionServiceImpl implements MainQuestionService {
                     .filter(question -> question.getUserId() == userId)
                     .toList();
         } catch (Exception e) {
-            ExceptionDTO.of(ErrorCode.NOT_FOUND_CHOICE); // not found
+            ExceptionDTO.of(ErrorCode.NOT_FOUND_MAIN_QUESTION); // not found
             return null;
         }
     }
@@ -47,7 +47,7 @@ public class MainQuestionServiceImpl implements MainQuestionService {
             return mainQuestionRepository.save(
                     modelMapper.map(newQuestion, MainQuestion.class));
         } catch (Exception e) {
-            ExceptionDTO.of(ErrorCode.NOT_FOUND_CHOICE);    // insert fail
+            ExceptionDTO.of(ErrorCode.NOT_FOUND_MAIN_QUESTION);    // insert fail
             return null;
         }
     }
@@ -58,7 +58,7 @@ public class MainQuestionServiceImpl implements MainQuestionService {
             return mainQuestionRepository.saveAndFlush(
                     modelMapper.map(modifyQuestion, MainQuestion.class));
         } catch (Exception e) {
-            ExceptionDTO.of(ErrorCode.NOT_FOUND_CHOICE);    // update fail
+            ExceptionDTO.of(ErrorCode.NOT_FOUND_MAIN_QUESTION);    // update fail
             return null;
         }
     }
@@ -69,7 +69,7 @@ public class MainQuestionServiceImpl implements MainQuestionService {
             mainQuestionRepository.deleteById(id);
             return true;
         } catch (Exception e) {
-            ExceptionDTO.of(ErrorCode.NOT_FOUND_CHOICE);    // delete fail
+            ExceptionDTO.of(ErrorCode.NOT_FOUND_MAIN_QUESTION);    // delete fail
             return false;
         }
         

@@ -2,6 +2,7 @@ package com.avengers.yoribogo.inquiry.domain;
 
 import com.avengers.yoribogo.answer.domain.Answer;
 import com.avengers.yoribogo.common.Status;
+import com.avengers.yoribogo.common.Visibility;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,11 +30,19 @@ public class Inquiry {
     @Column(name = "inquiry_status")
     private Status inquiryStatus;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "inquiry_visibility")
+    private Visibility inquiryVisibility;
+
     @Column(name = "inquiry_created_at")
     private LocalDateTime inquiryCreatedAt;
 
     @Column(name = "answers")
     private Integer answers;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "answer_status")
+    private Status answerStatus;
 
     @Column(name = "user_id")
     private int userId;
