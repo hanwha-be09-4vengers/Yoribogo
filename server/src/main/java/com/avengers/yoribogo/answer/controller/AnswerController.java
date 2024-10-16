@@ -40,12 +40,12 @@ public class AnswerController {
         return result != null ? ResponseDTO.ok(result) : ResponseDTO.ok("답변 생성 실패");
     }
 
-    // 답변 수정
-    @PostMapping("/modify")
-    public ResponseDTO modifyAnswer(@RequestBody AnswerDTO modifyAnswer) {
-        Answer result = answerService.updateAnswer(modifyAnswer);
-        return result != null ? ResponseDTO.ok(result) : ResponseDTO.ok("답변 수정 실패");
-    }
+//    // 답변 수정
+//    @PostMapping("/modify")
+//    public ResponseDTO modifyAnswer(@RequestBody AnswerDTO modifyAnswer) {
+//        Answer result = answerService.updateAnswer(modifyAnswer);
+//        return result != null ? ResponseDTO.ok(result) : ResponseDTO.ok("답변 수정 실패");
+//    }
 
     // 답변 삭제
     @DeleteMapping("/delete")

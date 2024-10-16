@@ -11,9 +11,11 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 
 @Service
 public class AnswerServiceImpl implements AnswerService {
@@ -42,44 +44,45 @@ public class AnswerServiceImpl implements AnswerService {
                     .filter(answer -> answer.getInquiryId() == inquiryId)
                     .toList();
         } catch (Exception e) {
-            ExceptionDTO.of(ErrorCode.NOT_FOUND_CHOICE);
+            ExceptionDTO.of(ErrorCode.NOT_FOUND_ANSWER);
             return null;
         }
     }
 
+    @Transactional
     @Override
     public Answer insertAnswer(AnswerDTO newAnswer) {
         try {
             newAnswer.setAnswerCreatedAt(LocalDateTime.now());
             Answer result = answerRepository.save(modelMapper.map(newAnswer, Answer.class));
-            inquiryService.plusAnswers(newAnswer.getInquiryId());
+            inquiryService.changeStatus(result.getInquiryId());
             return result;
         } catch (Exception e) {
-            ExceptionDTO.of(ErrorCode.NOT_FOUND_CHOICE);
+            ExceptionDTO.of(ErrorCode.NOT_FOUND_ANSWER);
             return null;
         }
     }
 
-    @Override
-    public Answer updateAnswer(AnswerDTO modifyAnswer) {
-        try {
-            modifyAnswer.setAnswerCreatedAt(LocalDateTime.now());
-            return answerRepository.saveAndFlush(modelMapper.map(modifyAnswer, Answer.class));
-        } catch (Exception e) {
-            ExceptionDTO.of(ErrorCode.NOT_FOUND_CHOICE);
-            return null;
-        }
-    }
+//    @Override
+//    public Answer updateAnswer(AnswerDTO modifyAnswer) {
+//        try {
+//            modifyAnswer.setAnswerCreatedAt(LocalDateTime.now());
+//            return answerRepository.saveAndFlush(modelMapper.map(modifyAnswer, Answer.class));
+//        } catch (Exception e) {
+//            ExceptionDTO.of(ErrorCode.NOT_FOUND_ANSWER);
+//            return null;
+//        }
+//    }
 
     @Override
-    public boolean removeAnswer(int id) {
+    public boolean removeAnswer(int answerId) {
         try {
-            int inquiryId = answerRepository.findById(id).get().getInquiryId();
-            inquiryService.minusAnswers(inquiryId);
-            answerRepository.deleteById(id);
+            int inquiryId = answerRepository.findById(answerId).get().getInquiryId();
+            answerRepository.deleteById(answerId);
+            inquiryService.changeStatus(inquiryId);
             return true;
         } catch (Exception e) {
-            ExceptionDTO.of(ErrorCode.NOT_FOUND_CHOICE);
+            ExceptionDTO.of(ErrorCode.NOT_FOUND_ANSWER);
             return false;
         }
     }

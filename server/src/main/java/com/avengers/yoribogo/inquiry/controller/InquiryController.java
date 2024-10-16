@@ -1,6 +1,7 @@
 package com.avengers.yoribogo.inquiry.controller;
 
 import com.avengers.yoribogo.common.ResponseDTO;
+import com.avengers.yoribogo.common.Status;
 import com.avengers.yoribogo.inquiry.domain.Inquiry;
 import com.avengers.yoribogo.inquiry.dto.InquiryDTO;
 import com.avengers.yoribogo.inquiry.dto.InquiryOnlyDTO;
@@ -26,17 +27,25 @@ public class InquiryController {
         return "OK";
     }
 
+    @GetMapping("/{id}")
+     public ResponseDTO getOneInquiry(@PathVariable int id) {
+        Inquiry result = inquiryService.findInquiryById(id);
+        return ResponseDTO.ok(result);
+    }
+
     // '/get' == 전체 문의; '/get?id=5' == 회원(user_id=5)의 문의
     @GetMapping("/get-only")
-    public ResponseDTO getInquiryOnly(@RequestParam(required = false, name = "id") Integer userId) {
-        List<InquiryOnlyDTO> result = inquiryService.findInquiryOnly(userId);
+    public ResponseDTO getInquiryOnly(@RequestParam(required = false, name = "id") Integer userId,
+                                      @RequestParam(required = false, name = "status") String status) {
+        List<InquiryOnlyDTO> result = inquiryService.findInquiryOnly(userId, status);
         return ResponseDTO.ok(result);
     }
 
     // '/get' == 전체 문의(+답변); '/get?id=5' == 회원(user_id=5)의 문의(+답변)
     @GetMapping("/get")
-    public ResponseDTO getInquiry(@RequestParam(required = false, value = "id") Integer userId) {
-        List<Inquiry> result = inquiryService.findInquiry(userId);
+    public ResponseDTO getInquiry(@RequestParam(required = false, name = "id") Integer userId,
+                                  @RequestParam(required = false, name = "status") String status) {
+        List<Inquiry> result = inquiryService.findInquiry(userId, status);
         return ResponseDTO.ok(result);
     }
 
@@ -57,7 +66,7 @@ public class InquiryController {
     // '/delete?code=5' == 문의(inquiry_id=5) 삭제(상태 변경: 'ACTIVE' -> 'INACTIVE')
     @DeleteMapping("/delete")
     public ResponseDTO deleteInquiry(@RequestParam int id) {
-        boolean result = inquiryService.removeInquiry(id);
-        return result ? ResponseDTO.ok("문의 삭제 성공") : ResponseDTO.ok("문의 삭제 실패");
+        Inquiry result = inquiryService.removeInquiry(id);
+        return result.getInquiryStatus() == Status.INACTIVE ? ResponseDTO.ok("문의 삭제 성공") : ResponseDTO.ok("문의 삭제 실패");
     }
 }
