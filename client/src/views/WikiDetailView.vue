@@ -5,6 +5,9 @@
     <GoTopButton></GoTopButton>
     <MainBoard :cur="'wiki'">
       <BackButton></BackButton>
+      <div class="menu-name-wrapper">
+        <span class="menu-name">{{ menuInfo.menu_name }}</span>
+      </div>
       <div class="menu-img-wrapper">
         <img v-show="isImageLoading" :src="defaultImage" alt="MenuImage" />
         <img
@@ -14,9 +17,6 @@
           @load="handleImageLoad"
           @error="handleImageError"
         />
-      </div>
-      <div class="menu-name-wrapper">
-        <span class="menu-name">{{ menuInfo.menu_name }}</span>
       </div>
       <div class="menu-ingredient-container">
         <div class="info">재료</div>
@@ -128,6 +128,19 @@ onMounted(() => {
   right: 8rem;
 }
 
+.menu-name-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 18rem;
+}
+
+.menu-name {
+  font-size: 4rem;
+  font-weight: 500;
+  color: var(--black-color);
+}
+
 .menu-img-wrapper {
   display: flex;
   justify-content: center;
@@ -135,7 +148,7 @@ onMounted(() => {
   width: 72rem;
   height: 54rem;
   overflow: hidden;
-  margin-top: 24rem;
+  margin-top: 4rem;
   border-radius: 1.4rem;
 }
 
@@ -145,26 +158,13 @@ onMounted(() => {
   object-fit: cover;
 }
 
-.menu-name-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 6rem;
-}
-
-.menu-name {
-  font-size: 4rem;
-  font-weight: 500;
-  color: var(--black-color);
-}
-
 .menu-ingredient-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
   gap: 4rem;
-  margin-top: 4rem;
+  margin-top: 6rem;
 }
 
 .menu-ingredient {
