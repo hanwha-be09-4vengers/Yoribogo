@@ -1,7 +1,9 @@
 <template>
   <div class="mypage-view">
-    <ProfileButton></ProfileButton>
-    <HomeButton></HomeButton>
+    <header>
+      <ProfileButton></ProfileButton>
+      <HomeButton></HomeButton>
+    </header>
     <MainBoard :cur="'mypage'"></MainBoard>
   </div>
 </template>

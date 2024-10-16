@@ -1,7 +1,9 @@
 <template>
   <div class="recipe-board-view">
-    <ProfileButton></ProfileButton>
-    <HomeButton></HomeButton>
+    <header>
+      <ProfileButton></ProfileButton>
+      <HomeButton></HomeButton>
+    </header>
     <MainBoard :cur="'recipe-board'"></MainBoard>
   </div>
 </template>
