@@ -25,8 +25,8 @@
 </template>
 
 <script setup>
-import ResultNav from '../components/mainquestion/ResultNav.vue'
-import ResultBoard from '../components/mainquestion/ResultBoard.vue'
+import ResultNav from '../components/recommend/ResultNav.vue'
+import ResultBoard from '../components/recommend/ResultBoard.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import HomeButton from '@/components/common/HomeButton.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
