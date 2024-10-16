@@ -30,7 +30,7 @@ import HomeButton from '@/components/common/HomeButton.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
 import MainBoard from '@/components/common/MainBoard.vue'
 import SearchBar from '@/components/common/SearchBar.vue'
-import MenuItem from '@/components/common/MenuItem.vue'
+import MenuItem from '@/components/recipe/MenuItem.vue'
 import PaginationComponent from '@/components/common/PaginationComponent.vue'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router' // Vue Router 사용
