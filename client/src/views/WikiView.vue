@@ -1,7 +1,9 @@
 <template>
   <div class="wiki-view">
-    <ProfileButton></ProfileButton>
-    <HomeButton></HomeButton>
+    <header>
+      <ProfileButton></ProfileButton>
+      <HomeButton></HomeButton>
+    </header>
     <MainBoard :cur="'wiki'">
       <div class="wiki-container">
         <SearchBar @search="handleSearch"></SearchBar>

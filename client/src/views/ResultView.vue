@@ -1,7 +1,5 @@
 <template>
   <div class="result-view">
-    <ProfileButton></ProfileButton>
-    <HomeButton></HomeButton>
     <header>
       <ResultNav></ResultNav>
     </header>
@@ -19,6 +17,10 @@
         <LoadingSpinner v-show="isLoading"></LoadingSpinner>
       </div>
     </main>
+    <aside>
+      <ProfileButton></ProfileButton>
+      <HomeButton></HomeButton>
+    </aside>
   </div>
 </template>
 

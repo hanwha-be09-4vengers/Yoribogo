@@ -1,8 +1,9 @@
 <template>
   <div class="wiki-detail-view">
-    <ProfileButton></ProfileButton>
-    <HomeButton></HomeButton>
-    <GoTopButton></GoTopButton>
+    <header>
+      <ProfileButton></ProfileButton>
+      <HomeButton></HomeButton>
+    </header>
     <MainBoard :cur="'wiki'">
       <BackButton></BackButton>
       <div class="menu-name-wrapper">
@@ -32,6 +33,9 @@
         ></RecipeManual>
       </div>
     </MainBoard>
+    <aside>
+      <GoTopButton></GoTopButton>
+    </aside>
   </div>
 </template>
 

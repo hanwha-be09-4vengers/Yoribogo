@@ -1,7 +1,5 @@
 <template>
   <div class="question-view">
-    <ProfileButton></ProfileButton>
-    <HomeButton></HomeButton>
     <header>
       <QuestionNav :questions="questions"></QuestionNav>
     </header>
@@ -24,12 +22,20 @@
           >
           </CardBoard>
         </div>
-        <div class="input-container" v-if="qid === 5">
-          <input type="text" placeholder="답변:" v-model="inputText" />
-          <button class="submit-btn" @click="goNext(null, qid + 1)">추천 결과 보기</button>
-        </div>
+        <form 
+          class="input-container" 
+          v-if="qid === 5"
+           @submit.prevent="goNext(null, qid + 1)"
+        >
+          <input id="extra-input" type="text" placeholder="답변:" v-model="inputText" />
+          <button class="submit-btn">추천 결과 보기</button>
+        </form>
       </div>
     </main>
+    <aside>
+      <ProfileButton></ProfileButton>
+      <HomeButton></HomeButton>
+    </aside>
   </div>
 </template>
 
