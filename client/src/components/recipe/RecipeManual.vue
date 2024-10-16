@@ -5,7 +5,7 @@
       <img v-show="isImageLoading" :src="defaultImage" alt="ManualImage" />
       <img
         v-show="!isImageLoading"
-        :src="menuImageSrc"
+        :src="manualImageSrc"
         alt="ManualImage"
         @load="handleImageLoad"
         @error="handleImageError"
@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const props = defineProps({
   manualContent: {
@@ -28,26 +28,30 @@ const props = defineProps({
 })
 
 const isImageLoading = ref(true)
+const isImageError = ref(false)
 
 const defaultImage = ref(
   'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728804967802_a4720492-2dd2-4e59-8f31-79b55e6a169e_%E1%84%80%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.svg'
 )
 
-// computed 속성으로 이미지 소스 처리
-const menuImageSrc = computed(() => {
-  return props.manualImage || defaultImage.value
-})
+const manualImageSrc = ref('')
 
 // 이미지 로딩 오류 처리 함수
 const handleImageError = () => {
+  manualImageSrc.value = defaultImage.value
   isImageLoading.value = false // 로딩 중지
-  menuImageSrc.value = defaultImage.value
+  isImageError.value = true
 }
 
 // 이미지 로드 완료 처리 함수
 const handleImageLoad = () => {
   isImageLoading.value = false // 로딩 중지
+  isImageError.value = false
 }
+
+onMounted(() => {
+  manualImageSrc.value = props.manualImage || defaultImage.value
+})
 </script>
 
 <style scoped>
