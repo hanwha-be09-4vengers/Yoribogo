@@ -47,10 +47,11 @@ import BackButton from '@/components/common/BackButton.vue'
 import RecipeManual from '@/components/recipe/RecipeManual.vue'
 import GoTopButton from '@/components/common/GoTopButton.vue'
 import axios from 'axios'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 const isImageLoading = ref(true)
+const isImageError = ref(false)
 
 const route = useRoute()
 
@@ -77,19 +78,20 @@ const fetchData = async () => {
 }
 
 // computed 속성으로 이미지 소스 처리
-const menuImageSrc = computed(() => {
-  return menuInfo.value.menu_image || defaultImage.value
-})
+const menuImageSrc = ref(defaultImage.value)
 
 // 이미지 로딩 오류 처리 함수
 const handleImageError = () => {
-  isImageLoading.value = false // 로딩 중지
   menuImageSrc.value = defaultImage.value
+  isImageLoading.value = false // 로딩 중지
+  isImageError.value = true
 }
 
 // 이미지 로드 완료 처리 함수
 const handleImageLoad = () => {
+  menuImageSrc.value = menuInfo.value.menu_image || defaultImage.value
   isImageLoading.value = false // 로딩 중지
+  isImageError.value = false
 }
 
 onMounted(() => {
