@@ -10,7 +10,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class UserDTO {
+public class AdminUserDTO {
 
     @JsonProperty("user_id")
     private Long userId;
@@ -49,13 +49,7 @@ public class UserDTO {
     private SignupPath signupPath;
 
     @JsonProperty("user_role")
-    private UserRole userRole;
-
-    @JsonProperty("user_likes")
-    private Long userLikes;
-
-    @JsonProperty("tier_id")
-    private Long tierId ;
+    private UserRole userRole = UserRole.ADMIN; // 기본값은 관리자
 
     @JsonProperty("user_identifier")
     private String userIdentifier;

@@ -31,6 +31,4 @@ public class ResponseOAuthLoginVO {
     @JsonProperty("user_identifier")
     private String userIdentifier;
 
-    @JsonProperty("is_profile_incomplete") // 프로필 정보가 불완전한지 여부
-    private boolean isProfileIncomplete;
 }

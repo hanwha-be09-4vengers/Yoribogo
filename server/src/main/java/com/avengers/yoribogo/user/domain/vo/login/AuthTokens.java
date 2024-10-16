@@ -14,6 +14,5 @@ public class AuthTokens {
     private long accessTokenExpiry;
     private long refreshTokenExpiry;
     private String userIdentifier;
-    private boolean isProfileIncomplete;
 }
 

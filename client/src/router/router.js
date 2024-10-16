@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import KakaoCallback from '@/components/top_nav/sns/KakaoCallback.vue'; // 콜백 처리용 컴포넌트
+import NaverCallback from '@/components/top_nav/sns/NaverCallback.vue'; // 콜백 처리용 컴포넌트
 
 const routes = [
   {
@@ -35,12 +37,17 @@ const routes = [
   {
     path: '/mypage',
     name: 'mypage',
-    component: () => import('../views/MyPageView.vue')
+    component: () => import('../views/user/MyPageView.vue')
   },
   {
-    path: '/mypage',
-    name: 'mypage',
-    component: () => import('../views/MyPageView.vue')
+    path: '/kakaologin',
+    name: 'KakaoCallback',
+    component: KakaoCallback,
+  },
+  {
+    path: '/naverlogin',
+    name: 'NaverCallback',
+    component: NaverCallback,
   }
 ]
 

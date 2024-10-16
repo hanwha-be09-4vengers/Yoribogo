@@ -21,7 +21,8 @@
 </template>
 
 <script setup>
-import HomeNav from '@/components/common/HomeNav.vue'
+
+import HomeNav from '@/components/top_nav/HomeNav.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()

@@ -2,6 +2,8 @@ package com.avengers.yoribogo.user.repository;
 
 import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.domain.enums.SignupPath;
+import com.avengers.yoribogo.user.dto.EnterpriseUserDTO;
+import com.avengers.yoribogo.user.dto.UserDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
