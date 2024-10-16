@@ -5,13 +5,18 @@
     </div>
     <div class="back">
       <img :src="props.img" alt="Image" />
-      <span>{{ props.text }}</span>
+      <span class="menu-name">{{ props.text }}</span>
+      <button class="go-wiki-detail-btn" @click="goWikiDetail">
+        <span>레시피 확인하러 가기</span>
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   img: {
@@ -21,8 +26,14 @@ const props = defineProps({
   text: {
     type: String,
     required: true
+  }, 
+  recipeId: {
+    type: Number,
+    required: true
   }
 })
+
+const router = useRouter()
 
 const bgImg =
   'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728805407561_0d689efb-7da9-461f-987a-6996c392361d_%E1%84%89%E1%85%AE%E1%84%8C%E1%85%A5%E1%86%BC.svg'
@@ -34,6 +45,10 @@ const isFlipped = ref(false)
 const flipCard = () => {
   isFlipped.value = !isFlipped.value
   emit('flipped')
+}
+
+const goWikiDetail = () => {
+  router.push(`/wiki/${props.recipeId}`)
 }
 </script>
 
@@ -57,7 +72,7 @@ const flipCard = () => {
   backface-visibility: hidden;
   box-shadow: 0.5rem 0.5rem 0.3rem 0rem rgba(60, 60, 60, 0.5);
   border-radius: 1.8rem;
-  transition: 0.8s ease;
+  transition: transform 0.8s ease, box-shadow 0.2s ease;
   transform-style: preserve-3d;
 }
 
@@ -85,7 +100,6 @@ const flipCard = () => {
 }
 
 .result-board.flipped .back {
-  display: flex;
   transform: rotateY(360deg);
 }
 
@@ -94,8 +108,26 @@ const flipCard = () => {
   box-shadow: 0.5rem 0.5rem 0.3rem 0.2rem rgba(60, 60, 60, 0.5);
 }
 
-.result-board span {
+.result-board .menu-name {
   font-size: 4rem;
+}
+
+.go-wiki-detail-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6rem;
+  background-color: transparent;
+  border: none;
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 2.5rem;
+  color: var(--red-color);
+  cursor: pointer;
+}
+
+.go-wiki-detail-btn i {
+  font-size: 1.8rem;
 }
 
 /* 데스크탑 */
@@ -131,8 +163,16 @@ const flipCard = () => {
     height: 18rem;
   }
 
-  .result-board span {
+  .result-board .menu-name {
     font-size: 3.3rem;
+  }
+
+  .go-wiki-detail-btn {
+    font-size: 1.65rem;
+  }
+
+  .go-wiki-detail-btn i {
+    font-size: 1.52rem;
   }
 }
 
@@ -146,8 +186,16 @@ const flipCard = () => {
     height: 16rem;
   }
 
-  .result-board span {
+  .result-board .menu-name {
     font-size: 3.2rem;
+  }
+
+  .go-wiki-detail-btn {
+    font-size: 1.6rem;
+  }
+
+  .go-wiki-detail-btn i {
+    font-size: 1.5rem;
   }
 }
 @media screen and (max-width: 320px) {
@@ -160,8 +208,16 @@ const flipCard = () => {
     height: 14rem;
   }
 
-  .result-board span {
+  .result-board .menu-name {
     font-size: 3rem;
+  }
+
+  .go-wiki-detail-btn {
+    font-size: 1.5rem;
+  }
+
+  .go-wiki-detail-btn i {
+    font-size: 1.45rem;
   }
 }
 </style>

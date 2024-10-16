@@ -8,6 +8,7 @@ import com.avengers.yoribogo.recipe.repository.AIRecipeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AIRecipeServiceImpl implements AIRecipeService {
@@ -24,6 +25,7 @@ public class AIRecipeServiceImpl implements AIRecipeService {
 
     // AI 요리 레시피 등록
     @Override
+    @Transactional
     public AIRecipeDTO registAIRecipe(AIRecipeDTO aiRecipeDTO) {
         AIRecipe aiRecipe = modelMapper.map(aiRecipeDTO, AIRecipe.class);
         aiRecipe.setAiMenuName(aiRecipeDTO.getMenuName());
@@ -33,6 +35,7 @@ public class AIRecipeServiceImpl implements AIRecipeService {
 
     // AI 요리 레시피 수정
     @Override
+    @Transactional
     public AIRecipeDTO modifyAIRecipe(AIRecipeDTO aiRecipeDTO) {
         // 기존 엔티티 조회
         AIRecipe aiRecipe = aiRecipeRepository.findByRecipeId(aiRecipeDTO.getRecipeId());
