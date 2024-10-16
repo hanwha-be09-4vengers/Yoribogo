@@ -2,7 +2,7 @@
     <div class="modal-overlay">
       <div class="modal-content">
         <div class="modal-header">
-          <h2>휴먼 계정 안내</h2>
+          <h2>휴면 계정 안내</h2>
         </div>
         <div class="modal-body">
           <div class="message-container">

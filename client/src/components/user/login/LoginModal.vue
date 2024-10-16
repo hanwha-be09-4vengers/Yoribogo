@@ -69,7 +69,7 @@
   import axios from 'axios';
   import eyeOpenIcon from '@/assets/images/eye_open.png';
   import eyeClosedIcon from '@/assets/images/eye_closed.png';
-  import AccountReactivationModal from '@/components/top_nav/login/AccountReactivationModal.vue';
+  import AccountReactivationModal from '@/components/user/login/AccountReactivationModal.vue';
   
   // useRouter를 최상위 레벨에서 호출
   const router = useRouter();
@@ -197,16 +197,14 @@
   <style scoped>
   /* 스타일 동일하게 유지 */
   .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    position: absolute;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 99999;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
   }
   
   .modal-content {

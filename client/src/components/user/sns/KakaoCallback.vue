@@ -12,7 +12,7 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import ProfileOAuthModal from '@/components/top_nav/sns/ProfileOAuthModal.vue';
+import ProfileOAuthModal from '@/components/user/sns/ProfileOAuthModal.vue';
 import { useTokenStore } from '@/stores/tokenStore';  // Pinia 스토어에서 토큰 관리
 
 const router = useRouter();

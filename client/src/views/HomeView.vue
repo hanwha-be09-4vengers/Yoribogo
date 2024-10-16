@@ -3,7 +3,7 @@
     <img class="bg-circle" src="/src/assets/Intersect.png" alt="Background Circle" />
     <img class="chicken" src="/src/assets/chicken.png" alt="Chicken" />
     <header>
-      <HomeNav></HomeNav>
+      <HomeNav @open-login-modal="openLoginModal"></HomeNav>
     </header>
     <main>
       <section id="start-section" class="start-section">
@@ -17,15 +17,35 @@
         <button id="start-btn" class="start-btn" @click="goQuestion">시작하기</button>
       </section>
     </main>
+    <LoginModal
+      v-if="isLoginModalVisible"
+      @close="closeLoginModal"
+      @goToStep1="openRegisterModal"
+      @openPasswordReset="openPasswordResetModal"
+      @openFindId="openFindIdModal"
+    />
   </div>
 </template>
 
 <script setup>
-
-import HomeNav from '@/components/top_nav/HomeNav.vue'
+import LoginModal from '@/components/user/login/LoginModal.vue';
+import HomeNav from '@/components/user/HomeNav.vue'
 import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 
 const router = useRouter()
+
+const isLoginModalVisible = ref(true); // 로그인 모달 상태
+
+// 로그인 모달 열기
+const openLoginModal = () => {
+  isLoginModalVisible.value = true; // 로그인 모달 열기
+};
+
+// 로그인 모달 닫기
+const closeLoginModal = () => {
+  isLoginModalVisible.value = false; // 로그인 모달 닫기
+};
 
 const goQuestion = () => {
   router.push('/question/1')
