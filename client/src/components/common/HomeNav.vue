@@ -1,7 +1,7 @@
 <template>
   <nav id="main-nav" class="main-nav">
     <div id="logo" class="logo">
-      <img src="../assets/logo.svg" alt="Logo" />
+      <img src="/src/assets/logo.svg" alt="Logo" />
       <span>Yoribogo</span>
     </div>
     <ul class="menu">

@@ -1,7 +1,5 @@
 <template>
   <div class="question-view">
-    <ProfileButton></ProfileButton>
-    <HomeButton></HomeButton>
     <header>
       <QuestionNav :questions="questions"></QuestionNav>
     </header>
@@ -11,33 +9,41 @@
           <span>{{ questions[qid - 1].label }}</span>
         </div>
         <div class="card-board-container" v-if="qid < 5">
-          <CardBoard
+          <ChoiceBoard
             :img="questions[qid - 1].leftImg"
             :text="questions[qid - 1].leftText"
             @click="goNext(questions[qid - 1].leftText, qid + 1)"
           >
-          </CardBoard>
-          <CardBoard
+          </ChoiceBoard>
+          <ChoiceBoard
             :img="questions[qid - 1].rightImg"
             :text="questions[qid - 1].rightText"
             @click="goNext(questions[qid - 1].rightText, qid + 1)"
           >
-          </CardBoard>
+          </ChoiceBoard>
         </div>
-        <div class="input-container" v-if="qid === 5">
-          <input type="text" placeholder="답변:" v-model="inputText" />
-          <button class="submit-btn" @click="goNext(null, qid + 1)">추천 결과 보기</button>
-        </div>
+        <form 
+          class="input-container" 
+          v-if="qid === 5"
+           @submit.prevent="goNext(null, qid + 1)"
+        >
+          <input id="extra-input" type="text" placeholder="답변:" v-model="inputText" />
+          <button class="submit-btn">추천 결과 보기</button>
+        </form>
       </div>
     </main>
+    <aside>
+      <ProfileButton></ProfileButton>
+      <HomeButton></HomeButton>
+    </aside>
   </div>
 </template>
 
 <script setup>
-import QuestionNav from '../components/QuestionNav.vue'
-import CardBoard from '../components/CardBoard.vue'
-import HomeButton from '@/components/HomeButton.vue'
-import ProfileButton from '@/components/ProfileButton.vue'
+import QuestionNav from '../components/recommend/QuestionNav.vue'
+import ChoiceBoard from '../components/recommend/ChoiceBoard.vue'
+import HomeButton from '@/components/common/HomeButton.vue'
+import ProfileButton from '@/components/common/ProfileButton.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ref, watch } from 'vue'
 

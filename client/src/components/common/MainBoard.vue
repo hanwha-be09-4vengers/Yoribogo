@@ -1,6 +1,6 @@
 <template>
-  <div class="main-board">
-    <div class="menu-container">
+  <main class="main-board">
+    <section class="menu-container">
       <MenuTab
         class="bg-pink"
         :class="{ cur: activeTab === 'wiki' }"
@@ -22,17 +22,17 @@
         @click="goActiveTab('mypage')"
         >마이페이지</MenuTab
       >
-    </div>
-    <div class="board">
+    </section>
+    <section class="board">
       <slot></slot>
-    </div>
-  </div>
+    </section>
+  </main>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import MenuTab from '@/components/MenuTab.vue'
+import MenuTab from '@/components/common/MenuTab.vue'
 
 const props = defineProps({
   cur: {
@@ -59,7 +59,7 @@ const goActiveTab = (tab) => {
   width: 72%;
   min-width: 20rem;
   min-height: 65rem;
-  margin-top: 17rem;
+  margin-top: 9rem;
   margin-bottom: 4rem;
 }
 
