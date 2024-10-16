@@ -31,7 +31,7 @@
   
   const reactivateUser = async () => {
     try {
-      const response = await axios.post('/user-service/api/users/activate', null, {
+      const response = await axios.post('/api/users/activate', null, {
         params: {
           userAuthId: props.userAuthId,
         },

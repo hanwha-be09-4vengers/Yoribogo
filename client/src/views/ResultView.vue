@@ -26,7 +26,7 @@
 import ResultNav from '../components/ResultNav.vue'
 import ResultBoard from '../components/ResultBoard.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
-import HomeButton from '@/components/HomeButton.vue'
+import HomeButton from '@/components/top_nav/HomeButton.vue'
 import ProfileButton from '@/components/ProfileButton.vue'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'

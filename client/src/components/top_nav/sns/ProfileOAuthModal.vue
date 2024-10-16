@@ -64,9 +64,10 @@
   const nicknameError = ref('');
   const isNicknameAvailable = ref(false);
   const nicknameDuplicationStatus = ref('');
-  
+
   // 닉네임만 입력되어야 완료 버튼이 활성화됨
-  const canComplete = computed(() => nickname.value !== '' && isNicknameAvailable.value);
+  const canComplete = computed(
+    () => nickname.value !== '' && isNicknameAvailable.value);
   
   // 라우터 사용
   const router = useRouter();
@@ -95,7 +96,7 @@ const checkNicknameDuplication = async () => {
   }
 
   try {
-    const response = await axios.post('/user-service/api/users/nickname/validate', { nickname: nickname.value });
+    const response = await axios.post('/api/users/nickname/validate', { nickname: nickname.value });
     console.log('닉네임 중복 검증 응답',response); // 응답 구조 확인
     if (response.data.success) {
   
@@ -131,7 +132,7 @@ const checkNicknameDuplication = async () => {
         formData.append('profile_image', profilePicture.value);
       }
   
-      const response = await axios.patch(`/user-service/api/users/${token.userId}/profile`, formData, {
+      const response = await axios.patch(`/api/users/${token.userId}/profile`, formData, {
         headers: { Authorization: `Bearer ${token.accessToken}` }
       });
   

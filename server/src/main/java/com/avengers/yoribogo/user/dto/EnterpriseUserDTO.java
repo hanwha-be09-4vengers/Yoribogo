@@ -1,5 +1,4 @@
 package com.avengers.yoribogo.user.dto;
-
 import com.avengers.yoribogo.user.domain.enums.AcceptStatus;
 import com.avengers.yoribogo.user.domain.enums.ActiveStatus;
 import com.avengers.yoribogo.user.domain.enums.SignupPath;
@@ -10,7 +9,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class UserDTO {
+public class EnterpriseUserDTO {
 
     @JsonProperty("user_id")
     private Long userId;
@@ -49,15 +48,14 @@ public class UserDTO {
     private SignupPath signupPath;
 
     @JsonProperty("user_role")
-    private UserRole userRole;
+    private UserRole userRole = UserRole.ENTERPRISE; // 기본값은 일반 회원
 
     @JsonProperty("user_likes")
-    private Long userLikes;
+    private Long userLikes = 0L; // 기본값 0
 
     @JsonProperty("tier_id")
-    private Long tierId ;
+    private Long tierId = 1L; // 기본값 1
 
     @JsonProperty("user_identifier")
     private String userIdentifier;
 }
-

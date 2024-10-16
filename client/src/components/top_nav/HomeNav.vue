@@ -1,9 +1,10 @@
 <template>
   <nav id="main-nav" class="main-nav">
-    <div id="logo" class="logo">
-      <img src="../assets/logo.svg" alt="Logo" />
+    <div id="logo" class="logo" @click="goHome">
+      <img src="https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/128icon.jpg" alt="Logo" />
       <span>Yoribogo</span>
     </div>
+    
     <ul class="menu">
       <li class="search-recipe" @click="goWiki">
         <div class="search-bar">
@@ -11,108 +12,82 @@
           <i class="fa-solid fa-magnifying-glass"></i>
         </div>
       </li>
-      <li class="signup">회원가입</li>
-      <li class="login" @click="openLoginModal">로그인</li>
+
+      <!-- 로그인 상태에 따라 다른 UI 표시 -->
+      <li v-if="isLoggedIn" @click="logout">로그아웃</li>
+      <li v-if="isLoggedIn" @click="toggleProfileDropdown">프로필</li>
+      <li v-else class="signup">회원가입</li>
+      <li v-else class="login" @click="openLoginModal">로그인</li>
     </ul>
-  </nav>
-
-
+    
     <!-- 로그인 모달 창 -->
-	  <LoginModal
+    <LoginModal
       v-if="isLoginModalVisible"
       @close="closeLoginModal"
       @goToStep1="openRegisterModal"
       @openPasswordReset="openPasswordResetModal"
-      @openFindId="openFindIdModal" 
-	  />
+      @openFindId="openFindIdModal"
+    />
+  </nav>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-import { ref, inject, watch } from 'vue';
+import { ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { useTokenStore } from '@/stores/tokenStore'; // Pinia 스토어 임포트
 import LoginModal from '@/components/top_nav/login/LoginModal.vue';
 
-const router = useRouter()
+const router = useRouter();
+const tokenStore = useTokenStore(); // Pinia 스토어 사용
 
+const isLoggedIn = ref(false); // 로그인 상태
+const isLoginModalVisible = ref(false); // 로그인 모달 상태
+const isDropdownVisible = ref(false); // 드롭다운 메뉴 상태
 
-  // 사용자 정보 및 로그인 상태 주입받기
-  const token = inject('token');
-  const setTokenData = inject('setTokenData');
-  
-  const isLoggedIn = ref(false); // 로그인 상태 확인
-  const isDropdownVisible = ref(false); // 드롭다운 메뉴 상태
+// 로그인 상태 확인
+const checkLoginStatus = () => {
+  isLoggedIn.value = !!tokenStore.token.accessToken; // accessToken이 존재하면 로그인 상태
+};
 
-  const isAccountReactivationModalVisible = ref(false);
-  const userAuthId = ref('');
-
-  // 로그인 상태 확인
-  const checkLoginStatus = () => {
-	  isLoggedIn.value = !!token.accessToken; // accessToken이 존재하면 로그인된 것으로 간주
-  };
-  
-
-    // 로그인 상태 변화 감시
-    watch(
-      () => token.accessToken,
-      () => {
-        checkLoginStatus(); // accessToken 변경 시 로그인 상태 확인
-      },
-      { immediate: true }
-  );
-
+// 로그인 상태 변화 감시
+watch(
+  () => tokenStore.token.accessToken,
+  () => {
+    checkLoginStatus(); // accessToken 변경 시 로그인 상태 확인
+  },
+  { immediate: true } // 초기에도 바로 실행
+);
 
 // 로그아웃 처리
 const logout = () => {
-	// 토큰과 사용자 정보를 초기화
-	setTokenData({
-	  user_identifier: null,
-	  access_token: null,
-	  access_token_expiry: null,
-	  refresh_token: null,
-	  refresh_token_expiry: null,
-	});
-  
-	// localStorage 초기화
-	localStorage.removeItem('token');
-	localStorage.removeItem('userId');
-	localStorage.removeItem('groupData');
-  
-	// 로그인 상태 갱신
-	isLoggedIn.value = false;
-  
-	// 로그아웃 후 홈으로 이동
-	router.push('/');
-  };
+  tokenStore.logout(); // Pinia 스토어의 로그아웃 함수 호출
+  router.push('/'); // 로그아웃 후 홈으로 이동
+};
 
-  // 모달 상태 변수
-  const isLoginModalVisible = ref(false);
-  const isRegisterModalVisible = ref(false);
-  const currentSignupStep = ref(1); // 회원가입 단계를 1로 초기화
-  const isPrivacyPolicyModalVisible = ref(false); // 개인정보 처리방침 모달 상태
+// 로그인 모달 열기
+const openLoginModal = () => {
+  isLoginModalVisible.value = true; // 로그인 모달 열기
+};
 
-    // 로그인 모달 열기
-    const openLoginModal = () => {
-    isLoginModalVisible.value = true; // 로그인 모달 열기
-    isRegisterModalVisible.value = false; // 회원가입 모달 닫기
-    };
-    
-    // 로그인 모달 닫기
-    const closeLoginModal = () => {
-    isLoginModalVisible.value = false; // 로그인 모달 닫기
-    };
+// 로그인 모달 닫기
+const closeLoginModal = () => {
+  isLoginModalVisible.value = false; // 로그인 모달 닫기
+};
 
-    // 드롭다운 메뉴 외부 클릭 시 닫기
-    document.addEventListener('click', (event) => {
-      const dropdownElement = document.querySelector('.user-profile');
-      if (dropdownElement && !dropdownElement.contains(event.target)) {
-        isDropdownVisible.value = false;
-      }
-    });
+// 프로필 드롭다운 메뉴 토글
+const toggleProfileDropdown = () => {
+  isDropdownVisible.value = !isDropdownVisible.value;
+};
 
-    //위키로 가기
-    const goWiki = () => {
-      router.push('/wiki')
-    }
+// 위키 페이지로 이동
+const goWiki = () => {
+  router.push('/wiki');
+};
+
+// 로고 클릭 시 홈으로 이동
+const goHome = () => {
+  router.push('/');
+};
 </script>
 
 <style scoped>

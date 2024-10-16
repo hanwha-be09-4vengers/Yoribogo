@@ -134,7 +134,7 @@
     }
   
     try {
-      const response = await axios.post('/user-service/login', {
+      const response = await axios.post('/login', {
         user_auth_id: username.value,
         password: password.value,
         signup_path: 'NORMAL',

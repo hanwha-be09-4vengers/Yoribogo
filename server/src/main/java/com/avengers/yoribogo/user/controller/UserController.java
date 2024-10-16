@@ -3,10 +3,15 @@ package com.avengers.yoribogo.user.controller;
 import com.avengers.yoribogo.common.ResponseDTO;
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
+import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.domain.enums.SignupPath;
 import com.avengers.yoribogo.user.domain.vo.email.EmailVerificationSignupVO;
 import com.avengers.yoribogo.user.domain.vo.email.EmailVerificationVO;
 import com.avengers.yoribogo.user.domain.vo.email.ResponseEmailMessageVO;
+import com.avengers.yoribogo.user.domain.vo.kakao.KakaoAuthorizationCode;
+import com.avengers.yoribogo.user.domain.vo.login.AuthTokens;
+import com.avengers.yoribogo.user.domain.vo.login.ResponseOAuthLoginVO;
+import com.avengers.yoribogo.user.domain.vo.naver.NaverAuthorizationCode;
 import com.avengers.yoribogo.user.dto.UserDTO;
 import com.avengers.yoribogo.user.dto.email.EmailVerificationUserIdRequestDTO;
 import com.avengers.yoribogo.user.dto.email.EmailVerificationUserPasswordRequestDTO;
@@ -18,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @RestController("userCommandController")
 @RequestMapping("/api/users")
@@ -106,5 +113,67 @@ public class UserController {
             return ResponseDTO.fail(new CommonException(ErrorCode.INVALID_VERIFICATION_CODE));
         }
     }
+
+    //설명. 3. 카카오 로그인, 네이버 로그인
+    // 설명. 3.1 카카오 로그인
+    @PostMapping("/oauth2/kakao")
+    public ResponseDTO<ResponseOAuthLoginVO> loginWithKakao(@RequestBody KakaoAuthorizationCode code) {
+        AuthTokens tokens = oAuth2LoginService.loginWithKakao(code.getCode());
+
+        // 응답 본문에 필요한 정보 포함
+        ResponseOAuthLoginVO loginResponseVO = new ResponseOAuthLoginVO(
+                tokens.getAccessToken(),
+                new Date(tokens.getAccessTokenExpiry()),
+                tokens.getRefreshToken(),
+                new Date(tokens.getRefreshTokenExpiry()),
+                tokens.getUserIdentifier()
+
+        );
+
+        return ResponseDTO.ok(loginResponseVO);
+    }
+
+    // 설명. 3.2 네이버 로그인
+    @PostMapping("/oauth2/naver")
+    public ResponseDTO<ResponseOAuthLoginVO> loginWithNaver(@RequestBody NaverAuthorizationCode code) {
+        AuthTokens tokens = oAuth2LoginService.loginWithNaver(code);
+
+        // 응답 본문에 필요한 정보 포함
+        ResponseOAuthLoginVO loginResponseVO = new ResponseOAuthLoginVO(
+                tokens.getAccessToken(),
+                new Date(tokens.getAccessTokenExpiry()),
+                tokens.getRefreshToken(),
+                new Date(tokens.getRefreshTokenExpiry()),
+                tokens.getUserIdentifier()
+        );
+
+        return ResponseDTO.ok(loginResponseVO);
+    }
+    // 설명. 4 사용자 정보 조회
+
+
+    // 설명. 사용자 식별자(userIdentifier)로 조회한 후 UserDTO로 변환하여 반환
+    @GetMapping("/identifier")
+    public ResponseDTO<UserDTO> getUserByUserIdentifier(@RequestParam("user_identifier") String userIdentifier) {
+        UserEntity userEntity = userService.findByUserIdentifier(userIdentifier);
+
+        // UserEntity를 UserDTO로 변환
+        UserDTO userDTO = modelMapper.map(userEntity, UserDTO.class);
+
+        return ResponseDTO.ok(userDTO);
+    }
+
+    // 리프레시 토큰으로 액세스 토큰 재발급
+//    @PostMapping("/refresh")
+//    public ResponseEntity<?> refreshAccessToken(@RequestBody TokenRefreshRequest request) {
+//        String requestRefreshToken = request.getRefreshToken();
+//
+//        if (tokenProvider.validateRefreshToken(requestRefreshToken)) {
+//            String newAccessToken = tokenProvider.generateAccessTokenFromRefreshToken(requestRefreshToken);
+//            return ResponseEntity.ok(new JwtResponse(newAccessToken, requestRefreshToken));
+//        } else {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid refresh token");
+//        }
+//    }
 
 }

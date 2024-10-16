@@ -1,56 +1,58 @@
 <template>
-    <div>
-      <p v-if="loading">카카오 로그인 중입니다...</p>
-      <p v-if="error">{{ error }}</p>
-      
-       <!-- 닉네임이 없을 경우 프로필 설정 모달 표시 -->
-    <ProfileOAuthModal v-if="showProfileModal" @close="closeProfileModal" />
-    </div>
-  </template>
-  
-  <script setup>
-  import { onMounted, ref, inject } from 'vue';
-  import { useRouter } from 'vue-router';
-  import axios from 'axios';
-  import ProfileOAuthModal from '@/components/top_nav/login/ProfileOAuthModal.vue';
-  
-  // 상위 컴포넌트(App.vue)에서 제공된 토큰 저장 함수 가져오기
-  const setTokenData = inject('setTokenData');
-  const router = useRouter();
-  const loading = ref(true);
-  const error = ref('');
-  const showProfileModal = ref(false); // 프로필 모달 표시 여부
+  <div>
+    <p v-if="loading">카카오 로그인 중입니다...</p>
+    <p v-if="error">{{ error }}</p>
 
-  // Kakao에서 전달받은 `code`를 서버로 전달하여 토큰 및 사용자 정보 받기
+    <!-- 닉네임이 없을 경우 프로필 설정 모달 표시 -->
+    <ProfileOAuthModal v-if="showProfileModal" @close="closeProfileModal" />
+  </div>
+</template>
+
+<script setup>
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+import ProfileOAuthModal from '@/components/top_nav/sns/ProfileOAuthModal.vue';
+import { useTokenStore } from '@/stores/tokenStore';  // Pinia 스토어에서 토큰 관리
+
+const router = useRouter();
+const tokenStore = useTokenStore();  // Pinia 스토어 사용
+
+const loading = ref(true);
+const error = ref('');
+const showProfileModal = ref(false);  // 프로필 모달 표시 여부
+
+// Kakao에서 전달받은 `code`를 서버로 전달하여 토큰 및 사용자 정보 받기
 const handleKakaoCallback = async () => {
   const code = router.currentRoute.value.query.code;
 
   if (code) {
     try {
-      const response = await axios.post('http://localhost:8080/api/users/oauth2/kakao', { code });
+      // 서버로 로그인 요청을 보내서 토큰을 받아옴
+      const response = await axios.post('/api/users/oauth2/kakao', { code });
 
       if (response.data.success) {
         const tokenData = response.data.data;
         console.log('카카오 로그인 성공 후 받은 토큰:', tokenData);
 
-        await setTokenData(tokenData);
-
-       // 올바른 user_identifier로 사용자 정보 조회
-       const userProfileResponse = await axios.get(`/api/users/identifier`, {
+        // 사용자 프로필 조회
+        const userProfileResponse = await axios.get(`/api/users/identifier`, {
           params: { user_identifier: tokenData.user_identifier },
-          headers: { Authorization: `Bearer ${tokenData.access_token}` }
+          headers: { Authorization: `Bearer ${tokenData.access_token}` },
         });
 
         // API 응답에서 userProfile을 안전하게 처리
         const userProfile = userProfileResponse?.data?.data || {};
-        
-        console.log('userProfile 정보: ',userProfile);
+        console.log('userProfile 정보:', userProfile);
 
-       if (!userProfile.nickname || userProfile.nickname === '') {
-          showProfileModal.value = true;  // 닉네임이 없는 경우 프로필 설정 모달 표시
-        } else {
-          router.push('/'); // 닉네임이 있으면 홈으로 리다이렉트
-        }
+        // user_id 포함한 토큰과 사용자 정보를 Pinia 스토어에 저장
+        await tokenStore.setTokenData({
+          ...tokenData,           // 기존의 토큰 데이터들 (access_token, refresh_token 등)
+          user_id: userProfile.user_id,  // 조회한 user_id 추가
+        });
+
+        // 프로필 설정 모달 또는 리다이렉트
+        router.push('/');
       } else {
         throw new Error(response.data.error || '카카오 로그인 실패');
       }
