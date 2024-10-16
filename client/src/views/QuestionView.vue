@@ -43,7 +43,7 @@
 
 import QuestionNav from '../components/recommend/QuestionNav.vue'
 import ChoiceBoard from '../components/recommend/ChoiceBoard.vue'
-import HomeButton from '@/components/top_nav/HomeButton.vue'
+import HomeButton from '@/components/common/HomeButton.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ref, watch } from 'vue'
