@@ -4,10 +4,7 @@ import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.recipeboard.domain.RecipeBoard;
 import com.avengers.yoribogo.recipeboard.domain.RecipeBoardFavorite;
-import com.avengers.yoribogo.recipeboard.dto.MyFavoriteBoardDTO;
-import com.avengers.yoribogo.recipeboard.dto.RecipeBoardDTO;
-import com.avengers.yoribogo.recipeboard.dto.RecipeBoardFavoriteDTO;
-import com.avengers.yoribogo.recipeboard.dto.ResponseFavoriteDTO;
+import com.avengers.yoribogo.recipeboard.dto.*;
 import com.avengers.yoribogo.recipeboard.repository.RecipeBoardFavoriteRepository;
 import com.avengers.yoribogo.recipeboard.repository.RecipeBoardRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -98,6 +95,13 @@ public class RecipeBoardFavoriteServiceImpl implements RecipeBoardFavoriteServic
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD));
 
         recipeBoardFavoriteRepository.delete(favorite);
+    }
+
+    @Override
+    public FavoriteStatusDTO getFavoriteStatus(Long userId, Long recipeBoardId) {
+
+        boolean isExists = recipeBoardFavoriteRepository.existsByUserIdAndRecipeBoard_RecipeBoardId(userId, recipeBoardId);
+        return new FavoriteStatusDTO(isExists);
     }
 
     //    @Override
