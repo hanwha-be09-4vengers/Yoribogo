@@ -1,10 +1,10 @@
 <template>
-  <div class="mypage-view">
+  <div class="qna-view">
     <header>
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
     </header>
-    <MainBoard :cur="'mypage'"></MainBoard>
+    <MainBoard :cur="'qna'"></MainBoard>
   </div>
 </template>
 
@@ -15,7 +15,7 @@ import ProfileButton from '@/components/common/ProfileButton.vue'
 </script>
 
 <style scoped>
-.mypage-view {
+.qna-view {
   position: relative;
   display: flex;
   flex-direction: column;

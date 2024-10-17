@@ -37,12 +37,6 @@ import ProfileButton from '@/components/common/ProfileButton.vue'
   right: 20rem;
 }
 
-@media screen and (max-width: 960px) {
-  .wiki-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 @media screen and (max-width: 480px) {
   .profile-btn {
     right: 10rem;
