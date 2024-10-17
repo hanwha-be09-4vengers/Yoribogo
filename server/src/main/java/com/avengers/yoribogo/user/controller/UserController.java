@@ -215,5 +215,16 @@ public class UserController {
         return ResponseDTO.ok(booleanResponseDTO);
     }
 
-
+    //필기. 9. 회원 탈퇴
+    @PatchMapping("/{userId}/deactivate")
+    public ResponseDTO<?> deactivateUser(@PathVariable("userId") Long userId) {
+        UserEntity userEntity = userService.deactivateUser(userId);
+        return ResponseDTO.ok(userEntity);
+    }
+    //필기. 10. 사용자 재활성화
+    @PostMapping("/activate")
+    public ResponseDTO<?> activateUser(@RequestParam("userAuthId") String userAuthId ) {
+        UserEntity userEntity = userService.activateUser(userAuthId);
+        return ResponseDTO.ok(userEntity);
+    }
 }
