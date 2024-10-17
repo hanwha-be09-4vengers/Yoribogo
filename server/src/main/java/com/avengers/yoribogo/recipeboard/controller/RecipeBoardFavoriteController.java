@@ -1,15 +1,11 @@
 package com.avengers.yoribogo.recipeboard.controller;
 
 import com.avengers.yoribogo.common.ResponseDTO;
-import com.avengers.yoribogo.recipeboard.dto.MyFavoriteBoardDTO;
-import com.avengers.yoribogo.recipeboard.dto.RecipeBoardDTO;
-import com.avengers.yoribogo.recipeboard.dto.RecipeBoardFavoriteDTO;
-import com.avengers.yoribogo.recipeboard.dto.ResponseFavoriteDTO;
+import com.avengers.yoribogo.recipeboard.dto.*;
 import com.avengers.yoribogo.recipeboard.service.RecipeBoardFavoriteService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -42,5 +38,13 @@ public class RecipeBoardFavoriteController {
         recipeBoardFavoriteService.removeFavorite(userId, recipeBoardId);
         return ResponseDTO.ok(null);
     }
+
+    @GetMapping("/users/{userId}/boards/{recipeBoardId}/status")
+    public ResponseDTO<?> getFavoriteStatus(@PathVariable("userId") Long userId,
+                                            @PathVariable("recipeBoardId") Long recipeBoardId) {
+        FavoriteStatusDTO favoriteStatusDTO = recipeBoardFavoriteService.getFavoriteStatus(userId, recipeBoardId);
+        return ResponseDTO.ok(favoriteStatusDTO);
+    }
+
 
 }

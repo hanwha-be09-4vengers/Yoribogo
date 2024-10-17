@@ -63,8 +63,9 @@ public class UserEntity {
     @Column(name = "user_likes")
     private Long userLikes;
 
-    @Column(name = "tier_id")
-    private Long tierId;
+    @ManyToOne
+    @JoinColumn(name = "tier_id", referencedColumnName = "tier_id")
+    private Tier tier;
 
     @Column(name = "user_identifier", nullable = false, unique = true, length = 511)
     private String userIdentifier; // signup_path + user_auth_id 조합으로 생성
