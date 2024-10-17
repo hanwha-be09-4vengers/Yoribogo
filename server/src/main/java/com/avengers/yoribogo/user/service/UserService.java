@@ -13,6 +13,7 @@ import com.avengers.yoribogo.user.domain.enums.AcceptStatus;
 import com.avengers.yoribogo.user.domain.enums.ActiveStatus;
 import com.avengers.yoribogo.user.domain.enums.SignupPath;
 import com.avengers.yoribogo.user.domain.enums.UserRole;
+import com.avengers.yoribogo.user.domain.vo.signup.RequestResistAdminUserVO;
 import com.avengers.yoribogo.user.domain.vo.signup.RequestResistEnterpriseUserVO;
 import com.avengers.yoribogo.user.dto.UserDTO;
 import com.avengers.yoribogo.user.dto.profile.RequestUpdateUserDTO;
@@ -35,12 +36,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -195,6 +191,58 @@ public class UserService implements UserDetailsService {
         return modelMapper.map(savedEntity, UserDTO.class);
     }
 
+    /* 설명. 관리자 회원가입 메서드 */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public UserDTO registAdminUser(RequestResistAdminUserVO newUser) {
+
+        // 1. 동일한 UserIdentifier가 존재하는지 확인 (중복 검증)
+        userRepository.findByUserIdentifier("ADMIN_" + newUser.getUserAuthId())
+                .ifPresent(user -> {
+                    throw new CommonException(ErrorCode.EXIST_USER_ID);
+                });
+
+        // 2. 이메일 인증 여부 확인 (이메일이 있을 때만)
+        if (newUser.getEmail() != null && !newUser.getEmail().isEmpty()) {
+            String emailVerificationStatus = stringRedisTemplate.opsForValue().get(newUser.getEmail());
+            if (!"True".equals(emailVerificationStatus)) {
+                throw new CommonException(ErrorCode.EMAIL_VERIFICATION_REQUIRED);
+            }
+        }
+
+        // 3. 관리자 기본 프로필 이미지 설정 (추후 S3로 교체 가능)
+        String defaultProfileImageUrl = "https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/admin_default_profile.png";
+
+        // 4. UserDTO 생성
+        UserDTO newUserDTO = UserDTO.builder()
+                .userAuthId(newUser.getUserAuthId())
+                .userName(newUser.getUserName())
+                .email(newUser.getEmail())
+                .signupPath(SignupPath.ADMIN)
+                .createdAt(LocalDateTime.now().withNano(0))
+                .acceptStatus(AcceptStatus.Y)
+                .userStatus(ActiveStatus.ACTIVE)
+                .profileImage(defaultProfileImageUrl)
+                .userIdentifier("ADMIN_" + newUser.getUserAuthId())  // user_identifier 생성
+                .userRole(UserRole.ADMIN)  // 일반 사용자로 설정
+                .build();
+
+        // 5. DTO -> Entity 변환
+        UserEntity userEntity = modelMapper.map(newUserDTO, UserEntity.class);
+
+        // 6. 비밀번호 암호화
+        userEntity.setEncryptedPwd(bCryptPasswordEncoder.encode(newUser.getPassword()));
+
+        // 7. Entity 저장 후 반환된 Entity 가져오기
+        UserEntity savedEntity = userRepository.save(userEntity);
+
+        // 8. 회원가입 성공 후 Redis에서 이메일 인증 키 삭제
+        if (newUser.getEmail() != null && !newUser.getEmail().isEmpty()) {
+            stringRedisTemplate.delete(newUser.getEmail());
+        }
+
+        // 10. 저장된 Entity를 DTO로 변환하여 반환
+        return modelMapper.map(savedEntity, UserDTO.class);
+    }
 
     // 설명. 닉네임 중복 여부 확인
     public BooleanResponseDTO getUserByNicknameForDuplicate(String nickname) {
@@ -303,7 +351,6 @@ public class UserService implements UserDetailsService {
 
         String imageUrl = null;
 
-
         // 닉네임 중복 검증(null이 아니고 기존과 같지 않은 경우에)
         if (userUpdateDTO.getNickname() != null ) {
 
@@ -399,7 +446,5 @@ public class UserService implements UserDetailsService {
             throw new CommonException(ErrorCode.FILE_UPLOAD_ERROR);
         }
     }
-
-
 
 }
