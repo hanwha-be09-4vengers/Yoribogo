@@ -4,12 +4,13 @@ import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.DeleteLikeInMongoEvent;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.InsertLikeToMongoEvent;
-import com.avengers.yoribogo.recipeboard.recipeboard.dto.RecipeBoardEntity;
-import com.avengers.yoribogo.recipeboard.recipeboard.repository.RecipeBoardRepository;
+import com.avengers.yoribogo.recipeboard.domain.RecipeBoard;
+import com.avengers.yoribogo.recipeboard.recipeboardlike.dto.RecipeBoardLikeEntity;
 import com.avengers.yoribogo.recipeboard.recipeboardlike.Repository.RecipeBoardLikeRepository;
 import com.avengers.yoribogo.recipeboard.recipeboardlike.dto.LikeRequestDTO;
-import com.avengers.yoribogo.recipeboard.recipeboardlike.dto.RecipeBoardLikeEntity;
-import com.avengers.yoribogo.user.dto.UserEntity;
+
+import com.avengers.yoribogo.recipeboard.repository.RecipeBoardRepository;
+import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -45,10 +46,11 @@ public class RecipeBoardLikeService {
         // 2. 유저와 게시글 정보 조회
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
-        RecipeBoardEntity recipeBoard = recipeBoardRepository.findById(postId)
+        RecipeBoard recipeBoard = recipeBoardRepository.findById(postId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECIPE));
 
-        UserEntity postAuthor = recipeBoard.getUser();  // 게시글 작성자
+        long postAuthorId = recipeBoard.getUserId();  // 게시글 작성자
+        UserEntity postAuthor = new UserEntity();
 
         if (existingLike != null) {
             // 3. 좋아요가 이미 눌러져 있는 경우 -> 좋아요 취소 로직
@@ -59,13 +61,16 @@ public class RecipeBoardLikeService {
 
         } else {
             // 4. 좋아요가 눌러져 있지 않은 경우 -> 좋아요 추가 로직
+            recipeBoard.setRecipeBoardLikes(recipeBoard.getRecipeBoardLikes() + 1);  // 게시글의 좋아요 수 +1
+
+            postAuthor.setUserId(postAuthorId);
+            postAuthor.setUserLikes(postAuthor.getUserLikes() + 1);  // 게시글 작성자의 좋아요 수 +1
+
             RecipeBoardLikeEntity newLike = new RecipeBoardLikeEntity();
             newLike.setUser(user);
-            newLike.setRecipeBoard(recipeBoard);
+            newLike.setRecipeBoard(existingLike.getRecipeBoard());
             newLike.setLikeCreatedAt(LocalDateTime.now());
             recipeBoardLikeRepository.save(newLike);  // 좋아요 엔티티 저장
-            recipeBoard.setRecipeBoardLikes(recipeBoard.getRecipeBoardLikes() + 1);  // 게시글의 좋아요 수 +1
-            postAuthor.setUserLikes(postAuthor.getUserLikes() + 1);  // 게시글 작성자의 좋아요 수 +1
         }
 
         // 5. 변경된 게시글, 유저 정보 저장

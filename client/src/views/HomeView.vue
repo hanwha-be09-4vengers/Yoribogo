@@ -77,18 +77,6 @@ const likePost = async () => {
   }
 }
 
-// SSE 연결 코드
-console.log("eventsource 연결 전");
-const eventSource = new EventSource('http://localhost:8080/notifications');
-console.log("eventsource 연결 후");
-
-eventSource.onmessage = function(event) {
-    console.log('알림:', event.data);
-};
-
-eventSource.addEventListener('notification', function(event) {
-    console.log('이벤트 알림:', event.data);
-});
 
 
 </script>

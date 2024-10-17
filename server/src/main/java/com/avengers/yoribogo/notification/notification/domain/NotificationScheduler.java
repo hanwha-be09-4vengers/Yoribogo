@@ -27,6 +27,6 @@ public class NotificationScheduler {
         // 알림 보낼 때 알림에 레시피 이름이 들어가야 하므로 받은 레시피 ID 값을 이용 레시피 단건조회 API를 호출하여
 
         String message = "가장 많은 좋아요를 받은 레시피는: " + mostLikedRecipe.getMyRecipeId();
-        notificationService.sendNotification(message);  // SSE로 클라이언트에 전송
+        notificationService.sendNotificationToLoggedInUsers(message);  // SSE로 클라이언트에 전송
     }
 }

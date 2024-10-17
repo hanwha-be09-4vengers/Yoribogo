@@ -10,7 +10,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 @EnableScheduling  // 스케줄러 활성화
-@EnableMongoRepositories
 @EnableJpaRepositories
 public class ServerApplication {
 

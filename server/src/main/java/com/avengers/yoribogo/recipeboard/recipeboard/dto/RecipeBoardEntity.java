@@ -1,6 +1,6 @@
 package com.avengers.yoribogo.recipeboard.recipeboard.dto;
 
-import com.avengers.yoribogo.user.dto.UserEntity;
+import com.avengers.yoribogo.user.domain.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;

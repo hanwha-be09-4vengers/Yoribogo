@@ -1,4 +1,4 @@
-package com.avengers.yoribogo.recipeboard.domain;
+package com.avengers.yoribogo.recipeboard.recipeboardlike.dto;
 
 import com.avengers.yoribogo.recipeboard.recipeboard.dto.RecipeBoardEntity;
 import com.avengers.yoribogo.user.domain.UserEntity;
@@ -23,9 +23,9 @@ public class RecipeBoardLikeEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-
+    @ManyToOne
     @JoinColumn(name = "recipe_board_id")
-    private long recipeBoard;
+    private RecipeBoardEntity recipeBoard;
 
     public Long getRecipeBoardLikeId() {
         return recipeBoardLikeId;
@@ -39,7 +39,7 @@ public class RecipeBoardLikeEntity {
         return user;
     }
 
-    public long getRecipeBoard() {
+    public RecipeBoardEntity  getRecipeBoard() {
         return recipeBoard;
     }
 
@@ -55,7 +55,7 @@ public class RecipeBoardLikeEntity {
         this.user = user;
     }
 
-    public void setRecipeBoard(long recipeBoard) {
+    public void setRecipeBoard(RecipeBoardEntity  recipeBoard) {
         this.recipeBoard = recipeBoard;
     }
 }

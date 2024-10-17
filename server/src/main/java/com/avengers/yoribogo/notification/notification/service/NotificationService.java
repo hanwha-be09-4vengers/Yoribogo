@@ -23,7 +23,7 @@ public class NotificationService {
         // Authorization 헤더에서 "Bearer " 이후의 JWT 토큰 추출
         String token = authorizationHeader.replace("Bearer ", "");
 
-        // JWT 토큰에서 userAuthId를 추출하고 검증
+        // JWT 토큰에서 userAuthId를 추출
         String userAuthId = jwtUtil.getUserId(token);
 
         // 새로운 SseEmitter 생성 및 사용자와 매핑
@@ -39,14 +39,14 @@ public class NotificationService {
     }
 
     // 특정 사용자에게 알림을 전송하는 메소드
-    public void sendNotificationToUser(String userAuthId, String message) {
-        SseEmitter emitter = emitters.get(userAuthId);
-        if (emitter != null) {
+    public void sendNotificationToLoggedInUsers(String message) {
+        emitters.forEach((userAuthId, emitter) -> {
             try {
                 emitter.send(SseEmitter.event().name("notification").data(message));
             } catch (Exception e) {
                 emitters.remove(userAuthId);  // 실패 시 emitter 제거
+                // 에러 로깅
             }
-        }
+        });
     }
 }
