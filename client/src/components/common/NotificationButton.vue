@@ -56,7 +56,7 @@ const toggleMenu = () => {
   font-size: 3rem;
 }
 
-.profile-img-wrapper:hover {
+.notification-icon-wrapper:hover {
   transition: 0.3s ease;
   box-shadow: 0rem 0.4rem 0.4rem 0.1rem rgba(60, 60, 60, 0.5);
 }
