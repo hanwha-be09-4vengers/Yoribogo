@@ -18,6 +18,9 @@ import com.avengers.yoribogo.user.domain.vo.signup.RequestResistEnterpriseUserVO
 import com.avengers.yoribogo.user.dto.UserDTO;
 import com.avengers.yoribogo.user.dto.email.EmailVerificationUserIdRequestDTO;
 import com.avengers.yoribogo.user.dto.email.EmailVerificationUserPasswordRequestDTO;
+import com.avengers.yoribogo.user.dto.validate.BooleanResponseDTO;
+import com.avengers.yoribogo.user.dto.validate.RequestNicknameDTO;
+import com.avengers.yoribogo.user.dto.validate.RequestUserAuthIdentifierDTO;
 import com.avengers.yoribogo.user.service.EmailVerificationService;
 import com.avengers.yoribogo.user.service.OAuth2LoginService;
 import com.avengers.yoribogo.user.service.UserService;
@@ -197,5 +200,20 @@ public class UserController {
         // ResponseUserVO로 변환하는 대신 UserDTO를 직접 응답으로 사용
         return ResponseDTO.ok(savedUserDTO);
     }
+
+    /* 설명. 7. 닉네임 중복 검증  */
+    @PostMapping("/nickname/validate")
+    public ResponseDTO<BooleanResponseDTO> validateNickname(@RequestBody RequestNicknameDTO requestNicknameDTO) {
+        BooleanResponseDTO booleanResponseDTO= userService. getUserByNicknameForDuplicate(requestNicknameDTO.getNickname());
+        return ResponseDTO.ok(booleanResponseDTO);
+    }
+
+    /* 설명. 8. 아이디 중복 검증  */
+    @PostMapping("/user-id/validate")
+    public ResponseDTO<BooleanResponseDTO> getUserByUserIdentifier(@RequestBody RequestUserAuthIdentifierDTO requestUserIdentifierDTO) {
+        BooleanResponseDTO booleanResponseDTO = userService.getUserByUserAuthId(requestUserIdentifierDTO.getUserAuthId());
+        return ResponseDTO.ok(booleanResponseDTO);
+    }
+
 
 }

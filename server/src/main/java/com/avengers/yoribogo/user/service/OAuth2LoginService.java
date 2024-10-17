@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class OAuth2LoginService {
@@ -115,46 +116,52 @@ public class OAuth2LoginService {
 
     private UserEntity getOrCreateMember(String userIdentifier, String email, String realName, SignupPath provider) {
         // user_identifier를 기반으로 사용자 조회
-        UserEntity existingUser = userRepository.findByUserIdentifier(userIdentifier);
+        Optional<UserEntity> existingUserOpt = userRepository.findByUserIdentifier(userIdentifier);
 
-        if (existingUser != null) {
+        if (existingUserOpt.isPresent()) {
+            UserEntity existingUser = existingUserOpt.get();
+
             // 사용자가 이미 존재하는 경우, 역할이 ENTERPRISE 인지 확인
             if (existingUser.getUserRole() != UserRole.ENTERPRISE) {
                 throw new CommonException(ErrorCode.INVALID_ENTERPRISE_ROLE);
             }
+
+            // 존재하는 사용자를 반환
             return existingUser;
-        } else {
-            // 사용자 정보가 없으면 신규 회원 생성
-            UserEntity newUser = new UserEntity();
-            newUser.setUserIdentifier(userIdentifier);
-
-            // provider에 따른 userAuthId 설정
-            String userAuthId = userIdentifier.split("_")[1]; // KAKAO_id or NAVER_id 형식
-            newUser.setUserAuthId(userAuthId);
-
-            newUser.setEmail(email);
-            newUser.setUserName(realName);  // 실명
-            newUser.setSignupPath(provider); // 가입 경로
-            newUser.setUserStatus(ActiveStatus.ACTIVE);
-            newUser.setAcceptStatus(AcceptStatus.Y);
-            newUser.setCreatedAt(LocalDateTime.now().withNano(0));
-
-            // 신규 회원 생성 시 역할 부여
-            if (provider == SignupPath.KAKAO || provider == SignupPath.NAVER) {
-                newUser.setUserRole(UserRole.ENTERPRISE); // 일반 회원
-            } else {
-                newUser.setUserRole(UserRole.ADMIN); // 관리자일 경우
-            }
-
-            // 일반 회원일 경우에만 tierId와 userLikes 설정
-            if (newUser.getUserRole() == UserRole.ENTERPRISE) {
-                newUser.setTierId(1L); // 기본 티어 값 설정
-                newUser.setUserLikes(0L); // 기본 좋아요 값 설정
-            }
-
-            return userRepository.save(newUser);
         }
+
+        // 사용자 정보가 없으면 신규 회원 생성
+        UserEntity newUser = new UserEntity();
+        newUser.setUserIdentifier(userIdentifier);
+
+        // provider에 따른 userAuthId 설정
+        String userAuthId = userIdentifier.split("_")[1]; // KAKAO_id or NAVER_id 형식
+        newUser.setUserAuthId(userAuthId);
+
+        newUser.setEmail(email);
+        newUser.setUserName(realName);  // 실명
+        newUser.setSignupPath(provider); // 가입 경로
+        newUser.setUserStatus(ActiveStatus.ACTIVE);
+        newUser.setAcceptStatus(AcceptStatus.Y);
+        newUser.setCreatedAt(LocalDateTime.now().withNano(0));
+
+        // provider에 따라 역할 부여
+        if (provider == SignupPath.KAKAO || provider == SignupPath.NAVER) {
+            newUser.setUserRole(UserRole.ENTERPRISE); // 일반 회원
+        } else {
+            newUser.setUserRole(UserRole.ADMIN); // 관리자일 경우
+        }
+
+        // 일반 회원일 경우에만 tierId와 userLikes 설정
+        if (newUser.getUserRole() == UserRole.ENTERPRISE) {
+            newUser.setTierId(1L); // 기본 티어 값 설정
+            newUser.setUserLikes(0L); // 기본 좋아요 값 설정
+        }
+
+        // 새 사용자를 저장하고 반환
+        return userRepository.save(newUser);
     }
+
 
 
     private String getKakaoAccessToken(String authorizationCode, String redirectUri) {

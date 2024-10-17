@@ -10,6 +10,7 @@ import com.avengers.yoribogo.user.domain.enums.SignupPath;
 import com.avengers.yoribogo.user.domain.enums.UserRole;
 import com.avengers.yoribogo.user.domain.vo.signup.RequestResistEnterpriseUserVO;
 import com.avengers.yoribogo.user.dto.UserDTO;
+import com.avengers.yoribogo.user.dto.validate.BooleanResponseDTO;
 import com.avengers.yoribogo.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -64,48 +65,40 @@ public class UserService implements UserDetailsService {
 
     // 설명. 이름, 가입 구분, 이메일로 사용자 찾기
     public UserDTO findUserByUserNicknameAndSignupPathAndEmail(String nickname, SignupPath signupPath, String email) {
-        UserEntity userEntity = userRepository.findByNicknameAndSignupPathAndEmail(nickname, signupPath, email);
-        if (userEntity == null) {
-            throw new CommonException(ErrorCode.NOT_FOUND_USER);
-        }
+        UserEntity userEntity = userRepository.findByNicknameAndSignupPathAndEmail(nickname, signupPath, email)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+
         return modelMapper.map(userEntity, UserDTO.class);
     }
 
     // 설명. 아이디와 이메일로 사용자 찾기
     public UserDTO findUserByUserAuthIdAndEmail(String userAuthId, String email) {
-        UserEntity userEntity = userRepository.findByUserAuthIdAndEmail(userAuthId, email);
-        if (userEntity == null) {
-            throw new CommonException(ErrorCode.NOT_FOUND_USER);
-        }
+        UserEntity userEntity = userRepository.findByUserAuthIdAndEmail(userAuthId, email)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+
         return modelMapper.map(userEntity, UserDTO.class);
     }
 
+
     // 설명. 사용자 식별자( userIdentifier)로 조회
     public UserEntity findByUserIdentifier(String userIdentifier) {
-        UserEntity userEntity =userRepository.findByUserIdentifier(userIdentifier);
-        if (userEntity == null) {
-            throw new CommonException(ErrorCode.NOT_FOUND_USER);
-        }
-        return userEntity;
+        return userRepository.findByUserIdentifier(userIdentifier)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
     }
+
 
     // 설명. userAuthId로 사용자 조회
     public UserEntity findByUserAuthId(String userAuthId) {
-        UserEntity userEntity =userRepository.findByUserAuthId(userAuthId);
-        if (userEntity == null) {
-            throw new CommonException(ErrorCode.NOT_FOUND_USER);
-        }
-        return userEntity;
+        return userRepository.findByUserAuthId(userAuthId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
     }
 
     /* 설명. 로그인 시 security가 자동으로 호출하는 메소드 */
     @Override
     public UserDetails loadUserByUsername(String userAuthId) throws UsernameNotFoundException {
         // 1. userAuthId를 기준으로 사용자 조회
-        UserEntity loginUser = userRepository.findByUserAuthId(userAuthId);
-        if (loginUser == null) {
-            throw new CommonException(ErrorCode.NOT_FOUND_USER);
-        }
+        UserEntity loginUser = userRepository.findByUserAuthId(userAuthId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
 
         // 2. 비밀번호 처리 (소셜 로그인 시 비밀번호가 없을 경우 기본값 설정)
         String encryptedPwd = loginUser.getEncryptedPwd();
@@ -125,15 +118,15 @@ public class UserService implements UserDetailsService {
     }
 
 
-    /* 설명. 일반 회원가입 메서드  */
+    /* 설명. 일반 회원가입 메서드 */
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public synchronized UserDTO registUser(RequestResistEnterpriseUserVO newUser) {
+    public UserDTO registUser(RequestResistEnterpriseUserVO newUser) {
 
         // 1. 동일한 UserIdentifier가 존재하는지 확인 (중복 검증)
-        UserEntity existingUser = userRepository.findByUserIdentifier("NORMAL_" + newUser.getUserAuthId());
-        if (existingUser != null) {
-            throw new CommonException(ErrorCode.EXIST_USER_ID);
-        }
+        userRepository.findByUserIdentifier("NORMAL_" + newUser.getUserAuthId())
+                .ifPresent(user -> {
+                    throw new CommonException(ErrorCode.EXIST_USER_ID);
+                });
 
         // 2. 이메일 인증 여부 확인 (이메일이 있을 때만)
         if (newUser.getEmail() != null && !newUser.getEmail().isEmpty()) {
@@ -147,10 +140,11 @@ public class UserService implements UserDetailsService {
         if (newUser.getNickname() == null || newUser.getNickname().isEmpty()) {
             throw new CommonException(ErrorCode.INVALID_INPUT_NICKNAME);
         }
-        Optional<UserEntity> existingUserWithSameNickname = userRepository.findByNickname(newUser.getNickname());
-        if (existingUserWithSameNickname.isPresent()) {
-            throw new CommonException(ErrorCode.DUPLICATE_NICKNAME_EXISTS);
-        }
+
+        userRepository.findByNickname(newUser.getNickname())
+                .ifPresent(user -> {
+                    throw new CommonException(ErrorCode.DUPLICATE_NICKNAME_EXISTS);
+                });
 
         // 4. 기본 프로필 이미지 설정 (추후 S3로 교체 가능)
         String defaultProfileImageUrl = "https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/default_profile.png";
@@ -188,6 +182,19 @@ public class UserService implements UserDetailsService {
 
         // 10. 저장된 Entity를 DTO로 변환하여 반환
         return modelMapper.map(savedEntity, UserDTO.class);
+    }
+
+
+    // 설명. 닉네임 중복 여부 확인
+    public BooleanResponseDTO getUserByNicknameForDuplicate(String nickname) {
+        // 닉네임이 존재하는지 여부를 BooleanResponseDTO로 바로 매핑
+        return new BooleanResponseDTO(userRepository.findByNickname(nickname).isPresent());
+    }
+
+    // 설명. 사용자 인증 아이디 중복 여부 확인
+    public BooleanResponseDTO getUserByUserAuthId(String userAuthId) {
+        // 사용자 인증 아이디가 존재하는지 여부를 BooleanResponseDTO로 바로 매핑
+        return new BooleanResponseDTO(userRepository.findByUserAuthId(userAuthId).isPresent());
     }
 
 }
