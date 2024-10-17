@@ -1,8 +1,7 @@
 package com.avengers.yoribogo.recipeboard.recipeboardlike.Repository;
 
-import com.avengers.yoribogo.recipeboard.recipeboardlike.dto.RecipeBoardLikeEntity;
+import com.avengers.yoribogo.recipeboard.domain.RecipeBoardLikeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;

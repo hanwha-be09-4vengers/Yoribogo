@@ -1,7 +1,7 @@
-package com.avengers.yoribogo.recipeboard.recipeboardlike.dto;
+package com.avengers.yoribogo.recipeboard.domain;
 
 import com.avengers.yoribogo.recipeboard.recipeboard.dto.RecipeBoardEntity;
-import com.avengers.yoribogo.user.dto.UserEntity;
+import com.avengers.yoribogo.user.domain.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -23,9 +23,9 @@ public class RecipeBoardLikeEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @ManyToOne
+
     @JoinColumn(name = "recipe_board_id")
-    private RecipeBoardEntity recipeBoard;
+    private long recipeBoard;
 
     public Long getRecipeBoardLikeId() {
         return recipeBoardLikeId;
@@ -39,7 +39,7 @@ public class RecipeBoardLikeEntity {
         return user;
     }
 
-    public RecipeBoardEntity getRecipeBoard() {
+    public long getRecipeBoard() {
         return recipeBoard;
     }
 
@@ -55,7 +55,7 @@ public class RecipeBoardLikeEntity {
         this.user = user;
     }
 
-    public void setRecipeBoard(RecipeBoardEntity recipeBoard) {
+    public void setRecipeBoard(long recipeBoard) {
         this.recipeBoard = recipeBoard;
     }
 }
