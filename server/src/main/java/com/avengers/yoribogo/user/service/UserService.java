@@ -197,4 +197,34 @@ public class UserService implements UserDetailsService {
         return new BooleanResponseDTO(userRepository.findByUserAuthId(userAuthId).isPresent());
     }
 
+    /**
+     * 사용자 계정을 비활성화하는 메서드.
+     */
+    public UserEntity deactivateUser(Long userId) {
+        // Optional 처리 및 예외 발생
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+
+        // 사용자 상태를 비활성화(INACTIVE)로 변경
+        userEntity.deactivateUser();
+
+        // 변경된 상태를 저장하고 반환
+        return userRepository.save(userEntity);
+    }
+
+    /**
+     * 사용자 계정을 활성화하는 메서드.
+     */
+    public UserEntity activateUser(String userAuthId) {
+        // Optional 처리 및 예외 발생
+        UserEntity userEntity = userRepository.findByUserIdentifier("NORMAL_" + userAuthId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+
+        // 사용자 상태를 활성화(ACTIVE)로 변경
+        userEntity.activateUser();
+
+        // 변경된 상태를 저장하고 반환
+        return userRepository.save(userEntity);
+    }
+
 }
