@@ -100,6 +100,12 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
     }
 
+    // 설명. userAuthId로 사용자 조회
+    public UserEntity findByUserId(Long userId) {
+        return userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+    }
+
     /* 설명. 로그인 시 security가 자동으로 호출하는 메소드 */
     @Override
     public UserDetails loadUserByUsername(String userAuthId) throws UsernameNotFoundException {
