@@ -13,16 +13,16 @@ public interface UserRepository extends JpaRepository<UserEntity,Long> {
     @Query("SELECT COALESCE(MAX(u.userId), 0) FROM UserEntity u")
     Long findMaxUserId();
 
-    UserEntity findByUserIdentifier(String userIdentifier);
+    Optional<UserEntity> findByUserIdentifier(String userIdentifier);
 
     Optional<UserEntity> findByNickname(String nickname);
 
     // 이름, 가입 경로, 이메일로 사용자 찾기
-    UserEntity findByNicknameAndSignupPathAndEmail(String userName, SignupPath signupPath, String email);
+    Optional<UserEntity> findByNicknameAndSignupPathAndEmail(String userName, SignupPath signupPath, String email);
 
     // 아이디와 이메일로 사용자 찾기
-    UserEntity findByUserAuthIdAndEmail(String userAuthId, String email);
+    Optional<UserEntity> findByUserAuthIdAndEmail(String userAuthId, String email);
 
     // userAuthId로 사용자 조회
-    UserEntity findByUserAuthId(String userAuthId);
+    Optional<UserEntity> findByUserAuthId(String userAuthId);
 }
