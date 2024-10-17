@@ -30,6 +30,7 @@ public class AIRecipeServiceImpl implements AIRecipeService {
         AIRecipe aiRecipe = modelMapper.map(aiRecipeDTO, AIRecipe.class);
         aiRecipe.setAiMenuName(aiRecipeDTO.getMenuName());
         aiRecipe.setAiMenuIngredient(aiRecipeDTO.getMenuIngredient());
+        aiRecipe.setAiMenuImage(aiRecipeDTO.getMenuImage());
         return modelMapper.map(aiRecipeRepository.save(aiRecipe), AIRecipeDTO.class);
     }
 
@@ -46,6 +47,7 @@ public class AIRecipeServiceImpl implements AIRecipeService {
         // 변경된 정보 반영
         aiRecipe.setAiMenuName(aiRecipeDTO.getMenuName());
         aiRecipe.setAiMenuIngredient(aiRecipeDTO.getMenuIngredient());
+        aiRecipe.setAiMenuImage(aiRecipeDTO.getMenuImage());
 
         return modelMapper.map(aiRecipeRepository.save(aiRecipe), AIRecipeDTO.class);
     }
@@ -62,6 +64,7 @@ public class AIRecipeServiceImpl implements AIRecipeService {
                 .aiRecipeId(aiRecipe.getAiRecipeId())
                 .menuName(aiRecipe.getAiMenuName())
                 .menuIngredient(aiRecipe.getAiMenuIngredient())
+                .menuImage(aiRecipe.getAiMenuImage())
                 .recipeId(aiRecipe.getRecipeId())
                 .build();
     }

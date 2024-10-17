@@ -184,6 +184,7 @@ CREATE TABLE ai_recipe (
     ai_recipe_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     ai_menu_name VARCHAR(255) NOT NULL,
     ai_menu_ingredient TEXT NOT NULL,
+    ai_menu_image TEXT,
     recipe_id BIGINT NOT NULL,
     FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id) ON DELETE CASCADE 
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='AI요리레시피' DEFAULT CHARSET=UTF8;
