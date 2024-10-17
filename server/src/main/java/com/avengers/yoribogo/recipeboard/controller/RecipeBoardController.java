@@ -23,12 +23,11 @@ public class RecipeBoardController {
     }
 
     // 나만의 레시피 등록
-    @PostMapping("/{userId}")
+    @PostMapping
     public ResponseDTO<?> createRecipeBoard(
-            @PathVariable Long userId,
             @RequestBody RecipeBoardDTO registRecipeBoardDTO) {
         // 등록된 게시글을 ResponseBoardDTO로 반환
-        ResponseBoardDTO responseBoardDTO = recipeBoardService.registRecipeBoard(userId, registRecipeBoardDTO);
+        ResponseBoardDTO responseBoardDTO = recipeBoardService.registRecipeBoard(registRecipeBoardDTO);
         return ResponseDTO.ok(responseBoardDTO);  // 조회용 DTO로 반환
     }
 
@@ -51,7 +50,7 @@ public class RecipeBoardController {
     // 나만의 레시피 게시글 단건 조회
     @GetMapping("/detail/{recipeBoardId}")
     public ResponseDTO<?> getRecipeBoardById(@PathVariable("recipeBoardId") Long recipeBoardId) {
-        RecipeBoardDTO recipeBoardDTO = recipeBoardService.findRecipeBoardById(recipeBoardId);
+        ResponseBoardDTO recipeBoardDTO = recipeBoardService.findRecipeBoardById(recipeBoardId);
         return ResponseDTO.ok(recipeBoardDTO);
     }
 
@@ -60,6 +59,14 @@ public class RecipeBoardController {
     public ResponseDTO<?> search(@RequestParam String recipeBoardMenuName,
                                  @RequestParam Integer pageNo) {
         Page<RecipeBoardDTO> recipeBoardDTOPage = recipeBoardService.findRecipeBoardByMenuName(recipeBoardMenuName, pageNo);
+        return ResponseDTO.ok(recipeBoardDTOPage);
+    }
+
+    // 본인이 작성한 게시글 전체 조회
+    @GetMapping("/users/{userId}/boards")
+    public ResponseDTO<?> getUserBoards(@PathVariable Long userId,
+                                        @RequestParam Integer pageNo) {
+        Page<RecipeBoardDTO> recipeBoardDTOPage = recipeBoardService.findRecipeBoardByUserId(userId, pageNo);
         return ResponseDTO.ok(recipeBoardDTOPage);
     }
 
