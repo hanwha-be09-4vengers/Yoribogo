@@ -21,6 +21,7 @@ import com.avengers.yoribogo.user.domain.vo.signup.RequestResistEnterpriseUserVO
 import com.avengers.yoribogo.user.dto.UserDTO;
 import com.avengers.yoribogo.user.dto.email.EmailVerificationUserIdRequestDTO;
 import com.avengers.yoribogo.user.dto.email.EmailVerificationUserPasswordRequestDTO;
+import com.avengers.yoribogo.user.dto.profile.RequestUpdateUserDTO;
 import com.avengers.yoribogo.user.dto.validate.BooleanResponseDTO;
 import com.avengers.yoribogo.user.dto.validate.RequestNicknameDTO;
 import com.avengers.yoribogo.user.dto.validate.RequestUserAuthIdentifierDTO;
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
@@ -42,15 +44,18 @@ public class UserController {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final OAuth2LoginService oAuth2LoginService;
+    private final EmailVerificationService emailVerificationService;
     private final JwtUtil jwtUtil;
 
     @Autowired
     public UserController(Environment env, UserService userService, ModelMapper modelMapper,
-                          OAuth2LoginService oAuth2LoginService, JwtUtil jwtUtil) {
+                          OAuth2LoginService oAuth2LoginService, EmailVerificationService emailVerificationService,
+                          JwtUtil jwtUtil) {
         this.env = env;
         this.userService = userService;
         this.modelMapper = modelMapper;
         this.oAuth2LoginService = oAuth2LoginService;
+        this.emailVerificationService=emailVerificationService;
         this.jwtUtil = jwtUtil;
     }
 
@@ -59,10 +64,6 @@ public class UserController {
         return "I'm Working in User Service on port "
                 + env.getProperty("local.server.port");
     }
-
-    // 설명. 이메일 인증 서비스
-    @Autowired
-    private EmailVerificationService emailVerificationService;
 
     // 설명. 1. 이메일 전송 API (회원가입시 실행)
     @PostMapping("/verification-email/signup")
@@ -250,5 +251,23 @@ public class UserController {
         ResponseUserVO userUpdateRequestVO = modelMapper.map(userEntity, ResponseUserVO.class);
         return ResponseDTO.ok(userUpdateRequestVO);
     }
+
+    //필기. 13. 사용자 프로필 변경(닉네임,사진)
+    @PatchMapping("/{userId}/profile")
+    public ResponseDTO<?> updateProfile(@PathVariable("userId") Long userId,
+                                        @RequestParam("nickname") String nickname,
+                                        @RequestParam(value = "profile_image", required = false) MultipartFile profileImage) {
+
+        // DTO 객체 생성 및 값 설정
+        RequestUpdateUserDTO userUpdateDTO = new RequestUpdateUserDTO();
+        userUpdateDTO.setNickname(nickname);
+        userUpdateDTO.setProfileImage(profileImage);
+
+        // 서비스 호출 및 결과 처리
+        UserEntity userEntity = userService.updateProfile(userId, userUpdateDTO);
+        ResponseUserVO userUpdateRequestVO = modelMapper.map(userEntity, ResponseUserVO.class);
+        return ResponseDTO.ok(userUpdateRequestVO);
+    }
+
 
 }
