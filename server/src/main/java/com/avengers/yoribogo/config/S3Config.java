@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class S3Config {
@@ -26,4 +27,11 @@ public class S3Config {
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
                 .build();
     }
+
+    /* 설명. S3용 RestTemplate 빈 추가 */
+    @Bean(name = "s3RestTemplate")  // S3용 RestTemplate 이름 설정
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
 }

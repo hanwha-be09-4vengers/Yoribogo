@@ -1,5 +1,14 @@
 package com.avengers.yoribogo.recipe.service;
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.util.IOUtils;
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.openai.service.OpenAIService;
@@ -7,16 +16,25 @@ import com.avengers.yoribogo.recipe.domain.MenuType;
 import com.avengers.yoribogo.recipe.domain.Recipe;
 import com.avengers.yoribogo.recipe.dto.*;
 import com.avengers.yoribogo.recipe.repository.RecipeRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import javax.net.ssl.HttpsURLConnection;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.*;
 
-@Transactional
 @Service
+@Slf4j
 public class RecipeServiceImpl implements RecipeService {
 
     private final Integer ELEMENTS_PER_PAGE = 12;
@@ -27,6 +45,8 @@ public class RecipeServiceImpl implements RecipeService {
     private final PublicDataRecipeService publicDataRecipeService;
     private final AIRecipeService aiRecipeService;
     private final OpenAIService openAIService;
+    private final AmazonS3Client s3Client;
+    private final RestTemplate restTemplate;
 
     @Autowired
     public RecipeServiceImpl(ModelMapper modelMapper,
@@ -34,14 +54,21 @@ public class RecipeServiceImpl implements RecipeService {
                              RecipeManualService recipeManualService,
                              PublicDataRecipeService publicDataRecipeService,
                              AIRecipeService aiRecipeService,
-                             OpenAIService openAIService) {
+                             OpenAIService openAIService,
+                             AmazonS3Client s3Client,
+                             @Qualifier("s3RestTemplate") RestTemplate restTemplate) {
         this.modelMapper = modelMapper;
         this.recipeRepository = recipeRepository;
         this.recipeManualService = recipeManualService;
         this.publicDataRecipeService = publicDataRecipeService;
         this.aiRecipeService = aiRecipeService;
         this.openAIService = openAIService;
+        this.s3Client = s3Client;
+        this.restTemplate = restTemplate;
     }
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
     // 페이지 번호로 요리 레시피 조회
     @Override
@@ -292,21 +319,42 @@ public class RecipeServiceImpl implements RecipeService {
         aiAnswerRecipe = parseString(aiAnswerRecipe);
 
         // 7단계: AI가 생성한 요리 등록
-        String imageUrl = openAIService.getImages(trimmedEnglishName).getData().get(0).getUrl();
+
+        // AI 사진 생성
+        String gptImageUrl = registImages(trimmedEnglishName);
+        System.out.println(gptImageUrl);
 
         // AI가 생성한 요리 정보 입력
         RecipeDTO newRecipeDTO = RecipeDTO
                 .builder()
                 .menuName(trimmedAiAnswerMenu)
                 .menuIngredient(aiAnswerIngredients)
-                .menuImage(imageUrl)
+                .menuImage(null)
                 .menuType(MenuType.AI)
                 .userId(1L)
                 .build();
 
+        // 엔티티 생성
         newRecipeDTO = registRecipe(newRecipeDTO);
 
-        // 8단계: AI가 생성한 요리 레시피 등록
+        // S3에 사진 등록
+        String s3ImageUrl = uploadMenuImage(gptImageUrl, newRecipeDTO.getRecipeId());
+
+        // 대표 이미지 업데이트
+        RecipeDTO modifyRecipeDTO = RecipeDTO
+                .builder()
+                .recipeId(newRecipeDTO.getRecipeId())
+                .menuName(newRecipeDTO.getMenuName())
+                .menuIngredient(newRecipeDTO.getMenuIngredient())
+                .menuImage(s3ImageUrl)
+                .menuType(MenuType.AI)
+                .userId(1L)
+                .build();
+
+        modifyRecipeDTO = modifyRecipe(modifyRecipeDTO.getRecipeId(), modifyRecipeDTO);
+        log.info(modifyRecipeDTO.toString());
+
+        // 8단계: AI가 생성한 요리 레시피 매뉴얼 등록
         List<Map<String,String>> manual = new ArrayList<>();
 
         List<String> contents = Arrays.stream(aiAnswerRecipe.split("\n")).toList();
@@ -330,6 +378,68 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public String registImages(String menuName) {
         return openAIService.getImages(menuName).getData().get(0).getUrl();
+    }
+
+    // 이미지의 url을 받아 S3에 등록하는 메소드
+    public String uploadMenuImage(String imageUrl, Long recipeId) {
+        String fileName = "recipe_" + recipeId + ".png"; // 기본 파일명 및 확장자
+
+        // URL 객체 생성
+        try {
+            URL url = new URL(imageUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setDoOutput(true);
+            connection.connect();
+
+            // 응답 코드 확인
+            if (connection.getResponseCode() != 200) {
+                throw new IOException("URL에서 이미지를 가져오지 못했습니다. 응답 코드: " + connection.getResponseCode());
+            }
+
+            // 연결에서 입력 스트림 가져오기
+            try (InputStream inputStream = connection.getInputStream()) {
+                // S3에 대한 ObjectMetadata 생성
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentLength(connection.getContentLengthLong());
+                metadata.setContentType(connection.getContentType());
+                metadata.setContentDisposition("inline");
+
+                // S3에 파일 업로드
+                s3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream, metadata));
+            } // try-with-resources 문을 사용하여 입력 스트림 자동으로 닫기
+
+            // 업로드된 이미지의 S3 URL 반환
+            return s3Client.getUrl(bucket, fileName).toString();
+        } catch (AmazonClientException | IOException e) {
+            log.error("S3에 이미지 업로드 실패", e);
+            throw new CommonException(ErrorCode.FILE_UPLOAD_ERROR);
+        }
+    }
+
+    // 이미지의 url을 받아 S3에서 삭제하는 메소드
+    public void deleteMenuImage(String fileUrl) {
+        // 유효성 검사
+        if (fileUrl == null || !fileUrl.contains(".com/")) {
+            log.error("유효하지 않은 파일 URL: {}", fileUrl);
+            return;
+        }
+
+        String fileName = fileUrl.substring(fileUrl.lastIndexOf(".com/") + 5); // ".com/" 길이 5
+
+        try {
+            // S3에서 파일 삭제 요청
+            s3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
+            log.info("S3에서 성공적으로 파일이 삭제되었습니다: {}", fileName);
+        } catch (AmazonClientException e) {
+            log.error("S3에서 파일을 삭제하지 못하였습니다.: {}", fileName, e);
+        }
+    }
+
+    // URL에서 파일 확장자 추출 (예: .jpg, .png)
+    private String getFileExtension(String imageUrl) {
+        String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+        return fileName.contains(".") ? fileName.substring(fileName.lastIndexOf(".")) : ".pn";
     }
 
     // ':'가 있는 경우, ':' 이후의 문자열만 남기는 메소드
