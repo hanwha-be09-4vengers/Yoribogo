@@ -221,9 +221,10 @@ public class RecipeServiceImpl implements RecipeService {
         // 앞뒤 특수문자 제거
         String trimmedAiAnswerMenu = trimSpecialCharacters(aiAnswerMenu);
 
+        // 2단계: 요리 레시피 테이블 조회하기
+
         // 비건이 아니고, 추가 요청 사항이 없을 경우
         if (requestRecommendDTO.getFourth().equals("아니요") && requestRecommendDTO.getFifth().isEmpty()) {
-            // 2단계: 요리 레시피 테이블 조회하기
             List<Recipe> recipeDTOList = recipeRepository.findByMenuNameContaining(trimmedAiAnswerMenu);
 
             // 요리 이름을 저장하는 리스트
@@ -242,20 +243,20 @@ public class RecipeServiceImpl implements RecipeService {
 
             // 난수가 0보다 크면 기존에 존재하던 데이터이므로 return
             if (idx > 0) return modelMapper.map(recipeDTOList.get(idx-1), RecipeDTO.class);
-        } else {
-            // 3단계: 공공데이터 요리 레시피 테이블 조회하기
-            PublicDataRecipeDTO publicDataRecipeDTO =
-                    publicDataRecipeService.findPublicDataRecipeByMenuName(trimmedAiAnswerMenu);
-
-            // 조회되었을 경우
-            if (publicDataRecipeDTO != null) return publicDataRecipeDTO;
-
-            // 4단계: AI 요리 레시피 테이블 조회하기
-            AIRecipeDTO aiRecipeDTO = aiRecipeService.findAIRecipeByMenuName(trimmedAiAnswerMenu);
-
-            // 조회되었을 경우
-            if (aiRecipeDTO != null) return aiRecipeDTO;
         }
+
+        // 3단계: 공공데이터 요리 레시피 테이블 조회하기
+        PublicDataRecipeDTO publicDataRecipeDTO =
+                publicDataRecipeService.findPublicDataRecipeByMenuName(trimmedAiAnswerMenu);
+
+        // 조회되었을 경우
+        if (publicDataRecipeDTO != null) return publicDataRecipeDTO;
+
+        // 4단계: AI 요리 레시피 테이블 조회하기
+        AIRecipeDTO aiRecipeDTO = aiRecipeService.findAIRecipeByMenuName(trimmedAiAnswerMenu);
+
+        // 조회되었을 경우
+        if (aiRecipeDTO != null) return aiRecipeDTO;
 
         // 5단계: AI가 추천한 요리의 재료를 물어보기
         String ingredientsPrompt = "다음 요리를 만들 때 필요한 재료를 자세하게 설명해줘: " + trimmedAiAnswerMenu +
