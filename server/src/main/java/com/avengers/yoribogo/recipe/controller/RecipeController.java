@@ -1,7 +1,9 @@
 package com.avengers.yoribogo.recipe.controller;
 
 import com.avengers.yoribogo.common.ResponseDTO;
+import com.avengers.yoribogo.recipe.dto.BaseRecipeDTO;
 import com.avengers.yoribogo.recipe.dto.RecipeDTO;
+import com.avengers.yoribogo.recipe.dto.RequestRecommendDTO;
 import com.avengers.yoribogo.recipe.service.RecipeServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,21 +22,21 @@ public class RecipeController {
 
     // 페이지 번호로 요리 레시피 목록 조회
     @GetMapping
-    public ResponseDTO<Page<RecipeDTO>> getRecipeByPageNo(@RequestParam("page") Integer pageNo) {
+    public ResponseDTO<?> getRecipeByPageNo(@RequestParam("page") Integer pageNo) {
         Page<RecipeDTO> recipeDTOPage = recipeService.findRecipeByPageNo(pageNo);
         return ResponseDTO.ok(recipeDTOPage);
     }
 
     // 요리 레시피 단건 조회
     @GetMapping("/{recipeId}")
-    public ResponseDTO<RecipeDTO> getRecipeByRecipeId(@PathVariable("recipeId") Long recipeId) {
+    public ResponseDTO<?> getRecipeByRecipeId(@PathVariable("recipeId") Long recipeId) {
         RecipeDTO recipeDTO = recipeService.findRecipeByRecipeId(recipeId);
         return ResponseDTO.ok(recipeDTO);
     }
 
     // 요리 레시피 요리 이름으로 조회
     @GetMapping("/search")
-    public ResponseDTO<Page<RecipeDTO>> getRecipeByMenuName(@RequestParam("name") String menuName,
+    public ResponseDTO<?> getRecipeByMenuName(@RequestParam("name") String menuName,
                                                               @RequestParam("page") Integer pageNo) {
         Page<RecipeDTO> recipeDTOPage = recipeService.findRecipeByMenuName(menuName, pageNo);
         return ResponseDTO.ok(recipeDTOPage);
@@ -42,14 +44,14 @@ public class RecipeController {
 
     // 요리 레시피 등록
     @PostMapping
-    public ResponseDTO<RecipeDTO> createRecipe(@RequestBody RecipeDTO registRecipeDTO) {
+    public ResponseDTO<?> createRecipe(@RequestBody RecipeDTO registRecipeDTO) {
         RecipeDTO recipeDTO = recipeService.registRecipe(registRecipeDTO);
         return ResponseDTO.ok(recipeDTO);
     }
 
     // 요리 레시피 수정
     @PutMapping("/{recipeId}")
-    public ResponseDTO<RecipeDTO> updateRecipe(@PathVariable("recipeId") Long recipeId,
+    public ResponseDTO<?> updateRecipe(@PathVariable("recipeId") Long recipeId,
                                                @RequestBody RecipeDTO modifyRecipeDTO) {
         RecipeDTO recipeDTO = recipeService.modifyRecipe(recipeId, modifyRecipeDTO);
         return ResponseDTO.ok(recipeDTO);
@@ -57,9 +59,16 @@ public class RecipeController {
 
     // 요리 레시피 삭제
     @DeleteMapping("/{recipeId}")
-    public ResponseDTO<RecipeDTO> deleteRecipe(@PathVariable("recipeId") Long recipeId) {
+    public ResponseDTO<?> deleteRecipe(@PathVariable("recipeId") Long recipeId) {
         recipeService.removeRecipe(recipeId);
         return ResponseDTO.ok(null);
+    }
+
+    // 요리 추천하기
+    @PostMapping("/recommend")
+    public ResponseDTO<?> createRecommendRecipe(@RequestBody RequestRecommendDTO requestRecommendDTO) {
+        BaseRecipeDTO baseRecipeDTO = recipeService.registRecommendRecipe(requestRecommendDTO);
+        return ResponseDTO.ok(baseRecipeDTO);
     }
 
 }

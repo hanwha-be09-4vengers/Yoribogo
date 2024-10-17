@@ -3,7 +3,7 @@
     <img class="bg-circle" src="/src/assets/Intersect.png" alt="Background Circle" />
     <img class="chicken" src="/src/assets/chicken.png" alt="Chicken" />
     <header>
-      <MainNav></MainNav>
+      <HomeNav @open-login-modal="openLoginModal"></HomeNav>
     </header>
     <main>
       <section id="start-section" class="start-section">
@@ -22,16 +22,37 @@
   </div>
 
     </main>
+    <LoginModal
+      v-if="isLoginModalVisible"
+      @close="closeLoginModal"
+      @goToStep1="openRegisterModal"
+      @openPasswordReset="openPasswordResetModal"
+      @openFindId="openFindIdModal"
+    />
   </div>
 </template>
 
 <script setup>
-import MainNav from '@/components/MainNav.vue'
+import LoginModal from '@/components/user/login/LoginModal.vue';
+import HomeNav from '@/components/user/HomeNav.vue'
 import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 
 import axios from 'axios';  // 추후 삭제 요망
 
 const router = useRouter()
+
+const isLoginModalVisible = ref(false); // 로그인 모달 상태
+
+// 로그인 모달 열기
+const openLoginModal = () => {
+  isLoginModalVisible.value = true; // 로그인 모달 열기
+};
+
+// 로그인 모달 닫기
+const closeLoginModal = () => {
+  isLoginModalVisible.value = false; // 로그인 모달 닫기
+};
 
 const goQuestion = () => {
   router.push('/question/1')
@@ -103,8 +124,8 @@ eventSource.addEventListener('notification', function(event) {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-top: 12rem;
-  margin-left: 15rem;
+  margin-top: 18rem;
+  margin-left: 20rem;
   margin-bottom: 10rem;
   gap: 9.6rem;
 }
@@ -125,11 +146,11 @@ eventSource.addEventListener('notification', function(event) {
 }
 
 .f-red {
-  color: var(--red-color);
+  color: var(--text-red-color);
 }
 
 .normal div span {
-  color: var(--red-color);
+  color: var(--text-red-color);
 }
 
 .indent {
@@ -156,18 +177,18 @@ eventSource.addEventListener('notification', function(event) {
 }
 
 /* 노트북 */
-@media screen and (max-width: 1683px) {
+@media screen and (max-width: 1684px) {
   .start-section {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin-top: 12rem;
-    margin-left: 15rem;
+    margin-top: 14rem;
+    margin-left: 20rem;
     gap: 9.6rem;
   }
 }
 
-@media screen and (max-width: 1439px) {
+@media screen and (max-width: 1440px) {
   .chicken {
     top: 22rem;
     right: 15rem;
@@ -181,8 +202,22 @@ eventSource.addEventListener('notification', function(event) {
   }
 }
 
+@media screen and (max-width: 1280px) {
+  .chicken {
+    top: 22rem;
+    right: 15rem;
+    width: 60rem;
+    height: 30rem;
+  }
+
+  .bg-circle {
+    width: 50rem;
+    height: 45rem;
+  }
+}
+
 /* 태블릿 */
-@media screen and (max-width: 1023px) {
+@media screen and (max-width: 1024px) {
   .chicken {
     top: 22rem;
     right: 15rem;
@@ -205,7 +240,7 @@ eventSource.addEventListener('notification', function(event) {
 }
 
 /* 모바일 */
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 768px) {
   .chicken {
     left: 50%;
     transform: translateX(-50%);

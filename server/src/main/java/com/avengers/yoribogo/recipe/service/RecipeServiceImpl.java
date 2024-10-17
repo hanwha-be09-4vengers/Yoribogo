@@ -2,11 +2,10 @@ package com.avengers.yoribogo.recipe.service;
 
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
+import com.avengers.yoribogo.openai.service.OpenAIService;
 import com.avengers.yoribogo.recipe.domain.MenuType;
 import com.avengers.yoribogo.recipe.domain.Recipe;
-import com.avengers.yoribogo.recipe.dto.AIRecipeDTO;
-import com.avengers.yoribogo.recipe.dto.PublicDataRecipeDTO;
-import com.avengers.yoribogo.recipe.dto.RecipeDTO;
+import com.avengers.yoribogo.recipe.dto.*;
 import com.avengers.yoribogo.recipe.repository.RecipeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,28 +13,34 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
 
 @Transactional
 @Service
 public class RecipeServiceImpl implements RecipeService {
 
-    private final Integer ELEMENTS_PER_PAGE = 10;
+    private final Integer ELEMENTS_PER_PAGE = 12;
 
     private final ModelMapper modelMapper;
     private final RecipeRepository recipeRepository;
+    private final RecipeManualService recipeManualService;
     private final PublicDataRecipeService publicDataRecipeService;
     private final AIRecipeService aiRecipeService;
+    private final OpenAIService openAIService;
 
     @Autowired
     public RecipeServiceImpl(ModelMapper modelMapper,
                              RecipeRepository recipeRepository,
+                             RecipeManualService recipeManualService,
                              PublicDataRecipeService publicDataRecipeService,
-                             AIRecipeService aiRecipeService) {
+                             AIRecipeService aiRecipeService,
+                             OpenAIService openAIService) {
         this.modelMapper = modelMapper;
         this.recipeRepository = recipeRepository;
+        this.recipeManualService = recipeManualService;
         this.publicDataRecipeService = publicDataRecipeService;
         this.aiRecipeService = aiRecipeService;
+        this.openAIService = openAIService;
     }
 
     // 페이지 번호로 요리 레시피 조회
@@ -61,11 +66,8 @@ public class RecipeServiceImpl implements RecipeService {
             throw new CommonException(ErrorCode.NOT_FOUND_RECIPE);
         }
 
-        // Recipe -> RecipeDTO 변환
-        List<RecipeDTO> recipeDTOList = convertEntityPageToDTOPage(recipePage);
-
-        // 새로운 Page 객체 생성
-        return new PageImpl<>(recipeDTOList, pageable, recipePage.getTotalElements());
+        // Recipe -> RecipeDTO 변환 및 Page 반환
+        return convertEntityPageToDTOPage(recipePage);
     }
 
     // 요리 레시피 단건 조회
@@ -100,15 +102,13 @@ public class RecipeServiceImpl implements RecipeService {
             throw new CommonException(ErrorCode.NOT_FOUND_RECIPE);
         }
 
-        // Recipe -> RecipeDTO 변환
-        List<RecipeDTO> recipeDTOList = convertEntityPageToDTOPage(recipePage);
-
-        // 새로운 Page 객체 생성
-        return new PageImpl<>(recipeDTOList, pageable, recipePage.getTotalElements());
+        // Recipe -> RecipeDTO 변환 및 Page 반환
+        return convertEntityPageToDTOPage(recipePage);
     }
 
     // 요리 레시피 등록
     @Override
+    @Transactional
     public RecipeDTO registRecipe(RecipeDTO registRecipeDTO) {
         // 요리 레시피 테이블에 저장
         Recipe newRecipe = modelMapper.map(registRecipeDTO, Recipe.class);
@@ -119,9 +119,9 @@ public class RecipeServiceImpl implements RecipeService {
             // DTO에 요리 레시피 정보 담기
             PublicDataRecipeDTO publicDataRecipeDTO = PublicDataRecipeDTO
                     .builder()
-                    .publicDataMenuName(newRecipe.getMenuName())
-                    .publicDataMenuIngredient(newRecipe.getMenuIngredient())
-                    .publicDataMenuImage(newRecipe.getMenuImage())
+                    .menuName(newRecipe.getMenuName())
+                    .menuIngredient(newRecipe.getMenuIngredient())
+                    .menuImage(newRecipe.getMenuImage())
                     .recipeId(newRecipe.getRecipeId())
                     .build();
 
@@ -131,8 +131,8 @@ public class RecipeServiceImpl implements RecipeService {
             // DTO에 요리 레시피 정보 담기
             AIRecipeDTO aiRecipeDTO = AIRecipeDTO
                     .builder()
-                    .aiMenuName(newRecipe.getMenuName())
-                    .aiMenuIngredient(newRecipe.getMenuIngredient())
+                    .menuName(newRecipe.getMenuName())
+                    .menuIngredient(newRecipe.getMenuIngredient())
                     .recipeId(newRecipe.getRecipeId())
                     .build();
 
@@ -148,6 +148,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     // 요리 레시피 수정
     @Override
+    @Transactional
     public RecipeDTO modifyRecipe(Long recipeId, RecipeDTO modifyRecipeDTO) {
         // 기존 엔티티 조회
         Recipe existingRecipe = recipeRepository.findById(recipeId)
@@ -155,15 +156,45 @@ public class RecipeServiceImpl implements RecipeService {
 
         // 엔티티 정보 수정
         existingRecipe.setMenuName(modifyRecipeDTO.getMenuName());
-        existingRecipe.setMenuImage(modifyRecipeDTO.getMenuImage());
         existingRecipe.setMenuIngredient(modifyRecipeDTO.getMenuIngredient());
+        existingRecipe.setMenuImage(modifyRecipeDTO.getMenuImage());
         existingRecipe.setUserId(modifyRecipeDTO.getUserId());
+
+        // 요리 구분 검사
+        if (existingRecipe.getMenuType() == MenuType.PUBLIC) {
+            // DTO에 요리 레시피 정보 담기
+            PublicDataRecipeDTO publicDataRecipeDTO = PublicDataRecipeDTO
+                    .builder()
+                    .menuName(modifyRecipeDTO.getMenuName())
+                    .menuIngredient(modifyRecipeDTO.getMenuIngredient())
+                    .menuImage(modifyRecipeDTO.getMenuImage())
+                    .recipeId(existingRecipe.getRecipeId())
+                    .build();
+
+            // 공공데이터 요리 레시피 수정
+            publicDataRecipeService.modifyPublicDataRecipe(publicDataRecipeDTO);
+        } else if (existingRecipe.getMenuType() == MenuType.AI) {
+            // DTO에 요리 레시피 정보 담기
+            AIRecipeDTO aiRecipeDTO = AIRecipeDTO
+                    .builder()
+                    .menuName(modifyRecipeDTO.getMenuName())
+                    .menuIngredient(modifyRecipeDTO.getMenuIngredient())
+                    .recipeId(existingRecipe.getRecipeId())
+                    .build();
+
+            // AI 요리 레시피 수정
+            aiRecipeService.modifyAIRecipe(aiRecipeDTO);
+        } else {
+            // 요리 구분이 잘못되었을 경우
+            throw new CommonException(ErrorCode.INVALID_REQUEST_BODY);
+        }
 
         return modelMapper.map(recipeRepository.save(existingRecipe), RecipeDTO.class);
     }
 
     // 요리 레시피 삭제
     @Override
+    @Transactional
     public void removeRecipe(Long recipeId) {
         // 기존 엔티티 조회
         Recipe existingRecipe = recipeRepository.findById(recipeId)
@@ -172,11 +203,142 @@ public class RecipeServiceImpl implements RecipeService {
         recipeRepository.delete(existingRecipe);
     }
 
-    // 페이지 내 엔티티를 DTO로 변환해주는 메소드
-    private List<RecipeDTO> convertEntityPageToDTOPage(Page<Recipe> recipePage) {
-        return recipePage.getContent().stream()
+    // 요리 추천하기
+    @Override
+    @Transactional
+    public BaseRecipeDTO registRecommendRecipe(RequestRecommendDTO requestRecommendDTO) {
+        // 1단계: AI에게 추천하는 요리 이름 물어보기
+        String prompt = "다음 정보를 바탕으로 알맞은 요리를 하나만 추천해줘: " +
+                "'오늘의 날씨는 어떤가요?' → '" + requestRecommendDTO.getFirst() + "', " +
+                "'오늘의 기분은 어떤가요?' → '" + requestRecommendDTO.getSecond() + "', " +
+                "'몇 명이 먹는 음식인가요?' → '" + requestRecommendDTO.getThird() + "', " +
+                "'채식 또는 비건 식단을 따르시나요?' → '" + requestRecommendDTO.getFourth() + "', " +
+                "'제가 또 알아야 하는게 있나요?' → '" + requestRecommendDTO.getFifth() + "'." +
+                " 특히 '" + requestRecommendDTO.getFifth() + "'를 가장 중요하게 고려하고, " +
+                "요리 이름은 특수문자와 다른 말은 빼고 오직 이름만 알려줘.";
+        String aiAnswerMenu = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
+
+        // 앞뒤 특수문자 제거
+        String trimmedAiAnswerMenu = trimSpecialCharacters(aiAnswerMenu);
+
+        // 2단계: 요리 레시피 테이블 조회하기
+
+        // 비건이 아니고, 추가 요청 사항이 없을 경우
+        if (requestRecommendDTO.getFourth().equals("아니요") && requestRecommendDTO.getFifth().isEmpty()) {
+            List<Recipe> recipeDTOList = recipeRepository.findByMenuNameContaining(trimmedAiAnswerMenu);
+
+            // 요리 이름을 저장하는 리스트
+            List<String> recipeNameList = new ArrayList<>();
+
+            // 0번 인덱스는 AI가 추천한 요리
+            recipeNameList.add(trimmedAiAnswerMenu);
+
+            // 조회된 요리의 이름 삽입
+            for (Recipe recipeDTO : recipeDTOList) {
+                recipeNameList.add(recipeDTO.getMenuName());
+            }
+
+            // 난수 발생
+            int idx = (int) (Math.random() * recipeNameList.size());
+
+            // 난수가 0보다 크면 기존에 존재하던 데이터이므로 return
+            if (idx > 0) return modelMapper.map(recipeDTOList.get(idx-1), RecipeDTO.class);
+        }
+
+        // 3단계: 공공데이터 요리 레시피 테이블 조회하기
+        PublicDataRecipeDTO publicDataRecipeDTO =
+                publicDataRecipeService.findPublicDataRecipeByMenuName(trimmedAiAnswerMenu);
+
+        // 조회되었을 경우
+        if (publicDataRecipeDTO != null) return publicDataRecipeDTO;
+
+        // 4단계: AI 요리 레시피 테이블 조회하기
+        AIRecipeDTO aiRecipeDTO = aiRecipeService.findAIRecipeByMenuName(trimmedAiAnswerMenu);
+
+        // 조회되었을 경우
+        if (aiRecipeDTO != null) return aiRecipeDTO;
+
+        // 5단계: AI가 추천한 요리의 재료를 물어보기
+        String ingredientsPrompt = "다음 요리를 만들 때 필요한 재료를 자세하게 설명해줘: " + trimmedAiAnswerMenu +
+                "를 만들기 위한 재료를 꼭 ','로 구분하여 양을 포함하고, '설탕 2스푼' 형식으로 작성해줘. " +
+                "단, 앞과 뒤에 특수문자와 다른 말은 빼고 오직 재료 내용만 제공해줘.";
+        String aiAnswerIngredients = openAIService.getRecommend(ingredientsPrompt).getChoices().get(0).getMessage().getContent();
+
+        // ':'가 있는 경우, ':' 이후의 문자열만 남기기
+        aiAnswerIngredients = parseString(aiAnswerIngredients);
+
+        // 앞뒤 특수문자 제거
+        String trimmedAiAnswerIngredients = trimSpecialCharacters(aiAnswerIngredients);
+
+        // 6단계: AI가 추천한 요리의 레시피를 물어보기
+        String recipePrompt = trimmedAiAnswerMenu + "를 만들기 위한 재료가 " + trimmedAiAnswerIngredients +
+                "일 때, " + trimmedAiAnswerMenu + "의 레시피를 단계별로 자세하게 설명해줘:\n" +
+                "레시피는 각 단계에 번호를 붙여서 '1. 파를 썹니다.'와 같은 형식으로 작성해줘. " +
+                "단, 한자 사용을 피하고, 앞과 뒤에 특수문자와 다른 말은 빼고 오직 레시피 내용만 제공해줘.";
+        String aiAnswerRecipe = openAIService.getRecommend(recipePrompt).getChoices().get(0).getMessage().getContent();
+
+        // ':'가 있는 경우, ':' 이후의 문자열만 남기기
+        aiAnswerRecipe = parseString(aiAnswerRecipe);
+
+        // 7단계: AI가 생성한 요리 등록
+
+        // AI가 생성한 요리 정보 입력
+        RecipeDTO newRecipeDTO = RecipeDTO
+                .builder()
+                .menuName(aiAnswerMenu)
+                .menuIngredient(aiAnswerIngredients)
+                .menuType(MenuType.AI)
+                .userId(1L)
+                .build();
+
+        newRecipeDTO = registRecipe(newRecipeDTO);
+
+        // 8단계: AI가 생성한 요리 레시피 등록
+        List<Map<String,String>> manual = new ArrayList<>();
+
+        List<String> contents = Arrays.stream(aiAnswerRecipe.split("\n")).toList();
+        for(String content: contents) {
+            Map<String,String> map = new HashMap<>();
+            map.put("content", content);
+            manual.add(map);
+        }
+
+        RequestRecipeManualDTO requestRecipeManualDTO = RequestRecipeManualDTO
+                .builder()
+                .manual(manual)
+                .build();
+
+        recipeManualService.registRecipeManual(newRecipeDTO.getRecipeId(), requestRecipeManualDTO);
+
+        return newRecipeDTO;
+    }
+
+    // ':'가 있는 경우, ':' 이후의 문자열만 남기는 메소드
+    private String parseString(String aiAnswer) {
+        int colonIndex = aiAnswer.indexOf(":");
+        if (colonIndex != -1) {
+            aiAnswer = aiAnswer.substring(colonIndex + 1).trim();
+        }
+        return aiAnswer;
+    }
+
+    // 문자열의 앞뒤에 있는 모든 특수문자를 제거하는 메소드
+    private String trimSpecialCharacters(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+
+        // 정규식을 사용하여 문자열의 앞뒤에서 특수문자를 제거
+        return input.replaceAll("^[^a-zA-Z0-9가-힣]+|[^a-zA-Z0-9가-힣]+$", "");
+    }
+
+    // Recipe -> RecipeDTO 변환 및 Page 반환 메소드
+    private Page<RecipeDTO> convertEntityPageToDTOPage(Page<Recipe> recipePage) {
+        List<RecipeDTO> recipeDTOList = recipePage.getContent().stream()
                 .map(recipe -> modelMapper.map(recipe, RecipeDTO.class))
                 .toList();
+
+        return new PageImpl<>(recipeDTOList, recipePage.getPageable(), recipePage.getTotalElements());
     }
 
 }

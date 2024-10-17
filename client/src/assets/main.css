@@ -4,10 +4,14 @@
   --yellow-color: #ffda14;
   --sub-yellow-color: #b29b1d;
   --light-yellow-color: #ffee91;
-  --red-color: #f45c47;
+  --blended-light-color: #fffbe8;
+  --text-red-color: #f45c47;
+  --red-color: #ff4040;
+  --pink-color: #ff7d7d;
+  --light-pink-color: #fff5f5;
 
   font-weight: normal;
-  font-family: 'Noto Sans';
+  font-family: 'Noto Sans KR', 'Noto Sans';
   font-size: 10px;
 }
 
@@ -25,7 +29,7 @@ header {
   align-items: center;
   width: 100%;
   min-height: 8rem;
-  z-index: 2;
+  z-index: 3;
 }
 
 main {
@@ -73,28 +77,35 @@ h1 {
   display: none;
 }
 
-/* 노트북 */
-@media screen and (max-width: 1683px) {
+/* 데스크탑 */
+@media screen and (max-width: 1920px) {
   :root {
-    font-size: 8px;
+    font-size: 8.2px;
   }
 }
 
-@media screen and (max-width: 1439px) {
+/* 노트북 */
+@media screen and (max-width: 1684px) {
   :root {
-    font-size: 7.5px;
+    font-size: 7.8px;
+  }
+}
+
+@media screen and (max-width: 1440px) {
+  :root {
+    font-size: 7.4px;
   }
 }
 
 /* 태블릿 */
-@media screen and (max-width: 1023px) {
+@media screen and (max-width: 1024px) {
   :root {
     font-size: 7px;
   }
 }
 
 /* 모바일 */
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 768px) {
   :root {
     font-size: 6px;
   }
@@ -106,7 +117,7 @@ h1 {
   }
 }
 
-@media screen and (max-width: 374px) {
+@media screen and (max-width: 375px) {
   :root {
     font-size: 5px;
   }

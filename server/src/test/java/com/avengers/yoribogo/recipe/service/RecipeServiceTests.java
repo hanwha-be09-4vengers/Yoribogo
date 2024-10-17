@@ -2,7 +2,9 @@ package com.avengers.yoribogo.recipe.service;
 
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.recipe.domain.MenuType;
+import com.avengers.yoribogo.recipe.dto.BaseRecipeDTO;
 import com.avengers.yoribogo.recipe.dto.RecipeDTO;
+import com.avengers.yoribogo.recipe.dto.RequestRecommendDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -135,6 +137,31 @@ class RecipeServiceTests {
             () -> recipeService.removeRecipe(recipeId)
             , "요리 레시피가 삭제되지 않았습니다."
         );
+    }
+
+    @DisplayName("요리 추천하기 테스트")
+    @Test
+    void testRegistRecommendRecipe() {
+        // Given
+        RequestRecommendDTO requestRecommendDTO = RequestRecommendDTO
+                .builder()
+                .first("맑아요")
+                .second("좋아요!")
+                .third("혼자 먹어요")
+                .fourth("아니요")
+                .fifth("없어요")
+                .build();
+
+        // When
+        BaseRecipeDTO baseRecipeDTO = recipeService.registRecommendRecipe(requestRecommendDTO);
+
+        // Then
+        Assertions.assertNotNull(baseRecipeDTO, "추천된 요리가 null 입니다.");
+
+        // 로그 찍기
+        log.info("(recipeId: {}, menuName: {}, menuIngredient: {}, menuImage: {})",
+                baseRecipeDTO.getRecipeId(), baseRecipeDTO.getMenuName(), baseRecipeDTO.getMenuIngredient(),
+                baseRecipeDTO.getMenuImage());
     }
 
 }

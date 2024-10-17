@@ -10,4 +10,10 @@ public interface RecommendedMenuService {
     // 추천 요리 회원별 조회
     List<GoodMenuDTO> findRecommendedMenuByUserId(Long userId);
 
+    // 추천 요리 등록
+    RecommendedMenuDTO registRecommendedMenu(RecommendedMenuDTO registRecommendedMenuDTO);
+
+    // 추천 요리 삭제
+    void removeRecommendedMenu(Long recommendedMenuId);
+
 }
