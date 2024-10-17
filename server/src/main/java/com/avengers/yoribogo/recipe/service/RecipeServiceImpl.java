@@ -359,9 +359,9 @@ public class RecipeServiceImpl implements RecipeService {
                 .manual(manual)
                 .build();
 
-        recipeManualService.registRecipeManual(newRecipeDTO.getRecipeId(), requestRecipeManualDTO);
+        recipeManualService.registRecipeManual(modifyRecipeDTO.getRecipeId(), requestRecipeManualDTO);
 
-        return newRecipeDTO;
+        return modifyRecipeDTO;
     }
 
     // 요리 사진 생성하기
