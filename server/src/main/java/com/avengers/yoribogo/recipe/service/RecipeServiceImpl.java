@@ -1,14 +1,10 @@
 package com.avengers.yoribogo.recipe.service;
 
 import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.SdkClientException;
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.util.IOUtils;
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.openai.service.OpenAIService;
@@ -26,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -46,7 +41,6 @@ public class RecipeServiceImpl implements RecipeService {
     private final AIRecipeService aiRecipeService;
     private final OpenAIService openAIService;
     private final AmazonS3Client s3Client;
-    private final RestTemplate restTemplate;
 
     @Autowired
     public RecipeServiceImpl(ModelMapper modelMapper,
@@ -55,8 +49,7 @@ public class RecipeServiceImpl implements RecipeService {
                              PublicDataRecipeService publicDataRecipeService,
                              AIRecipeService aiRecipeService,
                              OpenAIService openAIService,
-                             AmazonS3Client s3Client,
-                             @Qualifier("s3RestTemplate") RestTemplate restTemplate) {
+                             AmazonS3Client s3Client) {
         this.modelMapper = modelMapper;
         this.recipeRepository = recipeRepository;
         this.recipeManualService = recipeManualService;
@@ -64,7 +57,6 @@ public class RecipeServiceImpl implements RecipeService {
         this.aiRecipeService = aiRecipeService;
         this.openAIService = openAIService;
         this.s3Client = s3Client;
-        this.restTemplate = restTemplate;
     }
 
     @Value("${cloud.aws.s3.bucket}")
@@ -434,12 +426,6 @@ public class RecipeServiceImpl implements RecipeService {
         } catch (AmazonClientException e) {
             log.error("S3에서 파일을 삭제하지 못하였습니다.: {}", fileName, e);
         }
-    }
-
-    // URL에서 파일 확장자 추출 (예: .jpg, .png)
-    private String getFileExtension(String imageUrl) {
-        String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-        return fileName.contains(".") ? fileName.substring(fileName.lastIndexOf(".")) : ".pn";
     }
 
     // ':'가 있는 경우, ':' 이후의 문자열만 남기는 메소드

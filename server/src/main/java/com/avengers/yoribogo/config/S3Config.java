@@ -28,10 +28,4 @@ public class S3Config {
                 .build();
     }
 
-    /* 설명. S3용 RestTemplate 빈 추가 */
-    @Bean(name = "s3RestTemplate")  // S3용 RestTemplate 이름 설정
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
 }
