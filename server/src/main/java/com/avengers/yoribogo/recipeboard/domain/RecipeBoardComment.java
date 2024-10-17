@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "RECIPE_BOARD_COMMENT")
+@Table(name = "recipe_board_comment")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -17,24 +17,24 @@ import java.time.LocalDateTime;
 public class RecipeBoardComment {
 
     @Id
-    @Column(name = "RECIPE_BOARD_COMMENT_ID")
+    @Column(name = "recipe_board_comment_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long recipeBoardCommentId;
 
-    @Column(name = "RECIPE_BOARD_COMMENT_CONTENT")
+    @Column(name = "recipe_board_comment_content")
     private String recipeBoardCommentContent;
 
-    @Column(name = "RECIPE_BOARD_COMMENT_CREATED_AT")
+    @Column(name = "recipe_board_comment_created_at")
     private LocalDateTime recipeBoardCommentCreatedAt;
 
-    @Column(name = "RECIPE_BOARD_ID")
+    @Column(name = "recipe_board_id")
     private Long recipeBoardId;
 
-    @Column(name = "USER_ID")
+    @Column(name = "user_id")
     private Long userId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "RECIPE_BOARD_COMMENT_STATUS", nullable = false)
+    @Column(name = "recipe_board_comment_status", nullable = false)
     private RecipeBoardCommentStatus recipeBoardCommentStatus = RecipeBoardCommentStatus.ACTIVE; // 기본값 설정
 
 }

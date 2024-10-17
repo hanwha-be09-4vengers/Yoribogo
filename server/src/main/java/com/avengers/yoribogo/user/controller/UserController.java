@@ -6,6 +6,7 @@ import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.security.JwtUtil;
 import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.domain.enums.SignupPath;
+import com.avengers.yoribogo.user.domain.vo.ResponseUserVO;
 import com.avengers.yoribogo.user.domain.vo.email.EmailVerificationSignupVO;
 import com.avengers.yoribogo.user.domain.vo.email.EmailVerificationVO;
 import com.avengers.yoribogo.user.domain.vo.email.ResponseEmailMessageVO;
@@ -14,10 +15,14 @@ import com.avengers.yoribogo.user.domain.vo.login.AuthTokens;
 import com.avengers.yoribogo.user.domain.vo.login.ResponseOAuthLoginVO;
 import com.avengers.yoribogo.user.domain.vo.login.TokenRefreshRequest;
 import com.avengers.yoribogo.user.domain.vo.naver.NaverAuthorizationCode;
+import com.avengers.yoribogo.user.domain.vo.password.RequestUpdateLoggedInPasswordVO;
+import com.avengers.yoribogo.user.domain.vo.password.RequestUpdatePasswordUserVO;
+import com.avengers.yoribogo.user.domain.vo.signup.RequestResistAdminUserVO;
 import com.avengers.yoribogo.user.domain.vo.signup.RequestResistEnterpriseUserVO;
 import com.avengers.yoribogo.user.dto.UserDTO;
 import com.avengers.yoribogo.user.dto.email.EmailVerificationUserIdRequestDTO;
 import com.avengers.yoribogo.user.dto.email.EmailVerificationUserPasswordRequestDTO;
+import com.avengers.yoribogo.user.dto.profile.RequestUpdateUserDTO;
 import com.avengers.yoribogo.user.dto.validate.BooleanResponseDTO;
 import com.avengers.yoribogo.user.dto.validate.RequestNicknameDTO;
 import com.avengers.yoribogo.user.dto.validate.RequestUserAuthIdentifierDTO;
@@ -29,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
@@ -39,15 +45,18 @@ public class UserController {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final OAuth2LoginService oAuth2LoginService;
+    private final EmailVerificationService emailVerificationService;
     private final JwtUtil jwtUtil;
 
     @Autowired
     public UserController(Environment env, UserService userService, ModelMapper modelMapper,
-                          OAuth2LoginService oAuth2LoginService, JwtUtil jwtUtil) {
+                          OAuth2LoginService oAuth2LoginService, EmailVerificationService emailVerificationService,
+                          JwtUtil jwtUtil) {
         this.env = env;
         this.userService = userService;
         this.modelMapper = modelMapper;
         this.oAuth2LoginService = oAuth2LoginService;
+        this.emailVerificationService=emailVerificationService;
         this.jwtUtil = jwtUtil;
     }
 
@@ -56,10 +65,6 @@ public class UserController {
         return "I'm Working in User Service on port "
                 + env.getProperty("local.server.port");
     }
-
-    // 설명. 이메일 인증 서비스
-    @Autowired
-    private EmailVerificationService emailVerificationService;
 
     // 설명. 1. 이메일 전송 API (회원가입시 실행)
     @PostMapping("/verification-email/signup")
@@ -201,30 +206,81 @@ public class UserController {
         return ResponseDTO.ok(savedUserDTO);
     }
 
-    /* 설명. 7. 닉네임 중복 검증  */
+
+    /* 설명. 7. 관리자 회원 가입 기능 */
+    @PostMapping("/signup/admin")
+    public ResponseDTO<UserDTO> registAdminUser(@RequestBody RequestResistAdminUserVO newAdminUser) {
+        // UserService 호출
+        UserDTO savedUserDTO = userService.registAdminUser(newAdminUser); // 저장된 DTO 반환
+
+        // ResponseUserVO로 변환하는 대신 UserDTO를 직접 응답으로 사용
+        return ResponseDTO.ok(savedUserDTO);
+    }
+
+
+    /* 설명. 8. 닉네임 중복 검증  */
     @PostMapping("/nickname/validate")
     public ResponseDTO<BooleanResponseDTO> validateNickname(@RequestBody RequestNicknameDTO requestNicknameDTO) {
         BooleanResponseDTO booleanResponseDTO= userService. getUserByNicknameForDuplicate(requestNicknameDTO.getNickname());
         return ResponseDTO.ok(booleanResponseDTO);
     }
 
-    /* 설명. 8. 아이디 중복 검증  */
+    /* 설명. 9. 아이디 중복 검증  */
     @PostMapping("/user-id/validate")
     public ResponseDTO<BooleanResponseDTO> getUserByUserIdentifier(@RequestBody RequestUserAuthIdentifierDTO requestUserIdentifierDTO) {
         BooleanResponseDTO booleanResponseDTO = userService.getUserByUserAuthId(requestUserIdentifierDTO.getUserAuthId());
         return ResponseDTO.ok(booleanResponseDTO);
     }
 
-    //필기. 9. 회원 탈퇴
+    //필기. 10. 회원 탈퇴
     @PatchMapping("/{userId}/deactivate")
     public ResponseDTO<?> deactivateUser(@PathVariable("userId") Long userId) {
         UserEntity userEntity = userService.deactivateUser(userId);
         return ResponseDTO.ok(userEntity);
     }
-    //필기. 10. 사용자 재활성화
+    //필기. 11. 사용자 재활성화
     @PostMapping("/activate")
     public ResponseDTO<?> activateUser(@RequestParam("userAuthId") String userAuthId ) {
         UserEntity userEntity = userService.activateUser(userAuthId);
         return ResponseDTO.ok(userEntity);
     }
+
+    //필기. 12. 로그인전 사용자 비밀번호 재설정
+    @PostMapping("/re-password")
+    public ResponseDTO<?> updatePassword(@RequestBody RequestUpdatePasswordUserVO requestUpdatePasswordUserVO) {
+
+        // 서비스 호출 및 결과 처리
+        UserEntity userEntity = userService.updatePassword( requestUpdatePasswordUserVO.getUserAuthId(), requestUpdatePasswordUserVO.getPassword());
+        ResponseUserVO userUpdateRequestVO = modelMapper.map(userEntity, ResponseUserVO.class);
+        return ResponseDTO.ok(userUpdateRequestVO);
+    }
+
+    //필기. 13. 로그인한 사용자 비밀번호 재설정
+    @PatchMapping("/{userId}/password")
+    public ResponseDTO<?> updateLoginedPassword(@PathVariable("userId") Long userId,
+                                                @RequestBody RequestUpdateLoggedInPasswordVO requestUpdatePasswordUserVO) {
+        // 서비스 호출 및 결과 처리
+        UserEntity userEntity = userService.updateLoggedInPassword(userId, requestUpdatePasswordUserVO.getPassword());
+        ResponseUserVO userUpdateRequestVO = modelMapper.map(userEntity, ResponseUserVO.class);
+        return ResponseDTO.ok(userUpdateRequestVO);
+    }
+
+    //필기. 14. 사용자 프로필 변경(닉네임,사진)
+    @PatchMapping("/{userId}/profile")
+    public ResponseDTO<?> updateProfile(@PathVariable("userId") Long userId,
+                                        @RequestParam("nickname") String nickname,
+                                        @RequestParam(value = "profile_image", required = false) MultipartFile profileImage) {
+
+        // DTO 객체 생성 및 값 설정
+        RequestUpdateUserDTO userUpdateDTO = new RequestUpdateUserDTO();
+        userUpdateDTO.setNickname(nickname);
+        userUpdateDTO.setProfileImage(profileImage);
+
+        // 서비스 호출 및 결과 처리
+        UserEntity userEntity = userService.updateProfile(userId, userUpdateDTO);
+        ResponseUserVO userUpdateRequestVO = modelMapper.map(userEntity, ResponseUserVO.class);
+        return ResponseDTO.ok(userUpdateRequestVO);
+    }
+
+
 }

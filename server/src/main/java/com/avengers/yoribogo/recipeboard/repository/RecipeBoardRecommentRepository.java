@@ -6,18 +6,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface RecipeBoardCommentRepository extends JpaRepository<RecipeBoardComment, Long> {
+public interface RecipeBoardRecommentRepository extends JpaRepository<RecipeBoardRecomment, Long> {
 
 
-    // 레시피 id로 조회
-    List<RecipeBoardComment> findAllByRecipeBoardId(Long recipeId);
+    List<RecipeBoardRecomment> findByRecipeBoardComment_RecipeBoardCommentId(Long commentId);
+
+
 
     // 회원 id로 조회
-    List<RecipeBoardComment> findAllByUserId(Long userId);
-
-
-
-
+    List<RecipeBoardRecomment> findAllByUserId(Long userId);
 
 
 
