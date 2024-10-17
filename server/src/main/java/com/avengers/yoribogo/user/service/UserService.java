@@ -227,4 +227,52 @@ public class UserService implements UserDetailsService {
         return userRepository.save(userEntity);
     }
 
+    // 설명. 로그인 전 사용자 비밀번호 재설정
+    public UserEntity updatePassword(String userAuthId, String newPassword) {
+        // 1. 사용자 ID를 통해 사용자를 조회
+        UserEntity userEntity = userRepository.findByUserIdentifier("NORMAL_" + userAuthId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+
+        // 2. 비번 재설정시 이메일 인증여부 확인
+        if (userEntity.getEmail() != null && !userEntity.getEmail().isEmpty()) {
+            String emailVerificationStatus = stringRedisTemplate.opsForValue().get(userEntity.getEmail());
+            if (!"True".equals(emailVerificationStatus)) {
+                log.error("이메일 인증이 완료되지 않았습니다: {}", userEntity.getEmail());
+                throw new CommonException(ErrorCode.EMAIL_VERIFICATION_REQUIRED); // 이메일 인증이 필요하다는 커스텀 예외 던지기
+            }
+        }
+
+        // 3. 새로운 비밀번호를 암호화하여 설정
+        String encryptedPassword = bCryptPasswordEncoder.encode(newPassword);
+        userEntity.setEncryptedPwd(encryptedPassword);
+
+        // 4. 암호화된 비밀번호를 저장하고 사용자 정보를 업데이트
+        UserEntity updatedUserEntity = userRepository.save(userEntity);
+
+        // 5. 비번 재설정 성공 후 Redis에서 이메일 키 삭제
+        if (userEntity.getEmail() != null && !userEntity.getEmail().isEmpty()) {
+            stringRedisTemplate.delete(userEntity.getEmail());
+        }
+
+        // 6. 업데이트된 사용자 엔티티 반환
+        return updatedUserEntity;
+    }
+
+    // 설명. 로그인 후 사용자 비밀번호 재설정
+    public UserEntity updateLoggedInPassword(Long userId, String newPassword) {
+        // 1. 사용자 ID를 통해 사용자를 조회
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+
+        // 2. 새로운 비밀번호를 암호화하여 설정
+        String encryptedPassword = bCryptPasswordEncoder.encode(newPassword);
+        userEntity.setEncryptedPwd(encryptedPassword);
+
+        // 3. 암호화된 비밀번호를 저장하고 사용자 정보를 업데이트
+        UserEntity updatedUserEntity = userRepository.save(userEntity);
+
+        // 4. 업데이트된 사용자 엔티티 반환
+        return updatedUserEntity;
+    }
+
 }
