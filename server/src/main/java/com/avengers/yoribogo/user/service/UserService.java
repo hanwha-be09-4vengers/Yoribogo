@@ -1,6 +1,11 @@
 package com.avengers.yoribogo.user.service;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.user.domain.UserEntity;
@@ -10,6 +15,7 @@ import com.avengers.yoribogo.user.domain.enums.SignupPath;
 import com.avengers.yoribogo.user.domain.enums.UserRole;
 import com.avengers.yoribogo.user.domain.vo.signup.RequestResistEnterpriseUserVO;
 import com.avengers.yoribogo.user.dto.UserDTO;
+import com.avengers.yoribogo.user.dto.profile.RequestUpdateUserDTO;
 import com.avengers.yoribogo.user.dto.validate.BooleanResponseDTO;
 import com.avengers.yoribogo.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -27,13 +33,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -274,5 +285,121 @@ public class UserService implements UserDetailsService {
         // 4. 업데이트된 사용자 엔티티 반환
         return updatedUserEntity;
     }
+
+    /**설명.
+     *  사용자의 프로필(닉네임, 이미지)을 업데이트하는 메서드.
+     *설명.
+     * @param userId 프로필을 업데이트할 사용자의 ID
+     * @param userUpdateDTO 업데이트할 정보가 담긴 DTO 객체
+     * @return 업데이트된 UserEntity 객체
+     * @throws CommonException 사용자가 존재하지 않을 경우 발생
+     */
+    public UserEntity updateProfile(Long userId, RequestUpdateUserDTO userUpdateDTO) {
+        Optional<UserEntity> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new CommonException(ErrorCode.NOT_FOUND_USER);
+        }
+        UserEntity userEntity = user.get();
+
+        String imageUrl = null;
+
+
+        // 닉네임 중복 검증(null이 아니고 기존과 같지 않은 경우에)
+        if (userUpdateDTO.getNickname() != null ) {
+
+            if (userUpdateDTO.getNickname().equals(userEntity.getNickname()))
+            {
+                throw new CommonException(ErrorCode.DUPLICATE_NICKNAME);
+            }
+
+            Optional<UserEntity> existingUserWithSameNickname = userRepository.findByNickname(userUpdateDTO.getNickname());
+            if (existingUserWithSameNickname.isPresent()) {
+                throw new CommonException(ErrorCode.DUPLICATE_NICKNAME_EXISTS); // 커스텀 예외 던지기 (DUPLICATE_NICKNAME은 정의된 에러 코드로 가정)
+            }
+        }
+
+
+        // 프로필 이미지가 제공된 경우에만 처리
+        if (userUpdateDTO.getProfileImage() != null && !userUpdateDTO.getProfileImage().isEmpty()) {
+            // 기존 이미지가 있으면 삭제
+            if (userEntity.getProfileImage() != null && !userEntity.getProfileImage().isEmpty()) {
+                deleteProfileImage(userEntity.getProfileImage());
+            }
+            // 새로운 이미지를 업로드하고 URL을 얻음
+            imageUrl = uploadProfileImage(userUpdateDTO.getProfileImage(), userId);
+        }
+
+        // 닉네임이나 이미지가 null일 수 있으므로 기존 값을 유지할지 여부를 확인
+        String updatedNickname = userUpdateDTO.getNickname() != null ? userUpdateDTO.getNickname() : userEntity.getNickname();
+        String updatedImageUrl = imageUrl != null ? imageUrl : userEntity.getProfileImage();
+
+        // 프로필 업데이트
+        userEntity.updateProfile(updatedNickname, updatedImageUrl);
+        return userRepository.save(userEntity);
+    }
+
+    /**설명.
+     *  S3에서 기존 프로필 이미지를 삭제하는 메서드.
+     *설명.
+     * @param fileUrl 삭제할 파일의 S3 URL
+     */
+    public void deleteProfileImage(String fileUrl) {
+        String splitStr = ".com/";
+        String fileName = fileUrl.substring(fileUrl.lastIndexOf(splitStr) + splitStr.length());
+
+        log.info("Attempting to delete file from S3: " + fileName);
+
+        try {
+            // S3에서 파일 삭제 요청
+            s3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
+            log.info("Successfully deleted image from S3: " + fileName);
+        } catch (AmazonClientException e) {
+            log.error("Failed to delete image from S3: " + fileName, e);
+        }
+    }
+
+
+
+    /** 설명.
+     *  MultipartFile을 S3에 업로드하고, 업로드된 파일의 URL을 반환하는 메서드.
+     * 설명.
+     * @param profileImage 업로드할 프로필 이미지 파일
+     * @param userId 사용자의 ID로 파일명을 지정
+     * @return 업로드된 파일의 S3 URL
+     * @throws CommonException 파일 업로드에 실패할 경우 발생
+     */
+    private String uploadProfileImage(MultipartFile profileImage, Long userId) {
+        String originalFileName = profileImage.getOriginalFilename();
+        String fileExtension = originalFileName.substring(originalFileName.lastIndexOf(".")).toLowerCase();  // 확장자를 소문자로 변환
+        String fileName = "user_" + userId + fileExtension;  // 사용자 ID를 기반으로 파일명 생성
+
+        try {
+            // ObjectMetadata 객체 생성
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(profileImage.getSize());
+
+            // MIME 타입 설정 (MultipartFile에서 ContentType 가져오기)
+            String contentType = profileImage.getContentType();
+            if (contentType != null) {
+                metadata.setContentType(contentType);  // Content-Type 설정
+            } else {
+                metadata.setContentType("application/octet-stream");  // 기본 값 설정
+            }
+
+            // Content-Disposition을 inline으로 설정
+            metadata.setContentDisposition("inline");
+
+            // S3에 파일 업로드
+            s3Client.putObject(new PutObjectRequest(bucket, fileName, profileImage.getInputStream(), metadata));
+
+            // 업로드된 파일의 S3 URL 반환
+            return s3Client.getUrl(bucket, fileName).toString();
+        } catch (AmazonClientException | IOException e) {
+            log.error("S3에 이미지 업로드 실패", e);
+            throw new CommonException(ErrorCode.FILE_UPLOAD_ERROR);
+        }
+    }
+
+
 
 }
