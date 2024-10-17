@@ -26,7 +26,7 @@ const props = defineProps({
   text: {
     type: String,
     required: true
-  }, 
+  },
   recipeId: {
     type: Number,
     required: true
@@ -72,7 +72,9 @@ const goWikiDetail = () => {
   backface-visibility: hidden;
   box-shadow: 0.5rem 0.5rem 0.3rem 0rem rgba(60, 60, 60, 0.5);
   border-radius: 1.8rem;
-  transition: transform 0.8s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.8s ease,
+    box-shadow 0.2s ease;
   transform-style: preserve-3d;
 }
 
@@ -93,6 +95,7 @@ const goWikiDetail = () => {
 
 .back img {
   height: 22.6rem;
+  border-radius: 1.4rem;
 }
 
 .result-board.flipped .front {

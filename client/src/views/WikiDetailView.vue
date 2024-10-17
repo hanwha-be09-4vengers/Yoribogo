@@ -57,6 +57,7 @@ const route = useRoute()
 
 const menuInfo = ref({})
 const manualList = ref([])
+const menuImageSrc = ref('')
 
 const defaultImage = ref(
   'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728804967802_a4720492-2dd2-4e59-8f31-79b55e6a169e_%E1%84%80%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.svg'
@@ -67,6 +68,7 @@ const fetchData = async () => {
     const recipeResponse = (await axios.get(`/api/recipes/${route.params.recipeId}`)).data
     if (recipeResponse.success) {
       menuInfo.value = recipeResponse.data
+      menuImageSrc.value = menuInfo.value.menu_image || defaultImage.value
       const manualResponse = (await axios.get(`/api/manuals?recipe=${route.params.recipeId}`)).data
       if (manualResponse.success) {
         manualList.value = manualResponse.data
@@ -77,9 +79,6 @@ const fetchData = async () => {
   }
 }
 
-// computed 속성으로 이미지 소스 처리
-const menuImageSrc = ref(defaultImage.value)
-
 // 이미지 로딩 오류 처리 함수
 const handleImageError = () => {
   menuImageSrc.value = defaultImage.value
@@ -89,7 +88,6 @@ const handleImageError = () => {
 
 // 이미지 로드 완료 처리 함수
 const handleImageLoad = () => {
-  menuImageSrc.value = menuInfo.value.menu_image || defaultImage.value
   isImageLoading.value = false // 로딩 중지
   isImageError.value = false
 }
