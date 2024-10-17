@@ -100,6 +100,12 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
     }
 
+    // 설명. userAuthId로 사용자 조회
+    public UserEntity findByUserId(Long userId) {
+        return userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+    }
+
     /* 설명. 로그인 시 security가 자동으로 호출하는 메소드 */
     @Override
     public UserDetails loadUserByUsername(String userAuthId) throws UsernameNotFoundException {
@@ -415,7 +421,7 @@ public class UserService implements UserDetailsService {
      * @return 업로드된 파일의 S3 URL
      * @throws CommonException 파일 업로드에 실패할 경우 발생
      */
-    private String uploadProfileImage(MultipartFile profileImage, Long userId) {
+    public String uploadProfileImage(MultipartFile profileImage, Long userId) {
         String originalFileName = profileImage.getOriginalFilename();
         String fileExtension = originalFileName.substring(originalFileName.lastIndexOf(".")).toLowerCase();  // 확장자를 소문자로 변환
         String fileName = "user_" + userId + fileExtension;  // 사용자 ID를 기반으로 파일명 생성
