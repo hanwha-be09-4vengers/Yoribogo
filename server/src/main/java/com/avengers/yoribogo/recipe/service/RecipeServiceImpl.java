@@ -234,20 +234,20 @@ public class RecipeServiceImpl implements RecipeService {
                 "'채식 또는 비건 식단을 따르시나요?' → '" + requestRecommendDTO.getFourth() + "', " +
                 "'제가 또 알아야 하는 게 있나요?' → '" + requestRecommendDTO.getFifth() + "'." +
                 " 특히 '" + requestRecommendDTO.getFifth() + "'를 가장 중요하게 고려하고, " +
-                "추천하는 요리 이름은 '요리이름한국어(영어로된요리이름)' 형식으로 특수문자 없이 간단히 알려줘.";
+                "추천하는 요리 이름은 '요리이름(English description of the dish)' 형식으로 특수문자 없이 간단히 알려줘.";
 
         String aiAnswerMenu = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
 
         // 한국어 이름과 영어 이름 분리
         String koreanName = aiAnswerMenu.split("\\(")[0].trim();
-        String englishName = aiAnswerMenu.split("\\(")[1].replace(")", "").trim();
+        String description = aiAnswerMenu.split("\\(")[1].replace(")", "").trim();
 
         // 앞뒤 특수문자 제거
         String trimmedAiAnswerMenu = trimSpecialCharacters(koreanName);
-        String trimmedEnglishName = trimSpecialCharacters(englishName);
+        String trimmedDescription = trimSpecialCharacters(description);
 
         System.out.println(trimmedAiAnswerMenu);
-        System.out.println(trimmedEnglishName);
+        System.out.println(trimmedDescription);
 
         // 2단계: 요리 레시피 테이블 조회하기
 
@@ -311,7 +311,7 @@ public class RecipeServiceImpl implements RecipeService {
         // 7단계: AI가 생성한 요리 등록
 
         // AI 사진 생성
-        String gptImageUrl = registImages(trimmedEnglishName);
+        String gptImageUrl = registImages(trimmedDescription);
         System.out.println(gptImageUrl);
 
         // AI가 생성한 요리 정보 입력
