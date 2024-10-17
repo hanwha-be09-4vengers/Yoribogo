@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface RecipeBoardRepository extends JpaRepository<RecipeBoard, Long> {
 
     Page<RecipeBoard> findByRecipeBoardMenuNameContaining(String recipeBoardMenuName, Pageable pageable);
+
+    Page<RecipeBoard> findByUserId(Long userId, Pageable pageable);
 }
