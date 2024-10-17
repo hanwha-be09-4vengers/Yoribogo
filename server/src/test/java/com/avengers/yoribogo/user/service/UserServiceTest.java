@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.user.domain.UserEntity;
+import com.avengers.yoribogo.user.dto.UserDTO;
 import com.avengers.yoribogo.user.dto.profile.RequestUpdateUserDTO;
 import com.avengers.yoribogo.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -53,7 +54,7 @@ class UserServiceTest {
                 .thenReturn(new java.net.URL("https://s3.amazonaws.com/bucket/test.jpg"));
 
         // When
-        UserEntity result = userService.updateProfile(userId, userUpdateDTO);
+        UserDTO result = userService.updateProfile(userId, userUpdateDTO);
 
         // Then
         assertNotNull(result);
