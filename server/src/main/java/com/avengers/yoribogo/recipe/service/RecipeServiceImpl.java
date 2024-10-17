@@ -133,6 +133,7 @@ public class RecipeServiceImpl implements RecipeService {
                     .builder()
                     .menuName(newRecipe.getMenuName())
                     .menuIngredient(newRecipe.getMenuIngredient())
+                    .menuImage(newRecipe.getMenuImage())
                     .recipeId(newRecipe.getRecipeId())
                     .build();
 
@@ -179,6 +180,7 @@ public class RecipeServiceImpl implements RecipeService {
                     .builder()
                     .menuName(modifyRecipeDTO.getMenuName())
                     .menuIngredient(modifyRecipeDTO.getMenuIngredient())
+                    .menuImage(modifyRecipeDTO.getMenuImage())
                     .recipeId(existingRecipe.getRecipeId())
                     .build();
 
@@ -208,18 +210,27 @@ public class RecipeServiceImpl implements RecipeService {
     @Transactional
     public BaseRecipeDTO registRecommendRecipe(RequestRecommendDTO requestRecommendDTO) {
         // 1단계: AI에게 추천하는 요리 이름 물어보기
-        String prompt = "다음 정보를 바탕으로 알맞은 요리를 하나만 추천해줘: " +
+        String prompt = "다음 정보를 바탕으로 적합한 요리 이름을 하나만 추천해줘: " +
                 "'오늘의 날씨는 어떤가요?' → '" + requestRecommendDTO.getFirst() + "', " +
                 "'오늘의 기분은 어떤가요?' → '" + requestRecommendDTO.getSecond() + "', " +
                 "'몇 명이 먹는 음식인가요?' → '" + requestRecommendDTO.getThird() + "', " +
                 "'채식 또는 비건 식단을 따르시나요?' → '" + requestRecommendDTO.getFourth() + "', " +
-                "'제가 또 알아야 하는게 있나요?' → '" + requestRecommendDTO.getFifth() + "'." +
+                "'제가 또 알아야 하는 게 있나요?' → '" + requestRecommendDTO.getFifth() + "'." +
                 " 특히 '" + requestRecommendDTO.getFifth() + "'를 가장 중요하게 고려하고, " +
-                "요리 이름은 특수문자와 다른 말은 빼고 오직 이름만 알려줘.";
+                "추천하는 요리 이름은 '요리이름한국어(영어로된요리이름)' 형식으로 특수문자 없이 간단히 알려줘.";
+
         String aiAnswerMenu = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
 
+        // 한국어 이름과 영어 이름 분리
+        String koreanName = aiAnswerMenu.split("\\(")[0].trim();
+        String englishName = aiAnswerMenu.split("\\(")[1].replace(")", "").trim();
+
         // 앞뒤 특수문자 제거
-        String trimmedAiAnswerMenu = trimSpecialCharacters(aiAnswerMenu);
+        String trimmedAiAnswerMenu = trimSpecialCharacters(koreanName);
+        String trimmedEnglishName = trimSpecialCharacters(englishName);
+
+        System.out.println(trimmedAiAnswerMenu);
+        System.out.println(trimmedEnglishName);
 
         // 2단계: 요리 레시피 테이블 조회하기
 
@@ -281,12 +292,14 @@ public class RecipeServiceImpl implements RecipeService {
         aiAnswerRecipe = parseString(aiAnswerRecipe);
 
         // 7단계: AI가 생성한 요리 등록
+        String imageUrl = openAIService.getImages(trimmedEnglishName).getData().get(0).getUrl();
 
         // AI가 생성한 요리 정보 입력
         RecipeDTO newRecipeDTO = RecipeDTO
                 .builder()
-                .menuName(aiAnswerMenu)
+                .menuName(trimmedAiAnswerMenu)
                 .menuIngredient(aiAnswerIngredients)
+                .menuImage(imageUrl)
                 .menuType(MenuType.AI)
                 .userId(1L)
                 .build();
@@ -311,6 +324,12 @@ public class RecipeServiceImpl implements RecipeService {
         recipeManualService.registRecipeManual(newRecipeDTO.getRecipeId(), requestRecipeManualDTO);
 
         return newRecipeDTO;
+    }
+
+    // 요리 사진 생성하기
+    @Override
+    public String registImages(String menuName) {
+        return openAIService.getImages(menuName).getData().get(0).getUrl();
     }
 
     // ':'가 있는 경우, ':' 이후의 문자열만 남기는 메소드
