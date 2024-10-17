@@ -6,6 +6,7 @@ import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.security.JwtUtil;
 import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.domain.enums.SignupPath;
+import com.avengers.yoribogo.user.domain.vo.ResponseUserVO;
 import com.avengers.yoribogo.user.domain.vo.email.EmailVerificationSignupVO;
 import com.avengers.yoribogo.user.domain.vo.email.EmailVerificationVO;
 import com.avengers.yoribogo.user.domain.vo.email.ResponseEmailMessageVO;
@@ -14,6 +15,8 @@ import com.avengers.yoribogo.user.domain.vo.login.AuthTokens;
 import com.avengers.yoribogo.user.domain.vo.login.ResponseOAuthLoginVO;
 import com.avengers.yoribogo.user.domain.vo.login.TokenRefreshRequest;
 import com.avengers.yoribogo.user.domain.vo.naver.NaverAuthorizationCode;
+import com.avengers.yoribogo.user.domain.vo.password.RequestUpdateLoggedInPasswordVO;
+import com.avengers.yoribogo.user.domain.vo.password.RequestUpdatePasswordUserVO;
 import com.avengers.yoribogo.user.domain.vo.signup.RequestResistEnterpriseUserVO;
 import com.avengers.yoribogo.user.dto.UserDTO;
 import com.avengers.yoribogo.user.dto.email.EmailVerificationUserIdRequestDTO;
@@ -227,4 +230,25 @@ public class UserController {
         UserEntity userEntity = userService.activateUser(userAuthId);
         return ResponseDTO.ok(userEntity);
     }
+
+    //필기. 11. 로그인전 사용자 비밀번호 재설정
+    @PostMapping("/re-password")
+    public ResponseDTO<?> updatePassword(@RequestBody RequestUpdatePasswordUserVO requestUpdatePasswordUserVO) {
+
+        // 서비스 호출 및 결과 처리
+        UserEntity userEntity = userService.updatePassword( requestUpdatePasswordUserVO.getUserAuthId(), requestUpdatePasswordUserVO.getPassword());
+        ResponseUserVO userUpdateRequestVO = modelMapper.map(userEntity, ResponseUserVO.class);
+        return ResponseDTO.ok(userUpdateRequestVO);
+    }
+
+    //필기. 12. 로그인한 사용자 비밀번호 재설정
+    @PatchMapping("/{userId}/password")
+    public ResponseDTO<?> updateLoginedPassword(@PathVariable("userId") Long userId,
+                                                @RequestBody RequestUpdateLoggedInPasswordVO requestUpdatePasswordUserVO) {
+        // 서비스 호출 및 결과 처리
+        UserEntity userEntity = userService.updateLoggedInPassword(userId, requestUpdatePasswordUserVO.getPassword());
+        ResponseUserVO userUpdateRequestVO = modelMapper.map(userEntity, ResponseUserVO.class);
+        return ResponseDTO.ok(userUpdateRequestVO);
+    }
+
 }
