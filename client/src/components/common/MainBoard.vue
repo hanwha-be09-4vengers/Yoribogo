@@ -25,7 +25,7 @@
       <MenuTab
         class="bg-red"
         :class="{ cur: activeTab === 'qna' }"
-        :iconClass="'fa-solid fa-user'"
+        :iconClass="'fa-regular fa-circle-question'"
         @click="goActiveTab('qna')"
         >Q&A</MenuTab
       >
