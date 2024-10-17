@@ -39,18 +39,18 @@ public class RecipeBoardCommentServiceImpl implements RecipeBoardCommentService 
         // 기본 status -> ACTIVE 설정
         comment.setRecipeBoardCommentStatus(RecipeBoardCommentStatus.ACTIVE);
         // 시간 설정
-        comment.setRecipeBoardCommentCreatedAt(LocalDateTime.now());
+        comment.setRecipeBoardCommentCreatedAt(LocalDateTime.now().withNano(0));
 
 
         if (comment.getRecipeBoardCommentContent() == null || comment.getRecipeBoardCommentContent().trim().isEmpty()) {
-            throw new IllegalArgumentException("댓글을 입력해주세요.");
+            throw new IllegalArgumentException(ErrorCode.MISSING_REQUIRED_FIELD.getMessage());
         }
 
         try {
             RecipeBoardComment createdComment = commentRepository.save(comment);
             return modelMapper.map(createdComment, RecipeBoardCommentDTO.class);
         } catch (Exception e) {
-            throw new RuntimeException("댓글 등록에 실패하였습니다. " + e);
+            throw new CommonException(ErrorCode.DATA_INTEGRITY_VIOLATION);
         }
     }
 
@@ -62,13 +62,12 @@ public class RecipeBoardCommentServiceImpl implements RecipeBoardCommentService 
     public RecipeBoardCommentDTO modifyComment(Long id, RecipeBoardCommentDTO commentDTO) {
         // 수정할 내용이 비어 있는지 체크
         if (commentDTO.getRecipeBoardCommentContent() == null || commentDTO.getRecipeBoardCommentContent().trim().isEmpty()) {
-//            throw new IllegalArgumentException("수정할 댓글 내용이 비어있습니다.");
-            throw new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD_COMMENT);
+            throw new CommonException(ErrorCode.MISSING_REQUIRED_FIELD);
         }
 
         // 기존 댓글을 ID로 찾음
         RecipeBoardComment existingComment = commentRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
+                () -> new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD_COMMENT));
 
         // 엔티티의 ID를 변경하지 않고, 나머지 필드만 수동으로 매핑
         existingComment.setRecipeBoardCommentContent(commentDTO.getRecipeBoardCommentContent());
@@ -79,7 +78,7 @@ public class RecipeBoardCommentServiceImpl implements RecipeBoardCommentService 
             // 수정된 엔티티를 DTO로 변환하여 반환
             return modelMapper.map(updatedComment, RecipeBoardCommentDTO.class);
         } catch (Exception e) {
-            throw new RuntimeException("댓글 수정에 실패했습니다. " + e);
+            throw new RuntimeException(ErrorCode.INTERNAL_SERVER_ERROR.getMessage(), e);
         }
     }
 
@@ -94,9 +93,9 @@ public class RecipeBoardCommentServiceImpl implements RecipeBoardCommentService 
         try {
             commentRepository.deleteById(id);
         } catch (EntityNotFoundException e) {
-            throw new EntityNotFoundException("댓글을 찾을 수 없습니다. " + id);
+            throw new EntityNotFoundException(ErrorCode.NOT_FOUND_RECIPE_BOARD_COMMENT.getMessage());
         } catch (Exception e) {
-            throw new RuntimeException("댓글 삭제에 실패하였습니다." + id, e);
+            throw new RuntimeException(ErrorCode.INTERNAL_SERVER_ERROR.getMessage(), e);
         }
     }
 
@@ -104,12 +103,12 @@ public class RecipeBoardCommentServiceImpl implements RecipeBoardCommentService 
     @Override
     public List<RecipeBoardCommentDTO> getCommentsByRecipeBoardId(Long recipeId) {
         if (!recipeBoardRepository.existsById(recipeId)) {
-            throw new EntityNotFoundException("해당 게시글이 존재하지 않습니다" + recipeId);
+            throw new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD);
         }
 
         List<RecipeBoardComment> comments = commentRepository.findAllByRecipeBoardId(recipeId);
         if (comments.isEmpty()) {
-            throw new EntityNotFoundException("게시글에 댓글이 존재하지 않습니다." + recipeId);
+            throw new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD_COMMENT);
         }
 
         // 엔티티 리스트를 DTO 리스트로 변환
@@ -125,12 +124,11 @@ public class RecipeBoardCommentServiceImpl implements RecipeBoardCommentService 
     @Override
     public List<RecipeBoardCommentDTO> getCommentsByUserId(Long userId) {
         if (userId == null) {
-            throw new IllegalArgumentException("UserId 가 null 이므로 예외 발생");
-        }
+            throw new CommonException(ErrorCode.MISSING_REQUIRED_FIELD);        }
 
         List<RecipeBoardComment> comments = commentRepository.findAllByUserId(userId);
         if (comments.isEmpty()) {
-            throw new EntityNotFoundException("해당 유저의 댓글이 존재하지 않습니다." + userId);
+            throw new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD_COMMENT);
         }
 
         List<RecipeBoardCommentDTO> commentDTO = comments.stream()

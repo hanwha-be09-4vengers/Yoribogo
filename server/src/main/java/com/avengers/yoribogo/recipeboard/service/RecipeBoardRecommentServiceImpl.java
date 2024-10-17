@@ -1,5 +1,7 @@
 package com.avengers.yoribogo.recipeboard.service;
 
+import com.avengers.yoribogo.common.exception.CommonException;
+import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.recipeboard.domain.RecipeBoardComment;
 import com.avengers.yoribogo.recipeboard.domain.RecipeBoardRecomment;
 import com.avengers.yoribogo.recipeboard.domain.RecipeBoardRecommentStatus;
@@ -37,7 +39,7 @@ public class RecipeBoardRecommentServiceImpl implements RecipeBoardRecommentServ
     public RecipeBoardRecommentDTO createRecomment(Long commentId, RecipeBoardRecommentDTO recommentDTO) {
         // 댓글 객체를 가져오기
         RecipeBoardComment comment = recipeBoardCommentRepository.findById(commentId)
-                .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다. ID: " + commentId));
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD_COMMENT));
 
         // 대댓글 엔티티 생성
         RecipeBoardRecomment recomment = new RecipeBoardRecomment();
@@ -69,7 +71,7 @@ public class RecipeBoardRecommentServiceImpl implements RecipeBoardRecommentServ
 
         // 대댓글 조회
         RecipeBoardRecomment recomment = recommentRepository.findById(recommentId)
-                .orElseThrow(() -> new EntityNotFoundException("대댓글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD_RECOMMENT));
 
 
 
@@ -100,9 +102,9 @@ public class RecipeBoardRecommentServiceImpl implements RecipeBoardRecommentServ
         try {
             recommentRepository.deleteById(recommentId);
         } catch (EntityNotFoundException e) {
-            throw new EntityNotFoundException("댓글을 찾을 수 없습니다. " + recommentId);
+            throw new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD_RECOMMENT);
         } catch (Exception e) {
-            throw new RuntimeException("댓글 삭제에 실패하였습니다." + recommentId, e);
+            throw new CommonException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
 
 
@@ -151,10 +153,11 @@ public class RecipeBoardRecommentServiceImpl implements RecipeBoardRecommentServ
     @Transactional
     public List<RecipeBoardRecommentDTO> getRecommentsByUserId(Long userId){
 
-        // 2. 유저에 해당하는 대댓글 가져오기
+        // 유저에 해당하는 대댓글 가져오기
         List<RecipeBoardRecomment> recomments = recipeBoardRecommentRepository.findAllByUserId(userId);
-
-
+        if (recomments.isEmpty()) {
+            throw new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD_RECOMMENT);
+        }
 
         // 3. 대댓글 엔티티 리스트를 DTO 리스트로 변환
         List<RecipeBoardRecommentDTO> recommentDTOs = recomments.stream()
