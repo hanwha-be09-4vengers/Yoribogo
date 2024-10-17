@@ -11,20 +11,22 @@ import java.time.LocalDateTime;
 public class NotificationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "notification_id")
     private Long notificationId;
 
-    @Column(nullable = false)
+    @Column(name = "notification_content")
     private String notificationContent;
 
-    @Column(nullable = false)
-    private String notificationReadStatus;
+    @Column(name = "notification_read_status")
+    @Enumerated(EnumType.STRING)
+    private NotificationStatus notificationStatus;
 
-    @Column(nullable = false)
+    @Column(name = "notification_created_at")
     private LocalDateTime notificationCreatedAt;
 
+    @Column(name = "notification_read_at")
     private LocalDateTime notificationReadAt;
 
-    @Column(nullable = false)
+    @Column(name = "user_id")
     private Long userId;
-
 }

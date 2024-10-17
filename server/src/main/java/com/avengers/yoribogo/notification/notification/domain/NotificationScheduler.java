@@ -21,9 +21,11 @@ public class NotificationScheduler {
     @Scheduled(fixedRate = 30000)
     public void sendMostLikedRecipeNotification() {
         // 좋아요가 가장 많은 레시피 가져오기
-        WeeklyPopularRecipe mostLikedRecipe = weeklyPopularRecipeService.getMostLikedRecipe();
+        WeeklyPopularRecipe mostLikedRecipe = weeklyPopularRecipeService.getRandomTopLikedRecipe();
 
         // 알림 전송
+        // 알림 보낼 때 알림에 레시피 이름이 들어가야 하므로 받은 레시피 ID 값을 이용 레시피 단건조회 API를 호출하여
+
         String message = "가장 많은 좋아요를 받은 레시피는: " + mostLikedRecipe.getMyRecipeId();
         notificationService.sendNotification(message);  // SSE로 클라이언트에 전송
     }

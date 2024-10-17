@@ -4,7 +4,9 @@ import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.WeeklyPopularR
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface WeeklyPopularRecipeMongoRepository extends MongoRepository<WeeklyPopularRecipe, String> {
@@ -12,5 +14,7 @@ public interface WeeklyPopularRecipeMongoRepository extends MongoRepository<Week
     List<WeeklyPopularRecipe> findAll();
 
     // likeId 필드를 기준으로 가장 높은 값을 가진 데이터를 하나 반환
-    WeeklyPopularRecipe findTopByOrderByLikeIdDesc();
+    Optional<List<WeeklyPopularRecipe>> findByCreatedAtAfter(LocalDateTime date);
+    //
+    void deleteByUserIdAndMyRecipeId(String userId, String myRecipeId);
 }

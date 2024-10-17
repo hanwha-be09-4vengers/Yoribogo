@@ -30,7 +30,7 @@ public class WeeklyPopularRecipeController {
     // MongoDB에서 가장 많은 좋아요를 가진 레시피 추출하는 API (추후에 일주일 타임 걸어두는 로직 추가 필요)
     @GetMapping("/mostliked")
     public ResponseEntity<ResponseDTO<WeeklyPopularRecipe>> getMostLikedRecipe() {
-        WeeklyPopularRecipe recipe = weeklyPopularRecipeService.getMostLikedRecipe();
+        WeeklyPopularRecipe recipe = weeklyPopularRecipeService.getRandomTopLikedRecipe();
         return ResponseEntity.ok(ResponseDTO.ok(recipe));
     }
 }
