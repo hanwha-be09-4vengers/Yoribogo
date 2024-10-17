@@ -1,14 +1,8 @@
 <template>
   <div class="menu-item">
-    <div class="menu-img-wrapper" v-show="isLoading">
-    </div>
+    <div class="menu-img-wrapper" v-show="isLoading"></div>
     <div class="menu-img-wrapper" v-show="!isLoading">
-      <img
-        :src="menuImageSrc"
-        alt="MenuImage"
-        @load="handleImageLoad"
-        @error="handleImageError"
-      />
+      <img :src="menuImageSrc" alt="MenuImage" @load="handleImageLoad" @error="handleImageError" />
     </div>
     <div class="menu-name-wrapper">
       <span class="menu-name">{{ formattedMenuName }}</span>
@@ -94,8 +88,8 @@ onMounted(() => {
 }
 
 .menu-img-wrapper img {
-  height: 100%;
-  width: 100%;
+  height: 150%;
+  width: 150%;
   object-fit: cover;
 }
 

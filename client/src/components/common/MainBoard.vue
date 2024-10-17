@@ -22,6 +22,13 @@
         @click="goActiveTab('mypage')"
         >마이페이지</MenuTab
       >
+      <MenuTab
+        class="bg-red"
+        :class="{ cur: activeTab === 'qna' }"
+        :iconClass="'fa-solid fa-user'"
+        @click="goActiveTab('qna')"
+        >Q&A</MenuTab
+      >
     </section>
     <section class="board">
       <slot></slot>
