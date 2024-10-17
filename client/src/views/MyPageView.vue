@@ -1,6 +1,7 @@
 <template>
   <div class="mypage-view">
     <header>
+      <NotificationButton></NotificationButton>
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
     </header>
@@ -12,6 +13,7 @@
 import HomeButton from '@/components/common/HomeButton.vue'
 import MainBoard from '@/components/common/MainBoard.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
+import NotificationButton from '@/components/common/NotificationButton.vue'
 </script>
 
 <style scoped>
@@ -23,6 +25,12 @@ import ProfileButton from '@/components/common/ProfileButton.vue'
   width: 100%;
   min-height: 100vh;
   background-color: var(--yellow-color);
+}
+
+.notification-btn {
+  position: absolute;
+  top: 7rem;
+  left: 12rem;
 }
 
 .profile-btn {
@@ -38,6 +46,10 @@ import ProfileButton from '@/components/common/ProfileButton.vue'
 }
 
 @media screen and (max-width: 480px) {
+  .notification-btn {
+    left: 10rem;
+  }
+
   .profile-btn {
     right: 10rem;
   }
@@ -48,6 +60,10 @@ import ProfileButton from '@/components/common/ProfileButton.vue'
 }
 
 @media screen and (max-width: 425px) {
+  .notification-btn {
+    left: 9rem;
+  }
+
   .profile-btn {
     right: 9rem;
   }
@@ -58,6 +74,10 @@ import ProfileButton from '@/components/common/ProfileButton.vue'
 }
 
 @media screen and (max-width: 375px) {
+  .notification-btn {
+    left: 8rem;
+  }
+
   .profile-btn {
     right: 8rem;
   }
