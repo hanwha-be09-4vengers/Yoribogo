@@ -1,5 +1,5 @@
 package com.avengers.yoribogo.recipeboard.domain;
 
-public enum RecipeBoardReCommentStatus {
+public enum RecipeBoardRecommentStatus {
     ACTIVE, INACTIVE
 }
