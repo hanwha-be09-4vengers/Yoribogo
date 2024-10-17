@@ -13,7 +13,4 @@ public class RequestLoginVO {
 
     @JsonProperty("password")
     private String password;
-
-    @JsonProperty("signup_path")
-    private SignupPath signupPath;
 }

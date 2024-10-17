@@ -22,4 +22,7 @@ public interface UserRepository extends JpaRepository<UserEntity,Long> {
 
     // 아이디와 이메일로 사용자 찾기
     UserEntity findByUserAuthIdAndEmail(String userAuthId, String email);
+
+    // userAuthId로 사용자 조회
+    UserEntity findByUserAuthId(String userAuthId);
 }

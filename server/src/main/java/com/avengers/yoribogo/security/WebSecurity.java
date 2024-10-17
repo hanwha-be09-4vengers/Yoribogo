@@ -51,7 +51,7 @@ public class WebSecurity {
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
         http.authorizeHttpRequests((authz) ->
-                        authz
+                        authz   .requestMatchers(new AntPathRequestMatcher("/login", "POST")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/api/**", "POST")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/api/**", "GET")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/api/**", "PATCH")).permitAll()

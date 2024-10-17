@@ -109,7 +109,7 @@ public class OAuth2LoginService {
                 "Bearer",
                 accessTokenExpiry.getTime(),
                 refreshTokenExpiry.getTime(),
-                user.getUserIdentifier()
+                user.getUserAuthId()
         );
     }
 
@@ -119,7 +119,7 @@ public class OAuth2LoginService {
 
         if (existingUser != null) {
             // 사용자가 이미 존재하는 경우, 역할이 ENTERPRISE 인지 확인
-            if (existingUser.getUser_role() != UserRole.ENTERPRISE) {
+            if (existingUser.getUserRole() != UserRole.ENTERPRISE) {
                 throw new CommonException(ErrorCode.INVALID_ENTERPRISE_ROLE);
             }
             return existingUser;
@@ -141,13 +141,13 @@ public class OAuth2LoginService {
 
             // 신규 회원 생성 시 역할 부여
             if (provider == SignupPath.KAKAO || provider == SignupPath.NAVER) {
-                newUser.setUser_role(UserRole.ENTERPRISE); // 일반 회원
+                newUser.setUserRole(UserRole.ENTERPRISE); // 일반 회원
             } else {
-                newUser.setUser_role(UserRole.ADMIN); // 관리자일 경우
+                newUser.setUserRole(UserRole.ADMIN); // 관리자일 경우
             }
 
             // 일반 회원일 경우에만 tierId와 userLikes 설정
-            if (newUser.getUser_role() == UserRole.ENTERPRISE) {
+            if (newUser.getUserRole() == UserRole.ENTERPRISE) {
                 newUser.setTierId(1L); // 기본 티어 값 설정
                 newUser.setUserLikes(0L); // 기본 좋아요 값 설정
             }

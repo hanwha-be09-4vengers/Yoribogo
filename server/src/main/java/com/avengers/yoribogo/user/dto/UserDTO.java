@@ -4,12 +4,18 @@ import com.avengers.yoribogo.user.domain.enums.AcceptStatus;
 import com.avengers.yoribogo.user.domain.enums.ActiveStatus;
 import com.avengers.yoribogo.user.domain.enums.SignupPath;
 import com.avengers.yoribogo.user.domain.enums.UserRole;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder // Builder 패턴 적용
+@NoArgsConstructor // 기본 생성자
+@AllArgsConstructor // 모든 필드를 포함하는 생성자
 public class UserDTO {
 
     @JsonProperty("user_id")
@@ -55,9 +61,8 @@ public class UserDTO {
     private Long userLikes;
 
     @JsonProperty("tier_id")
-    private Long tierId ;
+    private Long tierId;
 
     @JsonProperty("user_identifier")
     private String userIdentifier;
 }
-

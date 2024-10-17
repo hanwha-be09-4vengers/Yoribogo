@@ -28,7 +28,7 @@ public class ResponseOAuthLoginVO {
     @JsonProperty("refresh_token_expiry")
     private Date refreshTokenExpiry;
 
-    @JsonProperty("user_identifier")
-    private String userIdentifier;
+    @JsonProperty("user_auth_id")
+    private String userAuthId;
 
 }
