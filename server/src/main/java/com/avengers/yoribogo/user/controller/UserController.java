@@ -187,6 +187,17 @@ public class UserController {
         return ResponseDTO.ok(userDTO);
     }
 
+    // 설명. 4.3 사용자 식별자(userId)로 조회한 후 UserDTO로 변환하여 반환
+    @GetMapping("/{userId}")
+    public ResponseDTO<UserDTO> getUserByUserId(@PathVariable("userId") Long userId) {
+        UserEntity userEntity = userService.findByUserId(userId);
+
+        // UserEntity를 UserDTO로 변환
+        UserDTO userDTO = modelMapper.map(userEntity, UserDTO.class);
+
+        return ResponseDTO.ok(userDTO);
+    }
+
     // 설명. 5. 리프레시 토큰으로 액세스 토큰 재발급
     @PostMapping("/auth/refresh-token")
     public ResponseDTO<AuthTokens> refreshToken(@RequestBody TokenRefreshRequest request) {

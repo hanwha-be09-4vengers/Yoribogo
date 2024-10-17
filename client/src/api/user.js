@@ -131,6 +131,21 @@ export const fetchUserByAuthId = async (userAuthId, accessToken) => {
 };
 
 /**
+ * user_id로 사용자 정보 조회 함수
+ */
+export const fetchUserById = async (userId, accessToken) => {
+  try {
+    const response = await apiClient.get(`/users/${userId}`, {
+      headers: { Authorization: `Bearer ${accessToken}` }, // 인증 토큰을 포함
+    });
+    return response.data;  // 반환된 사용자 정보
+  } catch (error) {
+    console.error('user_id로 사용자 정보 조회 중 오류:', error);
+    throw error;
+  }
+};
+
+/**
  * 회원 재활성화 함수
  */
 export const reactivateUser = async (userId) => {
