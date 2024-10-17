@@ -1,5 +1,7 @@
 package com.avengers.yoribogo.recipeboard.service;
 
+import com.avengers.yoribogo.common.exception.CommonException;
+import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.recipeboard.domain.RecipeBoardComment;
 import com.avengers.yoribogo.recipeboard.domain.RecipeBoardCommentStatus;
 import com.avengers.yoribogo.recipeboard.dto.RecipeBoardCommentDTO;
@@ -60,7 +62,8 @@ public class RecipeBoardCommentServiceImpl implements RecipeBoardCommentService 
     public RecipeBoardCommentDTO modifyComment(Long id, RecipeBoardCommentDTO commentDTO) {
         // 수정할 내용이 비어 있는지 체크
         if (commentDTO.getRecipeBoardCommentContent() == null || commentDTO.getRecipeBoardCommentContent().trim().isEmpty()) {
-            throw new IllegalArgumentException("수정할 댓글 내용이 비어있습니다.");
+//            throw new IllegalArgumentException("수정할 댓글 내용이 비어있습니다.");
+            throw new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD_COMMENT);
         }
 
         // 기존 댓글을 ID로 찾음
@@ -69,7 +72,6 @@ public class RecipeBoardCommentServiceImpl implements RecipeBoardCommentService 
 
         // 엔티티의 ID를 변경하지 않고, 나머지 필드만 수동으로 매핑
         existingComment.setRecipeBoardCommentContent(commentDTO.getRecipeBoardCommentContent());
-//        existingComment.setRecipeBoardCommentStatus(commentDTO.getRecipeBoardCommentStatus());
 
         // 댓글 수정 및 저장
         try {
