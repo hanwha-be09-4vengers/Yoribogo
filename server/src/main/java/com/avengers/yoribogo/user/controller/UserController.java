@@ -17,6 +17,7 @@ import com.avengers.yoribogo.user.domain.vo.login.TokenRefreshRequest;
 import com.avengers.yoribogo.user.domain.vo.naver.NaverAuthorizationCode;
 import com.avengers.yoribogo.user.domain.vo.password.RequestUpdateLoggedInPasswordVO;
 import com.avengers.yoribogo.user.domain.vo.password.RequestUpdatePasswordUserVO;
+import com.avengers.yoribogo.user.domain.vo.signup.RequestResistAdminUserVO;
 import com.avengers.yoribogo.user.domain.vo.signup.RequestResistEnterpriseUserVO;
 import com.avengers.yoribogo.user.dto.UserDTO;
 import com.avengers.yoribogo.user.dto.email.EmailVerificationUserIdRequestDTO;
@@ -205,34 +206,46 @@ public class UserController {
         return ResponseDTO.ok(savedUserDTO);
     }
 
-    /* 설명. 7. 닉네임 중복 검증  */
+
+    /* 설명. 7. 관리자 회원 가입 기능 */
+    @PostMapping("/signup/admin")
+    public ResponseDTO<UserDTO> registAdminUser(@RequestBody RequestResistAdminUserVO newAdminUser) {
+        // UserService 호출
+        UserDTO savedUserDTO = userService.registAdminUser(newAdminUser); // 저장된 DTO 반환
+
+        // ResponseUserVO로 변환하는 대신 UserDTO를 직접 응답으로 사용
+        return ResponseDTO.ok(savedUserDTO);
+    }
+
+
+    /* 설명. 8. 닉네임 중복 검증  */
     @PostMapping("/nickname/validate")
     public ResponseDTO<BooleanResponseDTO> validateNickname(@RequestBody RequestNicknameDTO requestNicknameDTO) {
         BooleanResponseDTO booleanResponseDTO= userService. getUserByNicknameForDuplicate(requestNicknameDTO.getNickname());
         return ResponseDTO.ok(booleanResponseDTO);
     }
 
-    /* 설명. 8. 아이디 중복 검증  */
+    /* 설명. 9. 아이디 중복 검증  */
     @PostMapping("/user-id/validate")
     public ResponseDTO<BooleanResponseDTO> getUserByUserIdentifier(@RequestBody RequestUserAuthIdentifierDTO requestUserIdentifierDTO) {
         BooleanResponseDTO booleanResponseDTO = userService.getUserByUserAuthId(requestUserIdentifierDTO.getUserAuthId());
         return ResponseDTO.ok(booleanResponseDTO);
     }
 
-    //필기. 9. 회원 탈퇴
+    //필기. 10. 회원 탈퇴
     @PatchMapping("/{userId}/deactivate")
     public ResponseDTO<?> deactivateUser(@PathVariable("userId") Long userId) {
         UserEntity userEntity = userService.deactivateUser(userId);
         return ResponseDTO.ok(userEntity);
     }
-    //필기. 10. 사용자 재활성화
+    //필기. 11. 사용자 재활성화
     @PostMapping("/activate")
     public ResponseDTO<?> activateUser(@RequestParam("userAuthId") String userAuthId ) {
         UserEntity userEntity = userService.activateUser(userAuthId);
         return ResponseDTO.ok(userEntity);
     }
 
-    //필기. 11. 로그인전 사용자 비밀번호 재설정
+    //필기. 12. 로그인전 사용자 비밀번호 재설정
     @PostMapping("/re-password")
     public ResponseDTO<?> updatePassword(@RequestBody RequestUpdatePasswordUserVO requestUpdatePasswordUserVO) {
 
@@ -242,7 +255,7 @@ public class UserController {
         return ResponseDTO.ok(userUpdateRequestVO);
     }
 
-    //필기. 12. 로그인한 사용자 비밀번호 재설정
+    //필기. 13. 로그인한 사용자 비밀번호 재설정
     @PatchMapping("/{userId}/password")
     public ResponseDTO<?> updateLoginedPassword(@PathVariable("userId") Long userId,
                                                 @RequestBody RequestUpdateLoggedInPasswordVO requestUpdatePasswordUserVO) {
@@ -252,7 +265,7 @@ public class UserController {
         return ResponseDTO.ok(userUpdateRequestVO);
     }
 
-    //필기. 13. 사용자 프로필 변경(닉네임,사진)
+    //필기. 14. 사용자 프로필 변경(닉네임,사진)
     @PatchMapping("/{userId}/profile")
     public ResponseDTO<?> updateProfile(@PathVariable("userId") Long userId,
                                         @RequestParam("nickname") String nickname,
