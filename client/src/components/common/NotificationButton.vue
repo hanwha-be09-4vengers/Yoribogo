@@ -22,18 +22,11 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
 
 const isMenuVisible = ref(false)
 
 const toggleMenu = () => {
   isMenuVisible.value = !isMenuVisible.value
-}
-
-const goMyPage = () => {
-  router.push('/mypage')
 }
 </script>
 
