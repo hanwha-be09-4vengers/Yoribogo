@@ -1,6 +1,7 @@
 <template>
   <div class="wiki-view">
     <header>
+      <NotificationButton></NotificationButton>
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
     </header>
@@ -28,6 +29,7 @@
 <script setup>
 import HomeButton from '@/components/common/HomeButton.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
+import NotificationButton from '@/components/common/NotificationButton.vue'
 import MainBoard from '@/components/common/MainBoard.vue'
 import SearchBar from '@/components/common/SearchBar.vue'
 import MenuItem from '@/components/recipe/MenuItem.vue'
@@ -104,6 +106,12 @@ watch(
   background-color: var(--yellow-color);
 }
 
+.notification-btn {
+  position: absolute;
+  top: 7rem;
+  left: 12rem;
+}
+
 .profile-btn {
   position: absolute;
   top: 7rem;
@@ -154,6 +162,10 @@ watch(
 }
 
 @media screen and (max-width: 480px) {
+  .notification-btn {
+    left: 10rem;
+  }
+
   .profile-btn {
     right: 10rem;
   }
@@ -164,6 +176,10 @@ watch(
 }
 
 @media screen and (max-width: 425px) {
+  .notification-btn {
+    left: 9rem;
+  }
+
   .profile-btn {
     right: 9rem;
   }
@@ -174,6 +190,10 @@ watch(
 }
 
 @media screen and (max-width: 375px) {
+  .notification-btn {
+    left: 8rem;
+  }
+
   .profile-btn {
     right: 8rem;
   }
