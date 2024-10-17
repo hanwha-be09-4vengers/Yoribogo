@@ -13,6 +13,6 @@ public class AuthTokens {
     private String tokenType;
     private long accessTokenExpiry;
     private long refreshTokenExpiry;
-    private String userIdentifier;
+    private String userAuthId;
 }
 

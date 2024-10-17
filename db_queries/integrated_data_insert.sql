@@ -16,8 +16,8 @@ VALUES
 INSERT INTO user (user_name, password, nickname, email, profile_image, created_at, signup_path, user_identifier, user_auth_id, user_status, user_role, accept_status, tier_id, user_likes)
 VALUES
     -- 관리자는 tier_id와 likes 없이 삽입
-    ('조찬국', '1234', '조찬국', 'alice@example.com', NULL, '2023-08-01 10:30:00', 'ADMIN', CONCAT('ADMIN_', 'changuk1234'), 'changuk1234', 'ACTIVE', 'ADMIN', 'Y', NULL, NULL),  -- 관리자
-    ('김범기', 'password123', 'princess_d', 'diana@example.com', NULL, '2023-08-04 09:15:00', 'ADMIN', CONCAT('ADMIN_', 'diana789'), 'diana789', 'ACTIVE', 'ADMIN', 'Y', NULL, NULL),  -- 관리자
+    ('조찬국', '$2a$10$3v.mR/vxwbRrExd0503Dte3eyw5ycrMwZKfwlqvn5E5Kb146/ZoGC', '조찬국', 'alice@example.com', NULL, '2023-08-01 10:30:00', 'ADMIN', CONCAT('ADMIN_', 'yoribogo'), 'yoribogo', 'ACTIVE', 'ADMIN', 'Y', NULL, NULL),  -- 관리자
+    ('김범기', '$2a$10$3v.mR/vxwbRrExd0503Dte3eyw5ycrMwZKfwlqvn5E5Kb146/ZoGC', 'princess_d', 'diana@example.com', NULL, '2023-08-04 09:15:00', 'ADMIN', CONCAT('ADMIN_', 'diana789'), 'diana789', 'ACTIVE', 'ADMIN', 'Y', NULL, NULL),  -- 관리자
     
     -- 일반 회원은 likes에 따라 tier_id 할당
     ('김석민', 'password123', 'bob_the_builder', 'bob@example.com', NULL, '2023-08-02 11:45:00', 'NAVER', CONCAT('NAVER_', '987654321'), '987654321', 'ACTIVE', 'ENTERPRISE', 'Y', 5, 25),  -- 다이아 (likes >= 20)

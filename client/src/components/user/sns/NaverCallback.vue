@@ -11,7 +11,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { handleNaverLogin, fetchUserProfile } from '@/api/user'; // 로그인 및 사용자 정보 관련 API 함수
+import { handleNaverLogin, fetchUserByAuthId } from '@/api/user'; // API 함수 임포트
 import { useTokenStore } from '@/stores/tokenStore';  // Pinia 스토어
 
 const router = useRouter();
@@ -34,8 +34,8 @@ const handleNaverCallback = async () => {
         const tokenData = response.data;
         console.log('네이버 로그인 성공 후 받은 토큰:', tokenData);
 
-        // 사용자 프로필 조회
-        const userProfileResponse = await fetchUserProfile(tokenData.user_identifier, tokenData.access_token);
+        // user_auth_id로 사용자 정보 조회
+        const userProfileResponse = await fetchUserByAuthId(tokenData.user_auth_id); // user_auth_id로 조회
         const userProfile = userProfileResponse?.data || {};
 
         console.log('userProfile 정보:', userProfile);
@@ -46,13 +46,8 @@ const handleNaverCallback = async () => {
           user_id: userProfile.user_id, // 프로필에서 user_id 추가
         });
 
-        // // 닉네임이 없으면 프로필 설정 모달 표시
-        // if (!userProfile.nickname || userProfile.nickname === '') {
-        //   showProfileModal.value = true;
-        // } else {
-        //   router.push('/'); // 닉네임이 있으면 홈으로 리다이렉트
-        // }
-        router.push('/'); // 닉네임이 있으면 홈으로 리다이렉트
+        // 닉네임이 있으면 홈으로 리다이렉트
+        router.push('/');
       } else {
         throw new Error(response.error || '네이버 로그인 실패');
       }

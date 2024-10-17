@@ -1,47 +1,40 @@
 import { defineStore } from 'pinia';
 import { reactive } from 'vue';
+import { fetchUserByAuthId } from '@/api/user'; // user.js에 정의한 fetchUserByAuthId 함수 임포트
 import axios from 'axios';
 
 export const useTokenStore = defineStore('token', () => {
   const token = reactive({
-    userId: null, // userId를 포함한 사용자 정보 초기화
-    userIdentifier: null,
-    accessToken: null,
-    accessTokenExpiry: null,
-    refreshToken: null,
-    refreshTokenExpiry: null,
+    userId: null,  // 사용자 ID
+    userAuthId: null,  // user_auth_id로 사용자 식별
+    accessToken: null,  // 액세스 토큰
+    accessTokenExpiry: null,  // 액세스 토큰 만료 시간
+    refreshToken: null,  // 리프레시 토큰
+    refreshTokenExpiry: null,  // 리프레시 토큰 만료 시간
   });
 
   // 토큰 데이터 설정 메서드 (로그인 성공 시 호출)
   const setTokenData = async (tokenData) => {
     // API 응답에서 받은 tokenData를 상태에 저장
-    token.userId = tokenData?.user_id || null;  // user_id 포함
-    token.userIdentifier = tokenData?.user_identifier || null;
-    token.accessToken = tokenData?.access_token || null;
-    token.accessTokenExpiry = tokenData?.access_token_expiry || null;
-    token.refreshToken = tokenData?.refresh_token || null;
-    token.refreshTokenExpiry = tokenData?.refresh_token_expiry || null;
+    token.userId = tokenData?.user_id || null;  // user_id 설정
+    token.userAuthId = tokenData?.user_auth_id || null;  // user_identifier -> user_auth_id로 변경
+    token.accessToken = tokenData?.access_token || null;  // 액세스 토큰 설정
+    token.accessTokenExpiry = tokenData?.access_token_expiry || null;  // 액세스 토큰 만료 시간 설정
+    token.refreshToken = tokenData?.refresh_token || null;  // 리프레시 토큰 설정
+    token.refreshTokenExpiry = tokenData?.refresh_token_expiry || null;  // 리프레시 토큰 만료 시간 설정
 
-    // 로컬 스토리지에 저장 (동기적)
+    // 로컬 스토리지에 저장
     localStorage.setItem('token', JSON.stringify(token));
     console.log('토큰이 저장되었습니다:', token);
   };
 
-  // 사용자 정보 조회 함수
-  const fetchUserId = async (userIdentifier) => {
+  // 사용자 정보 조회 함수 (user_auth_id로 조회)
+  const fetchUserId = async (userAuthId) => {
     try {
-      const response = await axios.get('/api/users/identifier', {
-        headers: {
-          Authorization: `Bearer ${token.accessToken}`, // 올바른 액세스 토큰을 전달
-        },
-        params: {
-          user_identifier: userIdentifier,
-        },
-      });
-
-      if (response.data.success) {
-        token.userId = response.data.data.user_id; // user_id 저장
-        console.log('사용자 정보 조회 성공:', response.data.data);
+      const response = await fetchUserByAuthId(userAuthId, token.accessToken);  // accessToken 추가
+      if (response.success) {
+        token.userId = response.data.user_id;  // user_id 저장
+        console.log('사용자 정보 조회 성공:', response.data);
       } else {
         console.error('사용자 정보를 가져오지 못했습니다.');
       }
@@ -54,13 +47,13 @@ export const useTokenStore = defineStore('token', () => {
   const refreshAccessToken = async () => {
     try {
       const response = await axios.post('/api/auth/refresh-token', {
-        refresh_token: token.refreshToken,
+        refresh_token: token.refreshToken,  // 리프레시 토큰 전송
       });
 
       if (response.data.success) {
         const newTokenData = response.data.data;
-        await setTokenData(newTokenData); // 새로운 토큰을 저장
-        return newTokenData.access_token; // 새로운 액세스 토큰 반환
+        await setTokenData(newTokenData);  // 새로운 토큰 저장
+        return newTokenData.access_token;  // 새 액세스 토큰 반환
       } else {
         console.error('리프레시 토큰으로 토큰 갱신 실패:', response.data.error);
         return null;
@@ -79,17 +72,17 @@ export const useTokenStore = defineStore('token', () => {
 
       // 상태 복원
       token.userId = parsedToken.userId || null;
-      token.userIdentifier = parsedToken.userIdentifier || null;
+      token.userAuthId = parsedToken.userAuthId || null;
       token.accessToken = parsedToken.accessToken || null;
       token.accessTokenExpiry = parsedToken.accessTokenExpiry || null;
       token.refreshToken = parsedToken.refreshToken || null;
       token.refreshTokenExpiry = parsedToken.refreshTokenExpiry || null;
 
       console.log('로컬 스토리지에서 토큰이 복원되었습니다:', token);
-      
+
       // 토큰이 유효한 경우 사용자 정보 확인
-      if (token.accessToken && token.userIdentifier) {
-        fetchUserId(token.userIdentifier); // userId 복원
+      if (token.accessToken && token.userAuthId) {
+        fetchUserId(token.userAuthId);  // user_auth_id로 사용자 정보 복원
       }
     } else {
       console.log('로컬 스토리지에 저장된 토큰이 없습니다. 기본값으로 설정합니다.');
@@ -100,7 +93,7 @@ export const useTokenStore = defineStore('token', () => {
   const logout = () => {
     // 모든 토큰 및 사용자 데이터 초기화
     token.userId = null;
-    token.userIdentifier = null;
+    token.userAuthId = null;
     token.accessToken = null;
     token.accessTokenExpiry = null;
     token.refreshToken = null;
