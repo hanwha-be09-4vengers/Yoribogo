@@ -2,6 +2,7 @@ package com.avengers.yoribogo.notification.notification.service;
 
 
 import com.avengers.yoribogo.security.JwtUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@Slf4j
 public class NotificationService {
 
     @Autowired
@@ -29,7 +31,7 @@ public class NotificationService {
         String userAuthId = jwtUtil.getUserId(token);
 
         // 새로운 SseEmitter 생성 및 사용자와 매핑
-        SseEmitter emitter = new SseEmitter(0L);  // 무한 타임아웃 설정
+        SseEmitter emitter = new SseEmitter(0L);  // SSE 객체 유효 시간 설정 필요
         emitters.put(userAuthId, emitter);
 
         // 연결 완료, 타임아웃, 에러 발생 시 emitter 제거
@@ -46,9 +48,11 @@ public class NotificationService {
             try {
                 emitter.send(SseEmitter.event().name("notification").data(message));
             } catch (Exception e) {
+                log.error("알림 전송에 실패하였습니다. {}: {}", userAuthId, e.getMessage());
                 emitters.remove(userAuthId);  // 실패 시 emitter 제거
-                // 에러 로깅
             }
         });
     }
+
+    // 사용자에게 보낸 알림을 DB에 저장하는 메소드
 }

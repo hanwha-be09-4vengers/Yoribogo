@@ -6,6 +6,7 @@ import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.DeleteLikeInMo
 import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.InsertLikeToMongoEvent;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.WeeklyPopularRecipe;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.repository.WeeklyPopularRecipeMongoRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class WeeklyPopularRecipeService {
 
     @Autowired
@@ -64,7 +66,7 @@ public class WeeklyPopularRecipeService {
 
         // 상위 3개 중 랜덤 선택
         String randomRecipeId = topRecipeIds.get(new Random().nextInt(topRecipeIds.size()));
-        System.out.println("알림 보낼 최종 레시피 선택됨");
+        log.info("알림 보낼 최종 레시피 선택됨");
         // 선택된 recipe_id에 해당하는 레시피 중 하나를 랜덤하게 반환
         List<WeeklyPopularRecipe> selectedRecipes = recentRecipes.stream()
                 .filter(recipe -> recipe.getMyRecipeId().equals(randomRecipeId))
@@ -78,6 +80,7 @@ public class WeeklyPopularRecipeService {
         // 그런데 같은 메뉴를 두 번 추천할 수는 없으니 한 번 추천 받은 음식은 리스트에서 제거하는 로직이 추가로 필요할 듯 하다
     }
 
+
     // 필기. mongodb에 insert 하기 위한 메서드 ( 단, 좋아요 트랜젝션 커밋 이후 실행 )
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -90,6 +93,7 @@ public class WeeklyPopularRecipeService {
         newLike.setCreatedAt(LocalDateTime.now());
 
         weeklyPopularRecipeMongoRepository.save(newLike);
+        log.info("MongoDB에 좋아요 데이터가 삽입되었습니다");
     }
 
     // 필기. 기존에 있던 좋아요를 취소하는 메서드 ( 단, 좋아요 트랜젝션 커밋 이후 실행 )
@@ -97,6 +101,6 @@ public class WeeklyPopularRecipeService {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void DeleteByUserIdAndMyRecipeId(DeleteLikeInMongoEvent event) {
         weeklyPopularRecipeMongoRepository.deleteByUserIdAndMyRecipeId(event.getUserId(), event.getPostId());
+        log.info("MongoDB에 좋아요 데이터가 삭제되었습니다");
     }
-
-}
+    }

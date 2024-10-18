@@ -18,11 +18,6 @@
         <button id="start-btn" class="start-btn" @click="goQuestion">시작하기</button>
       </section>
 
-      <!-- 새로 추가된 좋아요 버튼 -->
-      <div>
-        <button @click="likePost">좋아요 추가</button>
-      </div>
-
     </main>
     <LoginModal
       v-if="isLoginModalVisible"
@@ -39,11 +34,6 @@ import LoginModal from '@/components/user/login/LoginModal.vue';
 import HomeNav from '@/components/user/HomeNav.vue'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
-
-// 새로 추가된 import
-import { useTokenStore } from '@/stores/tokenStore';
-import axios from 'axios';
-import { addLike } from '@/api/like';
 
 const router = useRouter()
 
@@ -62,46 +52,6 @@ const closeLoginModal = () => {
 const goQuestion = () => {
   router.push('/question/1')
 }
-
-// 새로 추가된 likePost 함수
-const tokenStore = useTokenStore();
-
-const likePost = async () => {
-  try {
-    const postId = 1; 
-    const userId = tokenStore.token.userId;
-    console.log('Attempting to like post:', { userId, postId });
-
-    if (!tokenStore.token.userId) {
-      alert("로그인이 필요합니다.");
-      openLoginModal();
-      return;
-    }
-    
-    const response = await addLike(userId, postId);
-
-    console.log('Response data:', response.data); // 응답 확인
-
-    if (response.data.success) {
-      if (response.data.isLiked) {
-        alert("좋아요가 추가되었습니다!");
-      } else {
-        alert("좋아요가 취소되었습니다.");
-      }
-    } else {
-      alert("좋아요 처리에 실패했습니다.");
-    }
-  } catch (error) {
-    console.error(error);
-    if (error.response && error.response.status === 401) {
-      alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-      tokenStore.logout();
-      openLoginModal();
-    } else {
-      alert("좋아요 처리 중 오류가 발생했습니다.");
-    }
-  }
-};
 
 </script>
 
