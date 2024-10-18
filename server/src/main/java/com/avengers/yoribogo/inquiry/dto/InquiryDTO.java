@@ -3,6 +3,7 @@ package com.avengers.yoribogo.inquiry.dto;
 import com.avengers.yoribogo.common.Status;
 import com.avengers.yoribogo.common.Visibility;
 import com.avengers.yoribogo.inquiry.domain.Inquiry;
+import com.avengers.yoribogo.user.domain.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,13 +23,13 @@ public class InquiryDTO {
     private LocalDateTime inquiryCreatedAt;
     private Integer answers;
     private Status answerStatus;
-    private int userId;
     private List<Inquiry> answer;
+    private UserEntity user;
 
-    public InquiryDTO(String inquiryTitle, String inquiryContent, int userId) {
+    public InquiryDTO(String inquiryTitle, String inquiryContent, UserEntity user) {
         this.inquiryTitle = inquiryTitle;
         this.inquiryContent = inquiryContent;
-        this.userId = userId;
+        this.user = user;
     }
 
     public InquiryDTO(Integer inquiryId,
@@ -39,7 +40,7 @@ public class InquiryDTO {
                       LocalDateTime inquiryCreatedAt,
                       int answers,
                       Status answerStatus,
-                      int userId) {
+                      UserEntity user) {
         this.inquiryId = inquiryId;
         this.inquiryTitle = inquiryTitle;
         this.inquiryContent = inquiryContent;
@@ -48,6 +49,6 @@ public class InquiryDTO {
         this.inquiryCreatedAt = inquiryCreatedAt;
         this.answers = answers;
         this.answerStatus = answerStatus;
-        this.userId = userId;
+        this.user = user;
     }
 }

@@ -5,9 +5,8 @@
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
     </header>
-
     <MainBoard :cur="'recipe-board'">
-      <router-view></router-view>
+      <WriteRecipeBoardComponent> </WriteRecipeBoardComponent>
     </MainBoard>
   </div>
 </template>
@@ -17,12 +16,7 @@ import HomeButton from '@/components/common/HomeButton.vue'
 import MainBoard from '@/components/common/MainBoard.vue'
 import NotificationButton from '@/components/common/NotificationButton.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
-import SearchBar from '@/components/common/SearchBar.vue';
-import RecipeViewSwitchButton from '@/components/recipe-board/RecipeViewSwitchButton.vue';
-import WriteRecipeButton from '@/components/recipe-board/WriteRecipeButton.vue';
-
-
-
+import WriteRecipeBoardComponent from '@/components/recipe-board/WriteRecipeBoardComponent.vue'
 </script>
 
 <style scoped>

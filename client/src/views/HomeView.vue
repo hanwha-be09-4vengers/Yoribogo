@@ -1,5 +1,6 @@
 <template>
   <div id="home-view" class="home-view">
+    <!-- 기존 코드 유지 -->
     <img class="bg-circle" src="/src/assets/Intersect.png" alt="Background Circle" />
     <img class="chicken" src="/src/assets/chicken.png" alt="Chicken" />
     <header>
@@ -16,6 +17,7 @@
         </div>
         <button id="start-btn" class="start-btn" @click="goQuestion">시작하기</button>
       </section>
+
     </main>
     <LoginModal
       v-if="isLoginModalVisible"
@@ -50,6 +52,7 @@ const closeLoginModal = () => {
 const goQuestion = () => {
   router.push('/question/1')
 }
+
 </script>
 
 <style scoped>
