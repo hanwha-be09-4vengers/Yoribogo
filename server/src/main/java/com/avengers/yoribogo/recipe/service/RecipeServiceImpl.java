@@ -227,16 +227,14 @@ public class RecipeServiceImpl implements RecipeService {
     @Transactional
     public BaseRecipeDTO registRecommendRecipe(RequestRecommendDTO requestRecommendDTO) {
         // 1단계: AI에게 추천하는 요리 이름 물어보기
-        String prompt = "다음 정보를 바탕으로 적합한 요리 이름을 하나만 추천해줘: " +
-                "'오늘의 날씨는 어떤가요?' → '" + requestRecommendDTO.getFirst() + "', " +
-                "'오늘의 기분은 어떤가요?' → '" + requestRecommendDTO.getSecond() + "', " +
-                "'몇 명이 먹는 음식인가요?' → '" + requestRecommendDTO.getThird() + "', " +
-                "'채식 또는 비건 식단을 따르시나요?' → '" + requestRecommendDTO.getFourth() + "', " +
-                "'제가 또 알아야 하는 게 있나요?' → '" + requestRecommendDTO.getFifth() + "'." +
-                " 특히 '" + requestRecommendDTO.getFifth() + "'를 가장 중요하게 고려하고, " +
-                "추천하는 요리 이름은 '요리이름(Detailed english description of the dish with dish name)' 형식으로 특수문자 없이 간단히 알려줘.";
+        String prompt = "날씨: '" + requestRecommendDTO.getFirst() + "', 기분: '" + requestRecommendDTO.getSecond() +
+                "', 인원: '" + requestRecommendDTO.getThird() + "', 채식 여부: '" + requestRecommendDTO.getFourth() +
+                "', 추가 사항: '" + requestRecommendDTO.getFifth() + "'. " +
+                "앞의 정보를 바탕으로, 추가 사항이 있으면 그 요청을 우선 고려하고, 없으면 다양한 나라의 요리 중 한 가지를 " +
+                "'요리이름(Detailed english description of the dish)' 형식으로 한 문장으로 추천해줘.";
 
         String aiAnswerMenu = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
+        System.out.println(aiAnswerMenu);
 
         // 한국어 이름과 영어 이름 분리
         String koreanName = aiAnswerMenu.split("\\(")[0].trim();
@@ -287,10 +285,10 @@ public class RecipeServiceImpl implements RecipeService {
         if (aiRecipeDTO != null) return aiRecipeDTO;
 
         // 5단계: AI가 추천한 요리의 재료를 물어보기
-        String ingredientsPrompt = "다음 요리를 만들 때 필요한 재료를 자세하게 설명해줘: " + trimmedAiAnswerMenu +
-                "를 만들기 위한 재료를 꼭 ','로 구분하여 양을 포함하고, '설탕 2스푼' 형식으로 작성해줘. " +
-                "단, 앞과 뒤에 특수문자와 다른 말은 빼고 오직 재료 내용만 제공해줘.";
+        String ingredientsPrompt =
+                trimmedAiAnswerMenu + "에 필요한 재료를 ','로 구분해 양과 함께 알려줘. 예: '설탕 2스푼'. 특수문자나 불필요한 말은 제외.";
         String aiAnswerIngredients = openAIService.getRecommend(ingredientsPrompt).getChoices().get(0).getMessage().getContent();
+        System.out.println(aiAnswerIngredients);
 
         // ':'가 있는 경우, ':' 이후의 문자열만 남기기
         aiAnswerIngredients = parseString(aiAnswerIngredients);
@@ -299,11 +297,11 @@ public class RecipeServiceImpl implements RecipeService {
         String trimmedAiAnswerIngredients = trimSpecialCharacters(aiAnswerIngredients);
 
         // 6단계: AI가 추천한 요리의 레시피를 물어보기
-        String recipePrompt = trimmedAiAnswerMenu + "를 만들기 위한 재료가 " + trimmedAiAnswerIngredients +
-                "일 때, " + trimmedAiAnswerMenu + "의 레시피를 단계별로 자세하게 설명해줘:\n" +
-                "레시피는 각 단계에 번호를 붙여서 '1. 파를 썹니다.'와 같은 형식으로 작성해줘. " +
-                "단, 한자 사용을 피하고, 앞과 뒤에 특수문자와 다른 말은 빼고 오직 레시피 내용만 제공해줘.";
+        String recipePrompt = trimmedAiAnswerMenu + "에 필요한 재료가 " + trimmedAiAnswerIngredients + "일 때, " +
+                trimmedAiAnswerMenu + "의 레시피를 최대 6단계로 요약해줘. " +
+                "각 단계에 번호만 붙여 '1. 쌀을 씻습니다.'와 같은 형식으로 간결하게 작성해줘.";
         String aiAnswerRecipe = openAIService.getRecommend(recipePrompt).getChoices().get(0).getMessage().getContent();
+        System.out.println(aiAnswerRecipe);
 
         // ':'가 있는 경우, ':' 이후의 문자열만 남기기
         aiAnswerRecipe = parseString(aiAnswerRecipe);
