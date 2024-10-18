@@ -7,14 +7,26 @@
       <div class="result-container">
         <p v-show="!isLoading">요리보고가 추천하는 요리는!</p>
         <p v-show="isLoading">요리보고가 추천 중입니다...</p>
+        <LoadingSpinner v-show="isLoading"></LoadingSpinner>
         <div class="result-info" v-show="!isLoading">
           <span :style="{ opacity: isFlipped ? 1 : 0 }">{{ menuName }}</span>
         </div>
         <div class="card-board-container" v-show="!isLoading">
-          <ResultBoard :img="menuImage" :text="menuName" :recipeId="recipeId" @flipped="isFlipped = !isFlipped">
+          <ResultBoard
+            :img="menuImage"
+            :text="menuName"
+            :recipeId="recipeId"
+            @flipped="isFlipped = !isFlipped"
+          >
           </ResultBoard>
         </div>
-        <LoadingSpinner v-show="isLoading"></LoadingSpinner>
+        <div class="response-board-container" v-show="!isLoading">
+          <ResponseBoard
+            :class="{ flipped: isFlipped }"
+            @good="postRecommendData('GOOD')"
+            @bad="postRecommendData('BAD')"
+          ></ResponseBoard>
+        </div>
       </div>
     </main>
     <aside>
@@ -33,6 +45,7 @@ import ProfileButton from '@/components/common/ProfileButton.vue'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import ResponseBoard from '@/components/recommend/ResponseBoard.vue'
 
 const router = useRouter()
 
@@ -46,15 +59,29 @@ const menuImage = ref(
 const recipeId = ref(1)
 
 const fetchRecommendedMenu = async () => {
+  let requestData
+
   try {
     const questionResponse = JSON.parse(localStorage.getItem('question_responses'))
-    const requestData = {
-      first: questionResponse.question_1, // 질문 1의 응답
-      second: questionResponse.question_2, // 질문 2의 응답
-      third: questionResponse.question_3, // 질문 3의 응답
-      fourth: questionResponse.question_4, // 질문 4의 응답
-      fifth: questionResponse.question_5 // 질문 5의 응답
+
+    if (questionResponse) {
+      requestData = {
+        first: questionResponse.question_1, // 질문 1의 응답
+        second: questionResponse.question_2, // 질문 2의 응답
+        third: questionResponse.question_3, // 질문 3의 응답
+        fourth: questionResponse.question_4, // 질문 4의 응답
+        fifth: questionResponse.question_5 // 질문 5의 응답
+      }
+    } else {
+      throw new Error('질문 응답이 존재하지 않습니다.')
     }
+  } catch (error) {
+    console.error('질문 응답을 가져오는 중 오류 발생:', error)
+    alert('세션이 만료되었습니다.')
+    router.push('/')
+  }
+
+  try {
     const response = (await axios.post('/api/recipes/recommend', requestData)).data
     if (response.success) {
       menuName.value = response.data.menu_name
@@ -65,8 +92,22 @@ const fetchRecommendedMenu = async () => {
     }
   } catch (error) {
     console.error('요리를 추천받는데 실패했습니다.', error)
-    alert("세션이 만료되었습니다.")
-    router.push('/');
+  }
+}
+
+const postRecommendData = async (satisfaction) => {
+  try {
+    const userId = JSON.parse(localStorage.getItem('token')).userId
+    await axios.post('/api/recommended-menus', {
+      satisfaction: satisfaction,
+      user_id: userId,
+      recipe_id: recipeId.value
+    })
+  } catch (error) {
+    console.error(error)
+  } finally {
+    alert('회원님의 소중한 의견 감사합니다!')
+    router.push('/')
   }
 }
 
@@ -138,6 +179,10 @@ main {
 .card-board-container {
   display: flex;
   flex-direction: row;
+}
+
+.response-board-container {
+  margin-bottom: 4rem;
 }
 
 @media screen and (max-width: 768px) {
