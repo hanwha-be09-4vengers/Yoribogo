@@ -41,13 +41,13 @@ public class RecipeBoardServiceImpl implements RecipeBoardService {
     }
 
     @Override
-    public ResponseBoardDTO registRecipeBoard(Long userId, RecipeBoardDTO registRecipeBoardDTO) {
+    public ResponseBoardDTO registRecipeBoard(RecipeBoardDTO registRecipeBoardDTO) {
         // 1. RecipeBoard 게시글 저장 준비
         RecipeBoard newRecipeBoard = modelMapper.map(registRecipeBoardDTO, RecipeBoard.class);
-        newRecipeBoard.setUserId(userId);  // User ID 설정
+        newRecipeBoard.setUserId(registRecipeBoardDTO.getUserId());  // User ID 설정
 
         // 서버에서 자동으로 설정할 필드
-        newRecipeBoard.setRecipeBoardCreatedAt(LocalDateTime.now());
+        newRecipeBoard.setRecipeBoardCreatedAt(LocalDateTime.now().withNano(0));
         newRecipeBoard.setRecipeBoardComments(0);
         newRecipeBoard.setRecipeBoardLikes(0);
         newRecipeBoard.setRecipeBoardStatus(RecipeBoardStatus.ACTIVE);
@@ -111,9 +111,16 @@ public class RecipeBoardServiceImpl implements RecipeBoardService {
         RecipeBoard recipeBoard = recipeBoardRepository.findById(recipeBoardId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD));
 
-        recipeBoard.setRecipeBoardMenuName(updateRecipeBoardDTO.getRecipeBoardMenuName());
-        recipeBoard.setRecipeBoardIngredient(updateRecipeBoardDTO.getRecipeBoardIngredient());
-        recipeBoard.setRecipeBoardImage(updateRecipeBoardDTO.getRecipeBoardImage());
+        // 업데이트할 필드 값이 입력되었을 때만 변경
+        if (updateRecipeBoardDTO.getRecipeBoardMenuName() != null) {
+            recipeBoard.setRecipeBoardMenuName(updateRecipeBoardDTO.getRecipeBoardMenuName());
+        }
+        if (updateRecipeBoardDTO.getRecipeBoardIngredient() != null) {
+            recipeBoard.setRecipeBoardIngredient(updateRecipeBoardDTO.getRecipeBoardIngredient());
+        }
+        if (updateRecipeBoardDTO.getRecipeBoardImage() != null) {
+            recipeBoard.setRecipeBoardImage(updateRecipeBoardDTO.getRecipeBoardImage());
+        }
 
         recipeBoard = recipeBoardRepository.save(recipeBoard);
         return modelMapper.map(recipeBoard, ResponseBoardDTO.class);
@@ -138,12 +145,12 @@ public class RecipeBoardServiceImpl implements RecipeBoardService {
     }
 
     @Override
-    public RecipeBoardDTO findRecipeBoardById(Long recipeBoardId) {
+    public ResponseBoardDTO findRecipeBoardById(Long recipeBoardId) {
 
         RecipeBoard recipeBoard = recipeBoardRepository.findById(recipeBoardId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD));
 
-        return modelMapper.map(recipeBoard, RecipeBoardDTO.class);
+        return modelMapper.map(recipeBoard, ResponseBoardDTO.class);
     }
 
     @Override
@@ -165,6 +172,26 @@ public class RecipeBoardServiceImpl implements RecipeBoardService {
             throw new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD);
         }
 
+        return convertEntityPageToDTOPage(recipeBoardPage);
+    }
+
+    @Override
+    public Page<RecipeBoardDTO> findRecipeBoardByUserId(Long userId, Integer pageNo) {
+        // 페이지 번호 유효성 검사
+        if (pageNo == null || pageNo < 1) {
+            throw new CommonException(ErrorCode.INVALID_PARAMETER_FORMAT);
+        }
+
+        Pageable pageable = PageRequest.of(
+                pageNo - 1,
+                3,
+                Sort.by(Sort.Direction.DESC, "recipeBoardId")
+        );
+
+        Page<RecipeBoard> recipeBoardPage = recipeBoardRepository.findByUserId(userId, pageable);
+        if (recipeBoardPage.getContent().isEmpty()) {
+            throw new CommonException(ErrorCode.NOT_FOUND_RECIPE_BOARD);
+        }
         return convertEntityPageToDTOPage(recipeBoardPage);
     }
 

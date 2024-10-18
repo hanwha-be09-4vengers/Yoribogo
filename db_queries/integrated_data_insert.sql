@@ -16,15 +16,15 @@ VALUES
 INSERT INTO user (user_name, password, nickname, email, profile_image, created_at, signup_path, user_identifier, user_auth_id, user_status, user_role, accept_status, tier_id, user_likes)
 VALUES
     -- 관리자는 tier_id와 likes 없이 삽입
-    ('조찬국', '$2a$10$3v.mR/vxwbRrExd0503Dte3eyw5ycrMwZKfwlqvn5E5Kb146/ZoGC', '조찬국', 'alice@example.com', NULL, '2023-08-01 10:30:00', 'ADMIN', CONCAT('ADMIN_', 'yoribogo'), 'yoribogo', 'ACTIVE', 'ADMIN', 'Y', NULL, NULL),  -- 관리자
-    ('김범기', '$2a$10$3v.mR/vxwbRrExd0503Dte3eyw5ycrMwZKfwlqvn5E5Kb146/ZoGC', 'princess_d', 'diana@example.com', NULL, '2023-08-04 09:15:00', 'ADMIN', CONCAT('ADMIN_', 'diana789'), 'diana789', 'ACTIVE', 'ADMIN', 'Y', NULL, NULL),  -- 관리자
+    ('조찬국', '$2a$10$3v.mR/vxwbRrExd0503Dte3eyw5ycrMwZKfwlqvn5E5Kb146/ZoGC', '조찬국', 'alice@example.com', 'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/admin_default_profile.png', '2023-08-01 10:30:00', 'ADMIN', CONCAT('ADMIN_', 'yoribogo'), 'yoribogo', 'ACTIVE', 'ADMIN', 'Y', NULL, NULL),  -- 관리자
+    ('김범기', '$2a$10$3v.mR/vxwbRrExd0503Dte3eyw5ycrMwZKfwlqvn5E5Kb146/ZoGC', 'princess_d', 'diana@example.com', 'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/admin_default_profile.png', '2023-08-04 09:15:00', 'ADMIN', CONCAT('ADMIN_', 'diana789'), 'diana789', 'ACTIVE', 'ADMIN', 'Y', NULL, NULL),  -- 관리자
     
     -- 일반 회원은 likes에 따라 tier_id 할당
-    ('김석민', 'password123', 'bob_the_builder', 'bob@example.com', NULL, '2023-08-02 11:45:00', 'NAVER', CONCAT('NAVER_', '987654321'), '987654321', 'ACTIVE', 'ENTERPRISE', 'Y', 5, 25),  -- 다이아 (likes >= 20)
-    ('조국찬', 'password456', '조국찬', 'changuk0308@naver.com', NULL, '2023-08-03 12:00:00', 'NORMAL', CONCAT('NORMAL_', 'abc123xyz'), 'abc123xyz', 'ACTIVE', 'ENTERPRISE', 'Y', 4, 15),  -- 플레티넘 (likes >= 10)
-    ('이소라', 'password789', 'eve_123', 'eve@example.com', NULL, '2023-08-05 14:20:00', 'KAKAO', CONCAT('KAKAO_', 'kakao98765'), 'kakao98765', 'ACTIVE', 'ENTERPRISE', 'Y', 3, 8),  -- 골드 (likes >= 5)
-    ('박민수', 'password123', 'minsu_p', 'minsu@example.com', NULL, '2023-09-01 10:00:00', 'NORMAL', CONCAT('NORMAL_', 'minsu123'), 'minsu123', 'ACTIVE', 'ENTERPRISE', 'Y', 2, 3),  -- 실버 (likes >= 1)
-    ('이정현', 'password456', 'jung_h', 'jung@example.com', NULL, '2023-09-05 09:30:00', 'KAKAO', CONCAT('KAKAO_', 'jung123'), 'jung123', 'ACTIVE', 'ENTERPRISE', 'Y', 1, 0);  -- 브론즈 (likes >= 0)
+    ('김석민', 'password123', 'bob_the_builder', 'bob@example.com', 'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/default_profile.png', '2023-08-02 11:45:00', 'NAVER', CONCAT('NAVER_', '987654321'), '987654321', 'ACTIVE', 'ENTERPRISE', 'Y', 5, 25),  -- 다이아 (likes >= 20)
+    ('조국찬', 'password456', '조국찬', 'changuk0308@naver.com','https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/default_profile.png', '2023-08-03 12:00:00', 'NORMAL', CONCAT('NORMAL_', 'abc123xyz'), 'abc123xyz', 'ACTIVE', 'ENTERPRISE', 'Y', 4, 15),  -- 플레티넘 (likes >= 10)
+    ('이소라', 'password789', 'eve_123', 'eve@example.com', 'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/default_profile.png', '2023-08-05 14:20:00', 'KAKAO', CONCAT('KAKAO_', 'kakao98765'), 'kakao98765', 'ACTIVE', 'ENTERPRISE', 'Y', 3, 8),  -- 골드 (likes >= 5)
+    ('박민수', 'password123', 'minsu_p', 'minsu@example.com', 'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/default_profile.png', '2023-09-01 10:00:00', 'NORMAL', CONCAT('NORMAL_', 'minsu123'), 'minsu123', 'ACTIVE', 'ENTERPRISE', 'Y', 2, 3),  -- 실버 (likes >= 1)
+    ('이정현', 'password456', 'jung_h', 'jung@example.com', 'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/default_profile.png', '2023-09-05 09:30:00', 'KAKAO', CONCAT('KAKAO_', 'jung123'), 'jung123', 'ACTIVE', 'ENTERPRISE', 'Y', 1, 0);  -- 브론즈 (likes >= 0)
 
 
 -- 질문

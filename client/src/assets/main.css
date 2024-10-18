@@ -6,10 +6,16 @@
   --light-yellow-color: #ffee91;
   --blended-light-color: #fffbe8;
   --text-red-color: #f45c47;
+  --semi-red-color: #ff5959;
   --red-color: #ff4040;
   --pink-color: #ff7d7d;
   --light-pink-color: #fff5f5;
+<<<<<<< HEAD
   
+=======
+  --semi-blue-color: #53acff;
+
+>>>>>>> 5e3b889988ac03e75feb0f20dfd73cd8a4e7b5aa
   font-weight: normal;
   font-family: 'Noto Sans KR', 'Noto Sans';
   font-size: 10px;
@@ -74,7 +80,7 @@ h1 {
 }
 
 .hidden {
-  display: none;
+  opacity: 0;
 }
 
 /* 데스크탑 */

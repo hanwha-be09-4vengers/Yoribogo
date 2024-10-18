@@ -4,19 +4,18 @@ import com.avengers.yoribogo.recipeboard.dto.RecipeBoardDTO;
 import com.avengers.yoribogo.recipeboard.dto.RecipeBoardManualDTO;
 import com.avengers.yoribogo.recipeboard.dto.ResponseBoardDTO;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface RecipeBoardService {
 
-    ResponseBoardDTO registRecipeBoard(Long userId, RecipeBoardDTO registRecipeBoardDTO);
+    ResponseBoardDTO registRecipeBoard(RecipeBoardDTO registRecipeBoardDTO);
 
     Page<RecipeBoardDTO> findRecipeBoardByPageNo(Integer pageNo);
 
-    RecipeBoardDTO findRecipeBoardById(Long recipeBoardId);
+    ResponseBoardDTO findRecipeBoardById(Long recipeBoardId);
 
-    ResponseBoardDTO registRecipeBoardManual(Long userId, List<RecipeBoardManualDTO> registRecipeBoardDTOs);
+    ResponseBoardDTO registRecipeBoardManual(Long recipeBoardId, List<RecipeBoardManualDTO> registRecipeBoardDTOs);
 
     ResponseBoardDTO updateRecipeBoard(Long recipeBoardId, RecipeBoardDTO updateRecipeBoardDTO);
 
@@ -25,4 +24,6 @@ public interface RecipeBoardService {
     void removeRecipeBoard(Long recipeBoardId);
 
     Page<RecipeBoardDTO> findRecipeBoardByMenuName(String recipeBoardName, Integer pageNo);
+
+    Page<RecipeBoardDTO> findRecipeBoardByUserId(Long userId, Integer pageNo);
 }

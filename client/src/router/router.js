@@ -72,6 +72,11 @@ const routes = [
     path: '/naverlogin',
     name: 'NaverCallback',
     component: NaverCallback
+  },
+  {
+    path: '/qna',
+    name: 'qna',
+    component: () => import('../views/InquiryView.vue')
   }
 ]
 
