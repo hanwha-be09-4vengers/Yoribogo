@@ -4,6 +4,7 @@ import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.config.OAuthProperties;
 import com.avengers.yoribogo.security.JwtUtil;
+import com.avengers.yoribogo.user.domain.Tier;
 import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.domain.enums.AcceptStatus;
 import com.avengers.yoribogo.user.domain.enums.ActiveStatus;
@@ -13,6 +14,7 @@ import com.avengers.yoribogo.user.domain.vo.kakao.KakaoUser;
 import com.avengers.yoribogo.user.domain.vo.login.AuthTokens;
 import com.avengers.yoribogo.user.domain.vo.naver.NaverAuthorizationCode;
 import com.avengers.yoribogo.user.domain.vo.naver.NaverUser;
+import com.avengers.yoribogo.user.repository.TierRepository;
 import com.avengers.yoribogo.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,6 +36,7 @@ public class OAuth2LoginService {
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    private final TierRepository tierRepository;
     private final RestTemplate restTemplate;
     private final OAuthProperties oAuthProperties;
     private final long accessExpirationTime;
@@ -42,12 +45,14 @@ public class OAuth2LoginService {
     @Autowired
     public OAuth2LoginService(JwtUtil jwtUtil,
                               UserRepository userRepository,
+                              TierRepository tierRepository,
                               @Qualifier("securityRestTemplate") RestTemplate restTemplate,
                               OAuthProperties oAuthProperties,
                               @Value("${token.access-expiration-time}") long accessExpirationTime,
                               @Value("${token.refresh-expiration-time}") long refreshExpirationTime) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
+        this.tierRepository=tierRepository;
         this.restTemplate = restTemplate;
         this.oAuthProperties = oAuthProperties;
         this.accessExpirationTime = accessExpirationTime;
@@ -152,16 +157,19 @@ public class OAuth2LoginService {
             newUser.setUserRole(UserRole.ADMIN); // 관리자일 경우
         }
 
-        // 일반 회원일 경우에만 tierId와 userLikes 설정
+        // 일반 회원일 경우에만 tier와 userLikes 설정
         if (newUser.getUserRole() == UserRole.ENTERPRISE) {
-            newUser.setTierId(1L); // 기본 티어 값 설정
+            // 티어 조회 대신 기본 티어 ID 설정
+            Tier bronzeTier = new Tier();
+            bronzeTier.setTierId(1L); // 기본 티어를 브론즈(1)로 설정
+            newUser.setTier(bronzeTier); // 기본 티어 설정
+
             newUser.setUserLikes(0L); // 기본 좋아요 값 설정
         }
 
         // 새 사용자를 저장하고 반환
         return userRepository.save(newUser);
     }
-
 
 
     private String getKakaoAccessToken(String authorizationCode, String redirectUri) {

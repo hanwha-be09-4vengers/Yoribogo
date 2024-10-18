@@ -2,30 +2,38 @@ package com.avengers.yoribogo.user.repository;
 
 import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.domain.enums.SignupPath;
-import com.avengers.yoribogo.user.dto.EnterpriseUserDTO;
-import com.avengers.yoribogo.user.dto.UserDTO;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<UserEntity,Long> {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
+
     @Query("SELECT COALESCE(MAX(u.userId), 0) FROM UserEntity u")
     Long findMaxUserId();
 
-    Optional<UserEntity> findByUserIdentifier(String userIdentifier);
+    // userIdentifier로 사용자 조회 (페치 조인으로 tier 함께 조회)
+    @Query("SELECT u FROM UserEntity u LEFT JOIN FETCH u.tier WHERE u.userIdentifier = :userIdentifier")
+    Optional<UserEntity> findByUserIdentifier(@Param("userIdentifier") String userIdentifier);
 
-    Optional<UserEntity> findByNickname(String nickname);
+    // 닉네임으로 사용자 조회 (페치 조인으로 tier 함께 조회)
+    @Query("SELECT u FROM UserEntity u LEFT JOIN FETCH u.tier WHERE u.nickname = :nickname")
+    Optional<UserEntity> findByNickname(@Param("nickname") String nickname);
 
-    // 이름, 가입 경로, 이메일로 사용자 찾기
-    Optional<UserEntity> findByNicknameAndSignupPathAndEmail(String userName, SignupPath signupPath, String email);
+    // 이름, 가입 경로, 이메일로 사용자 찾기 (페치 조인으로 tier 함께 조회)
+    @Query("SELECT u FROM UserEntity u LEFT JOIN FETCH u.tier WHERE u.nickname = :nickname AND u.signupPath = :signupPath AND u.email = :email")
+    Optional<UserEntity> findByNicknameAndSignupPathAndEmail(@Param("nickname") String nickname, @Param("signupPath") SignupPath signupPath, @Param("email") String email);
 
-    // 아이디와 이메일로 사용자 찾기
-    Optional<UserEntity> findByUserAuthIdAndEmail(String userAuthId, String email);
+    // userAuthId와 이메일로 사용자 찾기 (페치 조인으로 tier 함께 조회)
+    @Query("SELECT u FROM UserEntity u LEFT JOIN FETCH u.tier WHERE u.userAuthId = :userAuthId AND u.email = :email")
+    Optional<UserEntity> findByUserAuthIdAndEmail(@Param("userAuthId") String userAuthId, @Param("email") String email);
 
-    // userAuthId로 사용자 조회
-    Optional<UserEntity> findByUserAuthId(String userAuthId);
+    // userAuthId로 사용자 조회 (페치 조인으로 tier 함께 조회)
+    @Query("SELECT u FROM UserEntity u LEFT JOIN FETCH u.tier WHERE u.userAuthId = :userAuthId")
+    Optional<UserEntity> findByUserAuthId(@Param("userAuthId") String userAuthId);
 
-    // userId로 사용자 조회
-    Optional<UserEntity> findByUserId(Long userId);
+    // userId로 사용자 조회 (페치 조인으로 tier 함께 조회)
+    @Query("SELECT u FROM UserEntity u LEFT JOIN FETCH u.tier WHERE u.userId = :userId")
+    Optional<UserEntity> findByUserIdWithTier(@Param("userId") Long userId);
 }
