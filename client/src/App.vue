@@ -3,16 +3,41 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-import { useTokenStore } from '@/stores/tokenStore'; // 스토어 임포트
+import { onMounted, watch, computed } from 'vue';
+import { useTokenStore } from '@/stores/tokenStore'; // Pinia 스토어 임포트
+import { connectSSE } from '@/api/SSERequest';  // SSE 연결 함수 임포트
 
 // Pinia 스토어 사용
 const tokenStore = useTokenStore();
 
-// 컴포넌트가 마운트될 때 초기화 함수 호출 및 SSE 연결 테스트
-onMounted(() => {
-  // 로그인 상태 초기화
-  tokenStore.initializeState();
+// 토큰 상태를 computed로 설정하여 반응형 참조 보장
+const accessToken = computed(() => tokenStore.token.accessToken);
 
+// SSE 연결 시도 함수
+const tryConnectSSE = () => {
+  if (accessToken.value) {
+    console.log('토큰이 존재합니다. SSE 연결을 시도합니다.');
+    connectSSE();  // 토큰이 존재할 경우 SSE 연결 시도
+  } else {
+    console.log('토큰이 없습니다. SSE 연결을 할 수 없습니다.');
+  }
+};
+
+// 토큰 상태를 감시하여, 토큰이 설정되면 SSE 연결 시도
+watch(
+  accessToken,  // 토큰 상태를 감시
+  (newToken) => {
+    if (newToken) {
+      console.log('토큰 변경 감지:', newToken);
+      tryConnectSSE();  // 토큰이 존재할 경우 SSE 연결 시도
+    }
+  },
+  { immediate: true }  // 컴포넌트가 마운트될 때 즉시 실행
+);
+
+// 컴포넌트가 마운트될 때 로그인 상태 초기화
+onMounted(() => {
+  console.log('컴포넌트 마운트됨: 상태 초기화 시도');
+  tokenStore.initializeState();  // 로컬 스토리지에서 상태 복원 시도
 });
 </script>

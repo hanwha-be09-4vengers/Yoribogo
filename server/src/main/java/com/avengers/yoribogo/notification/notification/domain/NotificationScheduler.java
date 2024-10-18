@@ -6,7 +6,7 @@ import com.avengers.yoribogo.notification.notification.service.NotificationServi
 import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.WeeklyPopularRecipe;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.service.WeeklyPopularRecipeService;
 import com.avengers.yoribogo.recipeboard.domain.RecipeBoard;
-import com.avengers.yoribogo.recipeboard.repository.RecipeBoardRepository; // 레시피 조회를 위한 Repository
+import com.avengers.yoribogo.recipeboard.repository.RecipeBoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ public class NotificationScheduler {
 
     private final WeeklyPopularRecipeService weeklyPopularRecipeService;
     private final NotificationService notificationService;
-    private final RecipeBoardRepository recipeBoardRepository; // 레시피 조회를 위한 Repository
+    private final RecipeBoardRepository recipeBoardRepository;
 
     @Autowired
     public NotificationScheduler(WeeklyPopularRecipeService weeklyPopularRecipeService,
@@ -27,13 +27,11 @@ public class NotificationScheduler {
         this.recipeBoardRepository = recipeBoardRepository;
     }
 
-//    @Scheduled(fixedRate = 900000000)
     @Scheduled(cron = "0 0 11 * * ?") // 매일 11:00에 실행
     public void sendLunchRecipeNotification() {
         sendRecipeNotification("lunch");
     }
 
-//    @Scheduled(fixedRate = 90000000)
     @Scheduled(cron = "0 0 17 * * ?") // 매일 17:00에 실행
     public void sendDinnerRecipeNotification() {
         sendRecipeNotification("dinner");
