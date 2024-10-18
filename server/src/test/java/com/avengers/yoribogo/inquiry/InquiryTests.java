@@ -70,7 +70,7 @@ public class InquiryTests {
                         "문의 수정 테스트 내용",
                         Status.ACTIVE,
                         Visibility.PUBLIC,
-                        LocalDateTime.parse("2024-01-01T16:00:00"),
+                        LocalDateTime.now().withNano(0),
                         0,
                         Status.PENDING,
                         3));

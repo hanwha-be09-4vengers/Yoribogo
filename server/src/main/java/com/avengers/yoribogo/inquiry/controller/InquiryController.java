@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/inquiry")
+@RequestMapping("/api/inquiry")
 public class InquiryController {
 
     private final InquiryService inquiryService;
@@ -28,7 +28,7 @@ public class InquiryController {
     }
 
     @GetMapping("/{id}")
-     public ResponseDTO getOneInquiry(@PathVariable int id) {
+     public ResponseDTO getOneInquiry(@PathVariable("id") int id) {
         Inquiry result = inquiryService.findInquiryById(id);
         return ResponseDTO.ok(result);
     }

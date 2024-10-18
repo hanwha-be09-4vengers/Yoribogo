@@ -1,7 +1,9 @@
 package com.avengers.yoribogo.inquiry.dto;
 
+import com.avengers.yoribogo.common.Role;
 import com.avengers.yoribogo.common.Status;
 import com.avengers.yoribogo.common.Visibility;
+import com.avengers.yoribogo.user.domain.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +22,9 @@ public class InquiryOnlyDTO {
     private LocalDateTime inquiryCreatedAt;
     private Integer answers;
     private Status answerStatus;
+    private Role userRole;
     private int userId;
+    private UserEntity user;
 
     public InquiryOnlyDTO(String inquiryTitle, String inquiryContent, int userId) {
         this.inquiryTitle = inquiryTitle;

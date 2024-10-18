@@ -53,7 +53,7 @@ public class AnswerServiceImpl implements AnswerService {
     @Override
     public Answer insertAnswer(AnswerDTO newAnswer) {
         try {
-            newAnswer.setAnswerCreatedAt(LocalDateTime.now());
+            newAnswer.setAnswerCreatedAt(LocalDateTime.now().withNano(0));
             Answer result = answerRepository.save(modelMapper.map(newAnswer, Answer.class));
             inquiryService.changeStatus(result.getInquiryId());
             return result;
