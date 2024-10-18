@@ -1004,6 +1004,7 @@ INSERT INTO `recipe` (`recipe_id`, `menu_name`, `menu_ingredient`, `menu_image`,
 INSERT INTO `recipe` (`recipe_id`, `menu_name`, `menu_ingredient`, `menu_image`, `menu_type`, `user_id`) VALUES (983, '맛살 미역줄기전', '[ 4인분 ] 미역 줄기(1팩=300g), 양파(½개), 맛살(135g), 건새우(1컵), 부침가루(1컵), 튀김가루(½컵), 탄산수(1컵), 아보카도유(1Ts)', 'https://www.foodsafetykorea.go.kr/common/ecmFileView.do?ecm_file_no=1NxSkgr9ktU', 'PUBLIC', 1);
 INSERT INTO `recipe` (`recipe_id`, `menu_name`, `menu_ingredient`, `menu_image`, `menu_type`, `user_id`) VALUES (984, '해산물샐러드와 미나리소스', '[ 2인분 ] 새송이버섯(1개), 방울토마토(200g), 오징어(1마리), 칵테일새우(200g), 후춧가루(약간), 다진 마늘(1Ts), 올리브유(1Ts), 레몬즙(1Ts), 후춧가루(약간), 미나리(50g), 깻잎(2장), 마늘(2쪽), 올리브유(3.5Ts), 체더치즈(2.5Ts), 아몬드(5개)', 'https://www.foodsafetykorea.go.kr/common/ecmFileView.do?ecm_file_no=1NxSkgr9nAC', 'PUBLIC', 1);
 INSERT INTO `recipe` (`recipe_id`, `menu_name`, `menu_ingredient`, `menu_image`, `menu_type`, `user_id`) VALUES (985, '매운요거트 토마토샐러드', '[ 2인분 ] 토마토(2개), 양파(¼개), 감자(¼개), 노랑 파프리카(¼개), 브로콜리(¼개), 새우(4마리) 고추기름(1Ts), 후춧가루(0.3Ts), 다진 마늘(0.3Ts), 플레인 요거트(½컵), 고추장(0.3Ts)', 'https://www.foodsafetykorea.go.kr/common/ecmFileView.do?ecm_file_no=1NxSkgr9nNW', 'PUBLIC', 1);
+INSERT INTO `recipe` (`recipe_id`, `menu_name`, `menu_ingredient`, `menu_image`, `menu_type`, `user_id`) VALUES (986, '비빔면', '소면 200g, 고추장 2스푼, 간장 1스푼, 설탕 2스푼, 식초 1스푼, 다진 마늘 1티스푼, 고춧가루 1스푼, 참기름 1스푼, 통깨 1스푼, 오이 1/4개, 삶은 계란 1개, 김가루 약간', 'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/recipe_986.png', 'AI', 1);
 
 -- 공공 데이터 레시피 삽입
 INSERT INTO `public_data_recipe` (`public_data_recipe_id`, `public_data_menu_name`, `public_data_menu_ingredient`, `public_data_menu_image`, `recipe_id`) VALUES (1, '새우 두부 계란찜', '새우두부계란찜\n연두부 75g(3/4모), 칵테일새우 20g(5마리), 달걀 30g(1/2개), 생크림 13g(1큰술), 설탕 5g(1작은술), 무염버터 5g(1작은술)\n고명\n시금치 10g(3줄기)', 'http://www.foodsafetykorea.go.kr/uploadimg/cook/10_00028_2.png', 1);
@@ -1920,6 +1921,9 @@ INSERT INTO `public_data_recipe` (`public_data_recipe_id`, `public_data_menu_nam
 INSERT INTO `public_data_recipe` (`public_data_recipe_id`, `public_data_menu_name`, `public_data_menu_ingredient`, `public_data_menu_image`, `recipe_id`) VALUES (983, '맛살 미역줄기전', '[ 4인분 ] 미역 줄기(1팩=300g), 양파(½개), 맛살(135g), 건새우(1컵), 부침가루(1컵), 튀김가루(½컵), 탄산수(1컵), 아보카도유(1Ts)', 'https://www.foodsafetykorea.go.kr/common/ecmFileView.do?ecm_file_no=1NxSkgr9ktU', 983);
 INSERT INTO `public_data_recipe` (`public_data_recipe_id`, `public_data_menu_name`, `public_data_menu_ingredient`, `public_data_menu_image`, `recipe_id`) VALUES (984, '해산물샐러드와 미나리소스', '[ 2인분 ] 새송이버섯(1개), 방울토마토(200g), 오징어(1마리), 칵테일새우(200g), 후춧가루(약간), 다진 마늘(1Ts), 올리브유(1Ts), 레몬즙(1Ts), 후춧가루(약간), 미나리(50g), 깻잎(2장), 마늘(2쪽), 올리브유(3.5Ts), 체더치즈(2.5Ts), 아몬드(5개)', 'https://www.foodsafetykorea.go.kr/common/ecmFileView.do?ecm_file_no=1NxSkgr9nAC', 984);
 INSERT INTO `public_data_recipe` (`public_data_recipe_id`, `public_data_menu_name`, `public_data_menu_ingredient`, `public_data_menu_image`, `recipe_id`) VALUES (985, '매운요거트 토마토샐러드', '[ 2인분 ] 토마토(2개), 양파(¼개), 감자(¼개), 노랑 파프리카(¼개), 브로콜리(¼개), 새우(4마리) 고추기름(1Ts), 후춧가루(0.3Ts), 다진 마늘(0.3Ts), 플레인 요거트(½컵), 고추장(0.3Ts)', 'https://www.foodsafetykorea.go.kr/common/ecmFileView.do?ecm_file_no=1NxSkgr9nNW', 985);
+
+-- AI 레시피 데이터 삽입
+INSERT INTO `ai_recipe` (`ai_recipe_id`, `ai_menu_name`, `ai_menu_ingredient`, `ai_menu_image`, `recipe_id`) VALUES (1, '비빔면', '소면 200g, 고추장 2스푼, 간장 1스푼, 설탕 2스푼, 식초 1스푼, 다진 마늘 1티스푼, 고춧가루 1스푼, 참기름 1스푼, 통깨 1스푼, 오이 1/4개, 삶은 계란 1개, 김가루 약간', 'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/recipe_986.png', 986);
 
 -- 요리 레시피 매뉴얼 데이터 삽입
 INSERT INTO `recipe_manual` (`recipe_manual_id`, `recipe_manual_step`, `manual_menu_image`, `manual_content`, `recipe_id`) VALUES (1, 1, 'http://www.foodsafetykorea.go.kr/uploadimg/cook/20_00028_1.png', '1. 손질된 새우를 끓는 물에 데쳐 건진다.a', 1);
@@ -7210,8 +7214,15 @@ INSERT INTO `recipe_manual` (`recipe_manual_id`, `recipe_manual_step`, `manual_m
 INSERT INTO `recipe_manual` (`recipe_manual_id`, `recipe_manual_step`, `manual_menu_image`, `manual_content`, `recipe_id`) VALUES (5708, 4, 'https://www.foodsafetykorea.go.kr/common/ecmFileView.do?ecm_file_no=1NxSkgr9sa8', '4. 새우와 후춧가루를 넣은 뒤 고루 섞으며 볶는다.', 985);
 INSERT INTO `recipe_manual` (`recipe_manual_id`, `recipe_manual_step`, `manual_menu_image`, `manual_content`, `recipe_id`) VALUES (5709, 5, 'https://www.foodsafetykorea.go.kr/common/ecmFileView.do?ecm_file_no=1NxSkgr9seb', '5. 고추장 요거트 드레싱을 만든다.', 985);
 INSERT INTO `recipe_manual` (`recipe_manual_id`, `recipe_manual_step`, `manual_menu_image`, `manual_content`, `recipe_id`) VALUES (5710, 6, 'https://www.foodsafetykorea.go.kr/common/ecmFileView.do?ecm_file_no=1NxSkgr9sgw', '6. 토마토 속에 ④의 볶은 재료를 담고, 고추장 요거트 드레싱을 곁들여 마무리한다.', 985);
-
-
+INSERT INTO `recipe_manual` (`recipe_manual_id`, `recipe_manual_step`, `manual_menu_image`, `manual_content`, `recipe_id`) VALUES (5711, 1, NULL, '1. 소면 200g을 끓는 물에 넣고 약 4~5분간 삶아줍니다.', 986);
+INSERT INTO `recipe_manual` (`recipe_manual_id`, `recipe_manual_step`, `manual_menu_image`, `manual_content`, `recipe_id`) VALUES (5713, 3, NULL, '2. 면이 다 익으면 찬물에 여러 번 헹궈서 탄력을 준 뒤, 물기를 빼줍니다.', 986);
+INSERT INTO `recipe_manual` (`recipe_manual_id`, `recipe_manual_step`, `manual_menu_image`, `manual_content`, `recipe_id`) VALUES (5715, 5, NULL, '3. 큰 볼에 고추장 2스푼, 간장 1스푼, 설탕 2스푼, 식초 1스푼, 다진 마늘 1티스푼, 고춧가루 1스푼, 참기름 1스푼을 넣고 잘 섞어 양념장을 만듭니다.', 986);
+INSERT INTO `recipe_manual` (`recipe_manual_id`, `recipe_manual_step`, `manual_menu_image`, `manual_content`, `recipe_id`) VALUES (5717, 7, NULL, '4. 오이 1/4개를 얇게 채썰어 준비합니다.', 986);
+INSERT INTO `recipe_manual` (`recipe_manual_id`, `recipe_manual_step`, `manual_menu_image`, `manual_content`, `recipe_id`) VALUES (5719, 9, NULL, '5. 삶은 계란 1개를 반으로 잘라 준비합니다.', 986);
+INSERT INTO `recipe_manual` (`recipe_manual_id`, `recipe_manual_step`, `manual_menu_image`, `manual_content`, `recipe_id`) VALUES (5721, 11, NULL, '6. 물기를 뺀 소면을 양념장에 넣고 골고루 버무립니다.', 986);
+INSERT INTO `recipe_manual` (`recipe_manual_id`, `recipe_manual_step`, `manual_menu_image`, `manual_content`, `recipe_id`) VALUES (5723, 13, NULL, '7. 그릇에 비빈 면을 담고, 채썬 오이와 삶은 계란을 올립니다.', 986);
+INSERT INTO `recipe_manual` (`recipe_manual_id`, `recipe_manual_step`, `manual_menu_image`, `manual_content`, `recipe_id`) VALUES (5725, 15, NULL, '8. 그 위에 통깨 1스푼과 김가루 약간을 뿌려 마무리합니다. ', 986);
+INSERT INTO `recipe_manual` (`recipe_manual_id`, `recipe_manual_step`, `manual_menu_image`, `manual_content`, `recipe_id`) VALUES (5727, 17, NULL, '9. 완성된 비빔면을 바로 맛있게 즐깁니다.', 986);
 
 -- 추천 요리 데이터 삽입
 INSERT INTO recommended_menu (satisfaction, recommended_menu_status, recommended_menu_created_at, user_id, recipe_id)
@@ -7234,4 +7245,4 @@ SELECT * FROM recipe;
 SELECT * FROM recipe_manual;
 SELECT * FROM public_data_recipe;
 SELECT * FROM recommended_menu;
--- 그 뒤 테이블 조회
+-- 그 뒤 테이블 조회recipe
