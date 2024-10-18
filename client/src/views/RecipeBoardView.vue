@@ -5,7 +5,10 @@
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
     </header>
-    <MainBoard :cur="'recipe-board'"></MainBoard>
+
+    <MainBoard :cur="'recipe-board'">
+      <router-view></router-view>
+    </MainBoard>
   </div>
 </template>
 
@@ -14,9 +17,23 @@ import HomeButton from '@/components/common/HomeButton.vue'
 import MainBoard from '@/components/common/MainBoard.vue'
 import NotificationButton from '@/components/common/NotificationButton.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
+import SearchBar from '@/components/common/SearchBar.vue';
+import RecipeViewSwitchButton from '@/components/recipeBoard/RecipeViewSwitchButton.vue';
+import WriteRecipeButton from '@/components/recipeBoard/WriteRecipeButton.vue';
+
+
+
 </script>
 
 <style scoped>
+.recipe-board-container{
+  display: flex;
+  align-items: center;
+
+}
+
+
+
 .recipe-board-view {
   position: relative;
   display: flex;
@@ -45,7 +62,20 @@ import ProfileButton from '@/components/common/ProfileButton.vue'
   right: 20rem;
 }
 
+.write-recipe-container{
+  position: absolute;
+  bottom: 7rem;
+  right: 8rem;
+}
+
+
+
+
 @media screen and (max-width: 480px) {
+  .search-bar{
+    width: 80%;
+  }
+
   .notification-btn {
     left: 10rem;
   }
