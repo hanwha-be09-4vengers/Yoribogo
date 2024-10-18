@@ -10,8 +10,8 @@
 
 <script setup>
 import SearchBar from '@/components/common/SearchBar.vue';
-import RecipeViewSwitchButton from '@/components/recipeBoard/RecipeViewSwitchButton.vue';
-import WriteRecipeButton from '@/components/recipeBoard/WriteRecipeButton.vue';
+import RecipeViewSwitchButton from '@/components/recipe-board/RecipeViewSwitchButton.vue';
+import WriteRecipeButton from '@/components/recipe-board/WriteRecipeButton.vue';
 
 </script>
 

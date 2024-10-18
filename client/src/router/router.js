@@ -5,8 +5,8 @@ import NaverCallback from '@/components/user/sns/NaverCallback.vue' // 콜백 �
 
 
 // 나만의 레시피 페이지 
-import RecipeListView from '@/components/recipeBoard/RecipeListView.vue'; // 레시피 목록 컴포넌트
-import WriteRecipeView from '@/components/recipeBoard/WriteRecipeView.vue'; // 레시피 작성 컴포넌트
+import RecipeListView from '@/components/recipe-board/RecipeListView.vue'; // 레시피 목록 컴포넌트
+import WriteRecipeView from '@/components/recipe-board/WriteRecipeView.vue'; // 레시피 작성 컴포넌트
 
 const routes = [
   {
