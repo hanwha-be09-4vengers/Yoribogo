@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/answer")
+@RequestMapping("/api/answer")
 public class AnswerController {
 
     private final AnswerService answerService;
 
     @Autowired
-    public AnswerController(@Lazy AnswerService answerService) {
+    public AnswerController(AnswerService answerService) {
         this.answerService = answerService;
     }
 
@@ -28,7 +28,7 @@ public class AnswerController {
 
     // '/get?id=2' 문의(inquiry_id=2)의 답변 조회
     @GetMapping("/get")
-    public ResponseDTO getAnswer(@RequestParam int id) {
+    public ResponseDTO getAnswer(@RequestParam("id") int id) {
         List<Answer> result = answerService.findAnswer(id);
         return ResponseDTO.ok(result);
     }
@@ -49,7 +49,7 @@ public class AnswerController {
 
     // 답변 삭제
     @DeleteMapping("/delete")
-    public ResponseDTO deleteAnswer(@RequestParam int id) {
+    public ResponseDTO deleteAnswer(@RequestParam("id") int id) {
         boolean result = answerService.removeAnswer(id);
         return result ? ResponseDTO.ok("답변 삭제 성공") : ResponseDTO.ok("답변 삭제 실패");
     }

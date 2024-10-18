@@ -1,6 +1,7 @@
 package com.avengers.yoribogo.answer.dto;
 
 import com.avengers.yoribogo.common.Role;
+import com.avengers.yoribogo.user.domain.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,13 +16,13 @@ public class AnswerDTO {
     private String answerContent;
     private Role writerType;
     private LocalDateTime answerCreatedAt;
-    private int userId;
     private int inquiryId;
+    private UserEntity user;
 
-    public AnswerDTO(String answerContent, Role writerType, int userId, int inquiryId) {
+    public AnswerDTO(String answerContent, Role writerType, int inquiryId, UserEntity user) {
         this.answerContent = answerContent;
         this.writerType = writerType;
-        this.userId = userId;
         this.inquiryId = inquiryId;
+        this.user = user;
     }
 }

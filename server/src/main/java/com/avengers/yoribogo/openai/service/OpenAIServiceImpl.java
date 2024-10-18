@@ -45,7 +45,7 @@ public class OpenAIServiceImpl implements OpenAIService {
     @Override
     public ResponseImagesDTO getImages(String prompt) {
         Integer numberOfImages = 1;
-        String size = "1024x1024";
+        String size = "512x512";
         RequestImagesDTO req = new RequestImagesDTO(prompt, size, numberOfImages);
 
         // 헤더 설정

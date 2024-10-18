@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.lang.Integer.parseInt;
 import static java.util.Comparator.comparing;
 
 @Service
@@ -44,11 +45,11 @@ public class InquiryServiceImpl implements InquiryService {
                     .stream()
                     .filter(row -> (row.getInquiryStatus()==Status.ACTIVE) &&
                             (status == null || status.toUpperCase().equals(row.getAnswerStatus().name())) &&
-                            (userId == null || row.getUserId() == userId))
+                            (userId == null || row.getUser().getUserId().toString().equals(userId.toString())))
                     .toList(), new TypeToken<List<InquiryOnlyDTO>>() {}.getType());
             return result;
         } catch (Exception e) {
-            ExceptionDTO.of(ErrorCode.NOT_FOUND_CHOICE);
+            ExceptionDTO.of(ErrorCode.NOT_FOUND_INQUIRY);
             return null;
         }
     }
@@ -60,7 +61,7 @@ public class InquiryServiceImpl implements InquiryService {
                     .stream()
                     .filter(row -> (row.getInquiryStatus()==Status.ACTIVE) &&
                             (status == null || status.toUpperCase().equals(row.getAnswerStatus().name())) &&
-                            (userId == null || row.getUserId() == userId))
+                            (userId == null || row.getUser().getUserId().toString().equals(userId.toString())))
                     .toList();
 
             return result;
@@ -87,7 +88,7 @@ public class InquiryServiceImpl implements InquiryService {
             Inquiry created = modelMapper.map(newInquiry, Inquiry.class);
             if (created.getInquiryVisibility() == null) created.setInquiryVisibility(Visibility.PUBLIC);
             created.setInquiryStatus(Status.ACTIVE);
-            created.setInquiryCreatedAt(LocalDateTime.now());
+            created.setInquiryCreatedAt(LocalDateTime.now().withNano(0));
             created.setAnswers(0);
             created.setAnswerStatus(Status.PENDING);
             return inquiryRepository.save(created);
@@ -100,7 +101,7 @@ public class InquiryServiceImpl implements InquiryService {
     @Override
     public Inquiry updateInquiry(InquiryDTO modifyInquiry) {
         try {
-            modifyInquiry.setInquiryCreatedAt(LocalDateTime.now());
+            modifyInquiry.setInquiryCreatedAt(LocalDateTime.now().withNano(0));
             return inquiryRepository.saveAndFlush(modelMapper.map(modifyInquiry, Inquiry.class));
         } catch (Exception e) {
             ExceptionDTO.of(ErrorCode.NOT_FOUND_INQUIRY);

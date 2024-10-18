@@ -1,67 +1,68 @@
 <template>
-    <div class="modal-overlay">
-      <div class="modal-content">
-        <button class="close-btn" @click="closeModal">×</button>
-        <div class="modal-header">
-          <h2>Yoribogo</h2>
-        </div>
-        <div class="modal-body">
-          <input
-            type="text"
-            placeholder="아이디"
-            v-model="username"
-            @keyup.enter="login"
-          />
-          <!-- 아이디 입력 에러 메시지 -->
-          <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
-  
-          <div class="password-input-container">
-            <input
-              :type="passwordVisible ? 'text' : 'password'"
-              placeholder="비밀번호 입력"
-              v-model="password"
-              maxlength="24"
-              @keyup.enter="login"
-            />
-            <i class="eye-icon" @click="togglePasswordVisibility">
-              <img
-                :src="passwordVisible ? eyeOpenIcon : eyeClosedIcon"
-                alt="eye icon"
-              />
-            </i>
-          </div>
-  
-          <!-- 비밀번호 입력 에러 메시지 -->
-          <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
-  
-          <button class="login-btn" @click="login">로그인</button>
-          <div class="sns-login">
-            <hr />
-            <span>SNS LOGIN</span>
-            <hr />
-          </div>
-          <div class="sns-buttons">
-            <button class="sns-btn kakao" @click="navigateToKakaoLogin"></button>
-            <button class="sns-btn naver" @click="navigateToNaverLogin"></button>
-          </div>
-          <div class="login-options">
-            <a href="#" @click.prevent="openFindId">아이디 찾기</a>
-            <span class="divider">|</span>
-            <a href="#" @click.prevent="openPasswordReset">비밀번호 찾기</a>
-            <span class="divider">|</span>
-            <a href="#" @click.prevent="goToRegister">회원가입</a>
-          </div>
-        </div>
-  
-        <!-- 계정 재활성화 모달 추가 -->
-        <AccountReactivationModal
-          v-if="isAccountReactivationModalVisible"
-          @close="closeAccountReactivationModal"
-          :userAuthId="username"
+  <div class="modal-content">
+    <!-- 상단 왼쪽 뒤로가기 버튼 -->
+    <button class="back-btn" @click="goBack">
+      <i class="fa-solid fa-arrow-left"></i> <!-- Font Awesome 아이콘 -->
+    </button>
+
+    <div class="modal-header">
+      <h2>요리보고</h2>
+    </div>
+
+    <div class="modal-body">
+      <input
+        type="text"
+        placeholder="아이디"
+        v-model="username"
+        @keyup.enter="login"
+      />
+      <!-- 아이디 입력 에러 메시지 -->
+      <span v-if="usernameError" class="error-message">{{ usernameError }}</span>
+
+      <div class="password-input-container">
+        <input
+          :type="passwordVisible ? 'text' : 'password'"
+          placeholder="비밀번호 입력"
+          v-model="password"
+          maxlength="24"
+          @keyup.enter="login"
         />
+        <i class="eye-icon" @click="togglePasswordVisibility">
+          <img :src="passwordVisible ? eyeOpenIcon : eyeClosedIcon" alt="eye icon" />
+        </i>
+      </div>
+
+      <!-- 비밀번호 입력 에러 메시지 -->
+      <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
+
+      <button class="login-btn" @click="login">로그인</button>
+
+      <div class="sns-login">
+        <hr />
+        <span>SNS LOGIN</span>
+        <hr />
+      </div>
+      <div class="sns-buttons">
+        <button class="sns-btn kakao" @click="navigateToKakaoLogin"></button>
+        <button class="sns-btn naver" @click="navigateToNaverLogin"></button>
+      </div>
+      <div class="login-options">
+        <a href="#" @click.prevent="openFindId">아이디 찾기</a>
+        <span class="divider">|</span>
+        <a href="#" @click.prevent="openPasswordReset">비밀번호 찾기</a>
+        <span class="divider">|</span>
+        <a href="#" @click.prevent="goSignup">회원가입</a>
       </div>
     </div>
-  </template>
+
+    <!-- 계정 재활성화 모달 추가 -->
+    <AccountReactivationModal
+      v-if="isAccountReactivationModalVisible"
+      @close="closeAccountReactivationModal"
+      :userAuthId="username"
+    />
+  </div>
+</template>
   
   <script setup>
   import { ref, inject } from 'vue';
@@ -81,7 +82,7 @@
   // 외부에서 받아온 이벤트 정의
   const emit = defineEmits(['close', 'goToStep1', 'openPasswordReset', 'openFindId']);
   
-  // 상태와 메서드 `inject`로 받아오기
+  // 상태와 메서드 inject로 받아오기
   const token = inject('token'); // 토큰 상태
   const setTokenData = inject('setTokenData'); // 토큰 데이터 설정 함수
   
@@ -177,11 +178,6 @@
     emit('openPasswordReset');
   };
   
-  // 회원가입 모달로 이동
-  const goToRegister = () => {
-    emit('goToStep1');
-  };
-  
   // 카카오 로그인 페이지로 리다이렉트
   const navigateToKakaoLogin = () => {
     window.location.href = KAKAO_AUTH_URL;
@@ -191,50 +187,78 @@
   const navigateToNaverLogin = () => {
     window.location.href = NAVER_AUTH_URL;
   };
+
+  // 홈화면으로 이동
+  const goBack=()=>{
+    router.push('/');
+  }
+
+  // 회원가입 창으로 이동
+  const goSignup = () => {
+    router.push('/signup');
+  };
+  
   
   </script>
   
   <style scoped>
-  /* 스타일 동일하게 유지 */
-  .modal-overlay {
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-  }
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border-radius: 10px;
+  width: 400px;
+  height: 480px;
+  padding: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  text-align: center;
+  animation: slide-up 0.3s ease-out;
   
-  .modal-content {
-    display: flex; /* Flexbox 레이아웃 사용 */
-    flex-direction: column; /* 수직 정렬 */
-    align-items: center; /* 수평 가운데 정렬 */
-    justify-content: center;
-  
-    background-color: white;
-    border-radius: 10px;
-    width: 400px;
-    height: 480px;
-    padding: 2rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    position: relative;
-    text-align: center;
-    animation: slide-up 0.3s ease-out; /* 애니메이션 효과 추가 */
+  /* 화면 중앙에 배치 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 뒤로가기 버튼을 모달창의 왼쪽 상단에 고정 */
+.back-btn {
+  position: absolute;
+  top: 7rem;
+  left: 3rem;
+  width: 3.7rem;  /* 너비 47px */
+  height: 3.7rem; /* 높이 47px */
+  background-color: black; /* 검은색 배경 */
+  border-radius: 50%; /* 원 모양 만들기 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+}
+
+.back-btn i {
+  color: white; /* 아이콘 색상 */
+  font-size: 1.6rem; /* 아이콘 크기 */
+}
+
+
+/* 모달 슬라이드 애니메이션 */
+@keyframes slide-up {
+  from {
+    transform: translate(-50%, -40%); /* 시작 위치 */
+    opacity: 0;
   }
-  
-  /* 슬라이드 애니메이션 */
-  @keyframes slide-up {
-    from {
-      transform: translateY(50px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
+  to {
+    transform: translate(-50%, -50%); /* 끝 위치 */
+    opacity: 1;
   }
+}
+
   
   .close-btn {
     position: absolute;
@@ -249,8 +273,8 @@
   
   .modal-header h2 {
     margin: 2rem;
-    font-size: 5rem;
-    color: #a1b872;
+    font-size: 3.8rem;
+    color: #000000;
   }
   
   .modal-body input {
@@ -287,11 +311,11 @@
     width: 360px;
     height: 40px;
     border: none;
-    background-color: #3E3E3E;
+    background-color: #000000;
     color: #ffffff;
     text-align: center;
     font-size: 1.8rem;
-    font-weight: bold;
+    font-weight: 200;
     border-radius: 5px;
     cursor: pointer;
     margin-top: 6rem;
@@ -372,4 +396,3 @@
   }
   
   </style>
-  
