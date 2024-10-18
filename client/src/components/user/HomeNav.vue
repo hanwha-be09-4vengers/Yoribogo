@@ -14,10 +14,9 @@
       </li>
 
       <!-- 로그인 상태에 따라 다른 UI 표시 -->
-      <li v-if="isLoggedIn" @click="logout">로그아웃</li>
       <li v-if="isLoggedIn"><ProfileButton></ProfileButton></li>
-      <li v-if="!isLoggedIn" class="signup">회원가입</li>
-      <li v-if="!isLoggedIn" class="login" @click="openLoginModal">로그인</li>
+      <li v-if="!isLoggedIn" class="signup" @click="goSignup">회원가입</li>
+      <li v-if="!isLoggedIn" class="login" @click="goLogin">로그인</li>
     </ul>
   </nav>
 </template>
@@ -64,6 +63,12 @@ const goWiki = () => {
   router.push('/wiki');
 };
 
+const goSignup = () => {
+  router.push('/signup')
+}
+const goLogin = () => {
+  router.push('/login')
+}
 // 로고 클릭 시 홈으로 이동
 const goHome = () => {
   router.push('/');

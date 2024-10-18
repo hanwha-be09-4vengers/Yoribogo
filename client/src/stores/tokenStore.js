@@ -67,9 +67,10 @@ export const useTokenStore = defineStore('token', () => {
   // 애플리케이션 초기화 시 로컬 스토리지에서 데이터 복원
   const initializeState = () => {
     const storedToken = localStorage.getItem('token');
+    
     if (storedToken) {
       const parsedToken = JSON.parse(storedToken);
-
+  
       // 상태 복원
       token.userId = parsedToken.userId || null;
       token.userAuthId = parsedToken.userAuthId || null;
@@ -77,17 +78,24 @@ export const useTokenStore = defineStore('token', () => {
       token.accessTokenExpiry = parsedToken.accessTokenExpiry || null;
       token.refreshToken = parsedToken.refreshToken || null;
       token.refreshTokenExpiry = parsedToken.refreshTokenExpiry || null;
-
+  
       console.log('로컬 스토리지에서 토큰이 복원되었습니다:', token);
-
-      // 토큰이 유효한 경우 사용자 정보 확인
-      if (token.accessToken && token.userAuthId) {
-        fetchUserId(token.userAuthId);  // user_auth_id로 사용자 정보 복원
+  
+      // user_auth_id가 String 타입인지 확인
+      if (token.userAuthId && typeof token.userAuthId === 'string') {
+        try {
+          fetchUserId(token.userAuthId);  // 유효한 user_auth_id로 사용자 정보 복원
+        } catch (error) {
+          console.error('fetchUserId 호출 중 에러 발생:', error);
+        }
+      } else {
+        console.warn('유효하지 않은 user_auth_id:', token.userAuthId);
       }
     } else {
       console.log('로컬 스토리지에 저장된 토큰이 없습니다. 기본값으로 설정합니다.');
     }
   };
+  
 
   // 로그아웃 처리
   const logout = () => {
