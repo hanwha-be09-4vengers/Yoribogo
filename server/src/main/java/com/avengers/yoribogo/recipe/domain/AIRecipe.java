@@ -23,6 +23,9 @@ public class AIRecipe {
     @Column(name = "AI_MENU_INGREDIENT")
     private String aiMenuIngredient;
 
+    @Column(name = "AI_MENU_IMAGE")
+    private String aiMenuImage;
+
     @Column(name = "RECIPE_ID")
     private Long recipeId;
 
