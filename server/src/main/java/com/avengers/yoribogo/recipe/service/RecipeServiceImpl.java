@@ -234,7 +234,7 @@ public class RecipeServiceImpl implements RecipeService {
                 "'채식 또는 비건 식단을 따르시나요?' → '" + requestRecommendDTO.getFourth() + "', " +
                 "'제가 또 알아야 하는 게 있나요?' → '" + requestRecommendDTO.getFifth() + "'." +
                 " 특히 '" + requestRecommendDTO.getFifth() + "'를 가장 중요하게 고려하고, " +
-                "추천하는 요리 이름은 '요리이름(English description of the dish)' 형식으로 특수문자 없이 간단히 알려줘.";
+                "추천하는 요리 이름은 '요리이름(Detailed english description of the dish with dish name)' 형식으로 특수문자 없이 간단히 알려줘.";
 
         String aiAnswerMenu = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
 
