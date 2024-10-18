@@ -49,4 +49,7 @@ public class RecipeBoard {
     // OneToMany 관계 설정 (보드가 여러 매뉴얼을 가질 수 있음)
     @OneToMany(mappedBy = "recipeBoard", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeBoardManual> manuals = new ArrayList<>();
+
+    @OneToMany(mappedBy = "recipeBoard", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RecipeBoardFavorite> favorites = new ArrayList<>();
 }

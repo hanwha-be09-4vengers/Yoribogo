@@ -10,8 +10,10 @@ import com.avengers.yoribogo.recipeboard.recipeboardlike.Repository.RecipeBoardL
 import com.avengers.yoribogo.recipeboard.recipeboardlike.dto.LikeRequestDTO;
 
 import com.avengers.yoribogo.recipeboard.repository.RecipeBoardRepository;
+import com.avengers.yoribogo.user.domain.Tier;
 import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.repository.UserRepository;
+import com.avengers.yoribogo.user.repository.TierRepository; // TierRepository 추가
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,13 +29,15 @@ public class RecipeBoardLikeService {
     private final UserRepository userRepository;
     private final RecipeBoardRepository recipeBoardRepository;
     private final RecipeBoardLikeRepository recipeBoardLikeRepository;
+    private final TierRepository tierRepository;  // TierRepository 추가
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    public RecipeBoardLikeService(UserRepository userRepository, RecipeBoardRepository recipeBoardRepository, RecipeBoardLikeRepository recipeBoardLikeRepository, ApplicationEventPublisher applicationEventPublisher) {
+    public RecipeBoardLikeService(UserRepository userRepository, RecipeBoardRepository recipeBoardRepository, RecipeBoardLikeRepository recipeBoardLikeRepository, TierRepository tierRepository, ApplicationEventPublisher applicationEventPublisher) {
         this.userRepository = userRepository;
         this.recipeBoardRepository = recipeBoardRepository;
         this.recipeBoardLikeRepository = recipeBoardLikeRepository;
+        this.tierRepository = tierRepository;  // TierRepository 주입
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -79,6 +83,9 @@ public class RecipeBoardLikeService {
             isLiked = true;  // 좋아요가 추가됨
         }
 
+        // 티어 업데이트 로직 추가
+        updateTierBasedOnLikes(postAuthor);
+
         // 5. 변경된 게시글, 유저 정보 저장
         recipeBoardRepository.save(recipeBoard);
         userRepository.save(postAuthor);  // 게시글 작성자 정보 업데이트
@@ -93,5 +100,17 @@ public class RecipeBoardLikeService {
         return isLiked;  // 좋아요 상태를 반환
     }
 
+    // 티어 업데이트 로직
+    private void updateTierBasedOnLikes(UserEntity postAuthor) {
+        // 티어 기준을 likes 수에 따라 조회
+        Tier newTier = tierRepository.findTopByTierCriteriaLessThanEqualOrderByTierCriteriaDesc(postAuthor.getUserLikes())
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_TIER));
+
+        // 새로운 티어와 기존 티어가 다를 경우에만 업데이트
+        if (!newTier.equals(postAuthor.getTier())) {
+            postAuthor.setTier(newTier);  // 새로운 티어로 업데이트
+            log.info("postAuthor의 티어가 {}로 변경되었습니다.", newTier.getTierName());
+        }
+    }
 
 }

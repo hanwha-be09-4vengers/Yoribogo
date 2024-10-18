@@ -5,21 +5,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-public class RecipeBoardDTO {
+public class ResponseFavoriteDTO {
 
-    @JsonProperty("menu_name")
-    private String recipeBoardMenuName;
-
-    @JsonProperty("ingredients")
-    private String recipeBoardIngredient;
-
-    @JsonProperty("board_image")
-    private String recipeBoardImage;
+    @JsonProperty("id")
+    private Long recipeBoardFavoriteId;
 
     @JsonProperty("user_id")
     private Long userId;
 
+    @JsonProperty("board_id")
+    private Long recipeBoardId;
 }
