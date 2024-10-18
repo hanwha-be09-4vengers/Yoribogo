@@ -28,24 +28,24 @@
 </template>
 
 <script setup>
-import LoginModal from '@/components/user/login/LoginModal.vue';
+import LoginModal from '@/components/user/login/LoginModal.vue'
 import HomeNav from '@/components/user/HomeNav.vue'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 
 const router = useRouter()
 
-const isLoginModalVisible = ref(false); // 로그인 모달 상태
+const isLoginModalVisible = ref(false) // 로그인 모달 상태
 
 // 로그인 모달 열기
 const openLoginModal = () => {
-  isLoginModalVisible.value = true; // 로그인 모달 열기
-};
+  isLoginModalVisible.value = true // 로그인 모달 열기
+}
 
 // 로그인 모달 닫기
 const closeLoginModal = () => {
-  isLoginModalVisible.value = false; // 로그인 모달 닫기
-};
+  isLoginModalVisible.value = false // 로그인 모달 닫기
+}
 
 const goQuestion = () => {
   router.push('/question/1')
