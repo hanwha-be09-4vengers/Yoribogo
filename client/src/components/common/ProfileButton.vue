@@ -1,39 +1,116 @@
 <template>
   <div class="profile-btn">
     <div class="profile-img-wrapper" @click="toggleMenu">
-      <img
-        src="https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1720072494119_21792adc-7e3e-4d3e-8e69-3b55fa58615c_IMG_2316.jpeg"
-        alt="Profile"
-      />
+      <img :src="profileImage" alt="Profile" />
     </div>
     <ul class="menu-list" v-show="isMenuVisible">
-      <li class="menu" @click="goMyPage">
+      <!-- 로그인된 경우 마이페이지와 로그아웃을 동시에 표시 -->
+      <li v-if="isLoggedIn" class="menu" @click="goMyPage">
         <i class="fa-solid fa-user"></i>
         <span>마이페이지</span>
       </li>
-      <li class="menu">
+      <li v-if="isLoggedIn" class="menu" @click="logout">
         <i class="fa-solid fa-arrow-right-from-bracket"></i>
         <span>로그아웃</span>
+      </li>
+
+      <!-- 로그인되지 않은 경우 회원가입과 로그인 버튼을 동시에 표시 -->
+      <li v-if="!isLoggedIn" class="menu" @click="goSignup">
+        <i class="fa-solid fa-user-plus"></i>
+        <span>회원가입</span>
+      </li>
+      <li v-if="!isLoggedIn" class="menu" @click="goLogin">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        <span>로그인</span>
       </li>
     </ul>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useTokenStore } from '@/stores/tokenStore'; // Pinia 스토어 임포트
+import {  fetchUserByAuthId } from '@/api/user'; // 사용자 프로필 조회 API
 
-const router = useRouter()
+const router = useRouter();
+const tokenStore = useTokenStore(); // Pinia 스토어 사용
 
-const isMenuVisible = ref(false)
+// 로그인 상태 체크
+const isLoggedIn = computed(() => !!tokenStore.token.accessToken);
 
+// 기본 프로필 이미지 URL
+const defaultProfileImage = 'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/default_profile.png';
+// 프로필 이미지 상태 관리
+const profileImage = ref(defaultProfileImage);
+
+// 로그인된 경우에만 프로필 이미지 가져오기
+const loadUserProfileImage = async () => {
+  const userAuthId = tokenStore.token.userAuthId; // 정확한 경로로 변경
+  const accessToken = tokenStore.token.accessToken;
+
+  if (isLoggedIn.value) {
+    console.log('토큰 상태:', userAuthId, accessToken); // 로그로 토큰 상태 확인
+
+    if (userAuthId && accessToken) {
+      try {
+        // 사용자 프로필 정보 가져오기
+        const userProfile = await fetchUserByAuthId(userAuthId, accessToken);
+        console.log('userProfile 프로필 버튼', userProfile);
+
+        // 프로필 이미지가 있으면 설정, 없으면 기본 이미지 설정
+        if (userProfile.success && userProfile.data.profileImage) {
+          profileImage.value = userProfile.data.profileImage; // 프로필 이미지 설정
+        } else {
+          console.log('프로필 이미지가 없습니다. 기본 이미지를 사용합니다.');
+          profileImage.value = defaultProfileImage; // 기본 이미지로 설정
+        }
+      } catch (error) {
+        console.error('프로필 이미지 가져오기 중 에러 발생:', error);
+        profileImage.value = defaultProfileImage; // 에러 발생 시 기본 이미지 사용
+      }
+    } else {
+      console.error('userAuthId 또는 accessToken이 없습니다.');
+      profileImage.value = defaultProfileImage; // 유효한 토큰이 없으면 기본 이미지 사용
+    }
+  } else {
+    profileImage.value = defaultProfileImage; // 로그인되지 않은 경우 기본 이미지 사용
+  }
+};
+
+
+
+// 메뉴 보이기/숨기기
+const isMenuVisible = ref(false);
 const toggleMenu = () => {
-  isMenuVisible.value = !isMenuVisible.value
-}
+  isMenuVisible.value = !isMenuVisible.value;
+};
 
+// 마이페이지로 이동
 const goMyPage = () => {
-  router.push('/mypage')
-}
+  router.push('/mypage');
+};
+
+// 로그아웃 처리
+const logout = () => {
+  tokenStore.logout(); // Pinia 스토어의 로그아웃 함수 호출
+  router.push('/'); // 로그아웃 후 홈으로 이동
+};
+
+// 회원가입 페이지로 이동
+const goSignup = () => {
+  router.push('/signup');
+};
+
+// 회원가입 페이지로 이동
+const goLogin = () => {
+  router.push('/login');
+};
+
+// 마운트될 때 사용자 프로필 이미지 불러오기
+onMounted(() => {
+  loadUserProfileImage();
+});
 </script>
 
 <style scoped>
@@ -41,8 +118,8 @@ const goMyPage = () => {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  width: 25rem;
   gap: 1rem;
+  position: relative; /* 부모 요소는 relative */
 }
 
 .profile-img-wrapper {
@@ -79,7 +156,10 @@ const goMyPage = () => {
   padding: 1rem;
   border-radius: 1.2rem;
   box-shadow: 0.1rem 0.35rem 0.35rem 0rem rgba(60, 60, 60, 0.5);
-  z-index: 9999;
+  z-index: 1000;
+  position: absolute; /* 메뉴는 부모 안에서 절대 위치 */
+  right: 0; /* 오른쪽 정렬 */
+  top: 7rem; /* 아래로 약간 떨어뜨림 */
 }
 
 .menu {
