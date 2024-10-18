@@ -11,6 +11,8 @@
   --pink-color: #ff7d7d;
   --light-pink-color: #fff5f5;
   --semi-blue-color: #53acff;
+  --navy-color: #2c3e50;
+  --light-gray-color: #f9f9f9;
 
   font-weight: normal;
   font-family: 'Noto Sans KR', 'Noto Sans';
@@ -53,11 +55,13 @@ dt,
 dd,
 p,
 span {
+  font-family: 'Noto Sans KR', 'Noto Sans';
   margin: 0;
   padding: 0;
 }
 
 a {
+  font-family: 'Noto Sans KR', 'Noto Sans';
   text-decoration: none;
 }
 
@@ -65,8 +69,17 @@ li {
   list-style: none;
 }
 
-h1 {
-  font-size: 3rem;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Noto Sans KR', 'Noto Sans';
+}
+
+input {
+  font-family: 'Noto Sans KR', 'Noto Sans';
 }
 
 .hide-text {
