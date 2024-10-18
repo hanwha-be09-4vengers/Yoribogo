@@ -3,6 +3,7 @@ package com.avengers.yoribogo.inquiry.domain;
 import com.avengers.yoribogo.answer.domain.Answer;
 import com.avengers.yoribogo.common.Status;
 import com.avengers.yoribogo.common.Visibility;
+import com.avengers.yoribogo.user.domain.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -44,16 +45,17 @@ public class Inquiry {
     @Column(name = "answer_status")
     private Status answerStatus;
 
-    @Column(name = "user_id")
-    private int userId;
-
     @OneToMany(mappedBy = "inquiryId")
     private List<Answer> answer;
 
-    public Inquiry(String inquiryTitle, String inquiryContent, int userId) {
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    private UserEntity user;
+
+    public Inquiry(String inquiryTitle, String inquiryContent, UserEntity user) {
         this.inquiryTitle = inquiryTitle;
         this.inquiryContent = inquiryContent;
-        this.userId = userId;
+        this.user = user;
     }
 
 

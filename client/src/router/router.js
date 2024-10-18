@@ -42,7 +42,13 @@ const routes = [
   {
     path: '/qna',
     name: 'qna',
-    component: () => import('../views/QnAView.vue')
+    component: () => import('../views/QnaView.vue')
+  },
+  {
+    path: '/qna/:num',
+    name: 'qna-detail',
+    component: () => import('../views/QnaDetailView.vue'),
+    props: true
   },
   {
     path: '/kakaologin',
@@ -54,11 +60,6 @@ const routes = [
     name: 'NaverCallback',
     component: NaverCallback
   },
-  {
-    path: '/qna',
-    name: 'qna',
-    component: () => import('../views/InquiryView.vue')
-  }
 ]
 
 const router = createRouter({
