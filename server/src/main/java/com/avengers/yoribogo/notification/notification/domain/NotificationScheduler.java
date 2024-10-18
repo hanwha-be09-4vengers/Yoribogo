@@ -3,12 +3,14 @@ package com.avengers.yoribogo.notification.notification.domain;
 import com.avengers.yoribogo.notification.notification.service.NotificationService;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.service.WeeklyPopularRecipeService;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.WeeklyPopularRecipe;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 public class NotificationScheduler {
 
+    @Autowired
     private final WeeklyPopularRecipeService weeklyPopularRecipeService;
     private final NotificationService notificationService;
 

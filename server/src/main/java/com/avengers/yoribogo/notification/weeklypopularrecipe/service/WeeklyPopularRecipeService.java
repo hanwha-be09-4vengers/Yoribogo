@@ -64,7 +64,7 @@ public class WeeklyPopularRecipeService {
 
         // 상위 3개 중 랜덤 선택
         String randomRecipeId = topRecipeIds.get(new Random().nextInt(topRecipeIds.size()));
-
+        System.out.println("알림 보낼 최종 레시피 선택됨");
         // 선택된 recipe_id에 해당하는 레시피 중 하나를 랜덤하게 반환
         List<WeeklyPopularRecipe> selectedRecipes = recentRecipes.stream()
                 .filter(recipe -> recipe.getMyRecipeId().equals(randomRecipeId))

@@ -3,6 +3,7 @@ package com.avengers.yoribogo.notification.weeklypopularrecipe.controller;
 import com.avengers.yoribogo.common.ResponseDTO;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.WeeklyPopularRecipe;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.service.WeeklyPopularRecipeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import java.util.List;
 @RequestMapping("/api/weeklypopularrecipes")
 public class WeeklyPopularRecipeController {
 
+    @Autowired
     private final WeeklyPopularRecipeService weeklyPopularRecipeService;
 
     public WeeklyPopularRecipeController(WeeklyPopularRecipeService weeklyPopularRecipeService) {

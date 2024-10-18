@@ -12,6 +12,7 @@ import com.avengers.yoribogo.recipeboard.recipeboardlike.dto.LikeRequestDTO;
 import com.avengers.yoribogo.recipeboard.repository.RecipeBoardRepository;
 import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
+@Slf4j
 public class RecipeBoardLikeService {
 
     private final UserRepository userRepository;
@@ -36,7 +38,7 @@ public class RecipeBoardLikeService {
     }
 
     @Transactional
-    public void likePost(LikeRequestDTO likeRequestDTO) {
+    public boolean likePost(LikeRequestDTO likeRequestDTO) {
         Long userId = likeRequestDTO.getUserId();
         Long postId = likeRequestDTO.getPostId();
 
@@ -49,39 +51,47 @@ public class RecipeBoardLikeService {
         RecipeBoard recipeBoard = recipeBoardRepository.findById(postId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_RECIPE));
 
-        long postAuthorId = recipeBoard.getUserId();  // 게시글 작성자
-        UserEntity postAuthor = new UserEntity();
+        long postAuthorId = recipeBoard.getUserId();  // 게시글 작성자의 ID
+        UserEntity postAuthor = userRepository.findById(postAuthorId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));  // 작성자 정보 조회
+
+        boolean isLiked = false;  // 기본 상태는 좋아요가 취소되지 않은 상태로 설정
 
         if (existingLike != null) {
             // 3. 좋아요가 이미 눌러져 있는 경우 -> 좋아요 취소 로직
             recipeBoardLikeRepository.delete(existingLike);
             recipeBoard.setRecipeBoardLikes(recipeBoard.getRecipeBoardLikes() - 1);
-            postAuthor.setUserLikes(postAuthor.getUserLikes() - 1);
-
-
+            postAuthor.setUserLikes(postAuthor.getUserLikes() - 1);  // 작성자의 좋아요 수 -1
+            log.info("좋아요 취소됨. postAuthor의 좋아요 수: {}", postAuthor.getUserLikes());
+            isLiked = false;  // 좋아요가 취소됨
         } else {
             // 4. 좋아요가 눌러져 있지 않은 경우 -> 좋아요 추가 로직
             recipeBoard.setRecipeBoardLikes(recipeBoard.getRecipeBoardLikes() + 1);  // 게시글의 좋아요 수 +1
 
-            postAuthor.setUserId(postAuthorId);
             postAuthor.setUserLikes(postAuthor.getUserLikes() + 1);  // 게시글 작성자의 좋아요 수 +1
+            log.info("좋아요 추가됨. postAuthor의 좋아요 수: {}", postAuthor.getUserLikes());
 
             RecipeBoardLikeEntity newLike = new RecipeBoardLikeEntity();
             newLike.setUser(user);
-            newLike.setRecipeBoard(existingLike.getRecipeBoard());
+            newLike.setRecipeBoard(recipeBoard);
             newLike.setLikeCreatedAt(LocalDateTime.now());
             recipeBoardLikeRepository.save(newLike);  // 좋아요 엔티티 저장
+            isLiked = true;  // 좋아요가 추가됨
         }
 
         // 5. 변경된 게시글, 유저 정보 저장
         recipeBoardRepository.save(recipeBoard);
-        userRepository.save(postAuthor);
+        userRepository.save(postAuthor);  // 게시글 작성자 정보 업데이트
 
-        // 6. 좋아요 추가 시에만 MongoDB 비동기 이벤트 처리
-        if (existingLike == null) {
+        // 6. 좋아요 추가/취소 시 MongoDB 비동기 이벤트 처리
+        if (isLiked) {
             applicationEventPublisher.publishEvent(new InsertLikeToMongoEvent(userId.toString(), postId.toString()));
         } else {
-            applicationEventPublisher.publishEvent((new DeleteLikeInMongoEvent(userId.toString(), postId.toString())));
+            applicationEventPublisher.publishEvent(new DeleteLikeInMongoEvent(userId.toString(), postId.toString()));
         }
+
+        return isLiked;  // 좋아요 상태를 반환
     }
+
+
 }

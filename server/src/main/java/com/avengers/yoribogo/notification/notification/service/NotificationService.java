@@ -2,6 +2,7 @@ package com.avengers.yoribogo.notification.notification.service;
 
 
 import com.avengers.yoribogo.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -11,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class NotificationService {
 
+    @Autowired
     private final JwtUtil jwtUtil;  // JwtUtil 주입
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
