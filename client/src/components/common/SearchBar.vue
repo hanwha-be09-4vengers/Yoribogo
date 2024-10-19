@@ -80,6 +80,7 @@ const submitSearch = () => {
   text-align: center;
   font-size: 2.3rem;
   font-weight: 500;
+  font-family: 'Noto Sans KR';
   color: #6c6c6c;
   line-height: 2.3rem;
   background-color: transparent;
