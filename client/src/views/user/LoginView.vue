@@ -21,9 +21,6 @@
 		    @openFindId="openFindIdModal"     
     />
 
-     <!-- 개인정보 처리방침 모달 -->
-	  <PrivacyPolicyModal v-if="isPrivacyPolicyModalVisible" @close="closePrivacyPolicyModal" />
-
     
 	  <!-- 회원 재활성화 모달 -->
 	  <AccountReactivationModal
@@ -69,7 +66,6 @@ import { ref, onMounted  } from 'vue';
 import { useRouter } from 'vue-router';
 import LoginModal from '@/components/user/login/LoginModal.vue'; // 모달 컴포넌트 임포트
 
-import PrivacyPolicyModal from '@/components/user/login/PrivacyPolicyModal.vue'; // PrivacyPolicyModal 모달창
 import AccountReactivationModal from '@/components/user/login/AccountReactivationModal.vue'; // 계정활 성화 모달창
 
 import PasswordResetStep1 from '@/components/user/login/PasswordResetStep1.vue'; // 비밀번호 찾기 Step1 모달창
@@ -84,8 +80,6 @@ const router = useRouter();
 
 const isLoginModalVisible = ref(false);// 로그인 모달창
 const isAccountReactivationModalVisible = ref(false);// 계정활성화 모달 상태
-const isPrivacyPolicyModalVisible = ref(false); // 개인정보 처리방침 모달 상
-
 const isPasswordResetModalVisible = ref(false);// 비밀번호 찾기 모달 상태
 const currentPasswordResetStep = ref(1); // 비밀번호 찾기 단계 초기화
 
@@ -125,17 +119,6 @@ const closeAccountReactivationModal = () => {
   isAccountReactivationModalVisible.value = false;
 };
 
-// 개인정보 처리방침 모달 열기
-const openPrivacyPolicyModal = () => {
-	isPrivacyPolicyModalVisible.value = true;
-	isRegisterModalVisible.value = false;
-  };
-  
-  // 개인정보 처리방침 모달 닫기
-  const closePrivacyPolicyModal = () => {
-	isPrivacyPolicyModalVisible.value = false;
-	isRegisterModalVisible.value = true; // 다시 회원가입 모달로 돌아가기
-  };
 
 // 비밀번호 찾기 데이터 업데이트
 const updatePasswordResetData = (newData) => {

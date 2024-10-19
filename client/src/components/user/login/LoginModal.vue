@@ -1,11 +1,10 @@
 <template>
   <div class="modal-content">
     <!-- 상단 왼쪽 뒤로가기 버튼 -->
-    <button class="back-btn" @click="goBack">
-      <i class="fa-solid fa-arrow-left"></i> <!-- Font Awesome 아이콘 -->
-    </button>
-
     <div class="modal-header">
+      <button class="back-btn" @click="goBack">
+        <i class="fa-solid fa-arrow-left"></i> <!-- Font Awesome 아이콘 -->
+      </button>
       <h2>요리보고</h2>
     </div>
 
@@ -225,19 +224,18 @@ const login = async () => {
   
   <style scoped>
 
+/* 모달 콘텐츠 */
 .modal-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   background-color: white;
   border-radius: 10px;
   width: 400px;
-  height: 480px;
+  height: 500px;
   padding: 2rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: relative;
-  text-align: center;
   animation: slide-up 0.3s ease-out;
   
   /* 화면 중앙에 배치 */
@@ -247,57 +245,61 @@ const login = async () => {
   transform: translate(-50%, -50%);
 }
 
-/* 뒤로가기 버튼을 모달창의 왼쪽 상단에 고정 */
-.back-btn {
-  position: absolute;
-  top: 7rem;
-  left: 3rem;
-  width: 3.7rem;  /* 너비 47px */
-  height: 3.7rem; /* 높이 47px */
-  background-color: black; /* 검은색 배경 */
-  border-radius: 50%; /* 원 모양 만들기 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  border: none;
-}
-
-.back-btn i {
-  color: white; /* 아이콘 색상 */
-  font-size: 1.6rem; /* 아이콘 크기 */
-}
-
-
-/* 모달 슬라이드 애니메이션 */
+  /* 슬라이드 애니메이션 */
 @keyframes slide-up {
   from {
-    transform: translate(-50%, -40%); /* 시작 위치 */
+    transform: translate(-50%, -40%);
     opacity: 0;
   }
   to {
-    transform: translate(-50%, -50%); /* 끝 위치 */
+    transform: translate(-50%, -50%);
     opacity: 1;
   }
 }
 
-  
-  .close-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 3.2rem;
-    opacity: 50%;
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .modal-header h2 {
-    margin: 2rem;
-    font-size: 3.8rem;
-    color: #000000;
-  }
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.2rem 1rem; /* 상단 여백을 줄여서 위로 밀기 */
+  position: relative;
+  width: 100%;
+  margin-top: 6rem;
+  margin-bottom: 10rem; /* 모달 내용과의 간격 줄이기 */
+}
+
+.modal-header h2 {
+  font-size: 3.6rem; /* 조금 더 작게 */
+  color: #000000;
+  margin: 0; /* 텍스트 기본 여백 제거 */
+  position: absolute; /* 텍스트를 중앙에 고정 */
+  top: 50%; /* 부모 높이의 중앙 */
+  left: 50%; /* 부모 너비의 중앙 */
+  transform: translate(-50%, -50%); /* 중앙 정렬 */
+}
+
+.back-btn {
+  position: absolute;
+  left: 1rem; /* 좌측 여백 */
+  top: 50%; /* 중앙에 맞춤 */
+  transform: translateY(-50%); /* 세로 정렬 */
+  background-color: black;
+  border-radius: 50%;
+  width: 3.5rem; /* 크기 살짝 줄임 */
+  height: 3.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+}
+
+.back-btn i {
+  color: white;
+  font-size: 1.4rem; /* 아이콘도 조금 작게 */
+}
+
   
   .modal-body input {
     width: 360px;
@@ -306,7 +308,7 @@ const login = async () => {
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 1.6rem;
-    margin: 1rem;
+    margin: 0.5rem;
   }
   
   /* 비밀번호 입력 필드 컨테이너 */
@@ -349,7 +351,7 @@ const login = async () => {
     display: flex;
     width: auto;
     align-items: center;
-    margin: 2rem 0;
+    margin: 1rem 0;
   }
   
   .sns-login hr {
@@ -359,15 +361,15 @@ const login = async () => {
   }
   
   .sns-login span {
-    margin: 0 1.4rem;
+    margin: 0 1.6rem;
     color: #888;
   }
   
   .sns-buttons {
     display: flex;
     justify-content: center;
-    gap: 6.5rem;
-    margin-bottom: 6rem;
+    gap: 8rem;
+    margin-bottom: 4rem;
   }
   
   .sns-btn {
@@ -390,7 +392,7 @@ const login = async () => {
   }
   
   .login-options {
-    margin-top: 1.5rem;
+    margin-top: 0rem;
     font-size: 1.4rem;
     color: #888;
     display: flex;

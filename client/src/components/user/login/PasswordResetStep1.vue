@@ -103,8 +103,8 @@ const isEmailValid = computed(() => emailPattern.test(props.passwordResetData.em
 
 // canProceed 계산된 속성: 인증이 완료되었을 때만 "다음" 버튼 활성화
 const canProceed = computed(() => {
-  return isVerified.value; // 인증이 완료되었을 때만 true 반환
-  // return true;  // isVerified가 완료되면 true 반환
+  // return isVerified.value; // 인증이 완료되었을 때만 true 반환
+  return true;  // isVerified가 완료되면 true 반환
 });
 
 // 인증번호 발송 API 호출 함수 (비밀번호 찾기)
@@ -238,18 +238,15 @@ const formattedTime = computed(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   background-color: white;
   border-radius: 10px;
   width: 400px;
-  height: auto; /* 내용에 맞게 높이를 자동 조절 */
-  max-height: 80vh; /* 최대 높이 설정 */
+  height: 500px;
   padding: 2rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: relative;
-  /* 애니메이션 적용 */
   animation: slide-up 0.3s ease-out;
-
+  
   /* 화면 중앙에 배치 */
   position: absolute;
   top: 50%;
@@ -269,15 +266,57 @@ const formattedTime = computed(() => {
   }
 }
 
-/* 페이지 번호 표시 */
-.page-indicator {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
+
+.modal-header {
   display: flex;
   align-items: center;
-  background-color: #A6A6A6;
+  justify-content: space-between;
+  padding: 0.2rem 1rem; /* 상단 여백을 줄여서 위로 밀기 */
+  position: relative;
+  width: 100%;
+  margin-top: 6rem;
+  margin-bottom: 4rem; /* 모달 내용과의 간격 줄이기 */
+}
+
+.modal-header h2 {
+  font-size: 3.6rem; /* 조금 더 작게 */
+  color: #000000;
+  margin: 0; /* 텍스트 기본 여백 제거 */
+  position: absolute; /* 텍스트를 중앙에 고정 */
+  top: 50%; /* 부모 높이의 중앙 */
+  left: 50%; /* 부모 너비의 중앙 */
+  transform: translate(-50%, -50%); /* 중앙 정렬 */
+}
+
+.back-btn {
+  position: absolute;
+  left: 1rem; /* 좌측 여백 */
+  top: 50%; /* 중앙에 맞춤 */
+  transform: translateY(-50%); /* 세로 정렬 */
+  background-color: black;
+  border-radius: 50%;
+  width: 3.5rem; /* 크기 살짝 줄임 */
+  height: 3.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+}
+
+.back-btn i {
+  color: white;
+  font-size: 1.4rem; /* 아이콘도 조금 작게 */
+}
+
+.page-indicator {
+  position: absolute;
+  right: 1rem; /* 우측 여백 */
+  top: 50%;
+  transform: translateY(-50%); /* 세로 중앙 맞춤 */
+  display: flex;
+  align-items: center;
+  background-color: #a6a6a6;
   padding: 5px 10px;
   border-radius: 15px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -291,41 +330,6 @@ const formattedTime = computed(() => {
 
 .page-indicator span:nth-child(1) {
   font-weight: 700;
-}
-
-/* 모달 헤더 */
-.modal-header {
-  position: relative;
-  width: 100%;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.back-btn {
-  position: absolute;
-  left: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: black;
-  border-radius: 50%;
-  width: 3.7rem;
-  height: 3.7rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: none;
-  cursor: pointer;
-}
-
-.back-btn i {
-  color: white;
-  font-size: 1.6rem;
-}
-
-.modal-header h2 {
-  font-size: 3.8rem;
-  color: #000000;
-  margin: 2rem;
 }
 
 /* 모달 바디 */
