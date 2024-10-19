@@ -1,5 +1,5 @@
 export function connectSSE() {
-  const eventSource = new EventSource('/api/notification/sseconnect');
+  const eventSource = new EventSource('/api/notification/sseConnect');
 
   // SSE 연결 시 나오는 메시지 
   eventSource.onopen = () => {

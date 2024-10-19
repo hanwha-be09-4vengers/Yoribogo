@@ -24,17 +24,20 @@ public class NotificationScheduler {
         this.notificationService = notificationService;
     }
 
-    // 11시에 실행되는 스케줄러
+    // 11시에 실행되는 스케줄러 ( 알림 저장 )
     @Scheduled(cron = "0 0 11 * * ?")
 //    @Scheduled(fixedRate = 30000)
     public void saveLunchRecipeNotification() {
         notificationService.saveRecipeNotification("lunch");
+
     }
 
-    // 17시에 실행되는 스케줄러
+    // 17시에 실행되는 스케줄러 ( 알림 저장 )
     @Scheduled(cron = "0 0 17 * * ?")
     public void saveDinnerRecipeNotification() {
         notificationService.saveRecipeNotification("dinner");
     }
+
+
 
 }

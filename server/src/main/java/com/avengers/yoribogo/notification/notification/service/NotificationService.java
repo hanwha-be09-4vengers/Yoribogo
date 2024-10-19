@@ -42,10 +42,12 @@ public class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
+
     // SSE 연결 로직
     private final List<SseEmitter> emitters = new ArrayList<>();
 
     public SseEmitter subscribe() {
+        // 시큐리티 적용 시에 토큰에서 UserId 받아 HashMap 타입으로 Emitter 객체 관리하도록 수정 필요.
         SseEmitter emitter = new SseEmitter(0L);
         emitters.add(emitter);
 
@@ -53,7 +55,7 @@ public class NotificationService {
         emitter.onTimeout(() -> emitters.remove(emitter));
         emitter.onError((ex) -> emitters.remove(emitter));
 
-        // 연결 즉시 메시지 전송
+        // 연결 시에 최초 메시지 전송
         try {
             emitter.send(SseEmitter.event().name("connect").data("Connected!"));
             log.info("(Service)SSE 최초 연결 및 메세지 전송 완료!!");
@@ -67,21 +69,19 @@ public class NotificationService {
             emitter.completeWithError(e);
 
         }
-
         return emitter;
     }
 
     // 메시지를 클라이언트로 전송 (보류)
-    public void sendNotification(String data) {
+    public void sendNotification() {
         List<SseEmitter> deadEmitters = new ArrayList<>();
         for (SseEmitter emitter : emitters) {
             try {
-                emitter.send(SseEmitter.event().name("notification").data(data));
+                emitter.send(SseEmitter.event().name("notification").data("로그인 성공!! Deleted 되지 않은 알림들을 보냅니다."));
             } catch (IOException e) {
                 deadEmitters.add(emitter);  // 전송 실패한 emitter를 제거 목록에 추가
             }
         }
-
         // 실패한 emitter 제거
         emitters.removeAll(deadEmitters);
     }
@@ -146,6 +146,32 @@ public class NotificationService {
 
             log.info("회원 {}에게 {} 알림이 저장되었습니다: {}", user.getUserName(), mealType, notificationContent);
         }
+    }
+
+    // 특정 사용자의 알림을 전송
+    public List<NotificationEntity> sendNotificationsToUser(Long userId) {
+        // 1. 해당 사용자의 알림 목록 조회 (DELETED 되지 않은 것들만)
+        List<NotificationEntity> userNotifications = notificationRepository.findByUserIdAndNotificationStatusNot(userId, NotificationStatus.DELETED);
+
+        // 2. 알림 데이터를 SSE로 전송
+        List<SseEmitter> deadEmitters = new ArrayList<>();
+        for (SseEmitter emitter : emitters) {
+            try {
+                for (NotificationEntity notification : userNotifications) {
+                    String notificationContent = notification.getNotificationContent();
+                    emitter.send(SseEmitter.event().name("notification").data(notificationContent));
+                    log.info("User ID {}에게 알림 전송: {}", userId, notificationContent);
+                }
+            } catch (IOException e) {
+                deadEmitters.add(emitter); // 실패한 emitter 목록에 추가
+            }
+        }
+
+        // 실패한 emitters 제거
+        emitters.removeAll(deadEmitters);
+
+        // 전송된 알림 목록 반환
+        return userNotifications;
     }
 
 }
