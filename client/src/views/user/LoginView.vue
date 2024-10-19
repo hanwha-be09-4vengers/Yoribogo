@@ -8,29 +8,99 @@
 
     <!-- 오른쪽 요리사 이미지 및 텍스트 -->
     <div class="chef-wrapper">
-      <img src="/src/assets/images/basic_profile.png" alt="Chef" />
+      <img src="/src/assets/images/login_page_profile.png" alt="Chef" />
       <div class="speech-bubble">
-        <p>만나서 반가워요!</p>
+        <span>지금 뭐 먹을지 고민하세요?</span>
       </div>
     </div>
 
     <!-- Login Modal -->
-    <LoginModal v-if="isLoginModalVisible" @close="closeLoginModal" />
+    <LoginModal v-if="isLoginModalVisible" 
+        @close="closeLoginModal" 
+        @openPasswordReset="openPasswordResetModal"
+		    @openFindId="openFindIdModal"     
+    />
+
+     <!-- 개인정보 처리방침 모달 -->
+	  <PrivacyPolicyModal v-if="isPrivacyPolicyModalVisible" @close="closePrivacyPolicyModal" />
+
+    
+	  <!-- 회원 재활성화 모달 -->
+	  <AccountReactivationModal
+      v-if="isAccountReactivationModalVisible"
+      :userAuthId="userAuthId"
+      @close="closeAccountReactivationModal"
+	  />
+
+     <!-- 비밀번호 찾기 Step1 모달 -->
+      <PasswordResetStep1
+      v-if="isPasswordResetModalVisible && currentPasswordResetStep === 1"
+      @close="closePasswordResetModal"
+      @goToPasswordResetStep2="goToPasswordResetStep2"
+      @update="updatePasswordResetData" 
+      @openLogin="openLoginModal"
+      :passwordResetData="passwordResetData" />
+      <!-- 비밀번호 찾기 Step2 모달 -->
+      <PasswordResetStep2
+      v-if="isPasswordResetModalVisible && currentPasswordResetStep === 2"
+      @close="closePasswordResetModal"
+      @update="updatePasswordResetData" 
+      @openPasswordReset="openPasswordResetModal"
+      :passwordResetData="passwordResetData"/>
+
+       <!-- 아이디 찾기 Step1 모달 -->
+      <FindIdStep1
+        v-if="isFindIdModalVisible && currentFindIdStep === 1"
+        @close="closeFindIdModal"
+        @goToFindIdStep2="goToFindIdStep2"
+      />
+      <!-- 아이디 찾기 Step2 모달 -->
+      <FindIdStep2
+        v-if="isFindIdModalVisible && currentFindIdStep === 2" 
+        @close="closeFindIdModal"
+        :nickname="foundNickname"
+        :userAuthId="foundUserAuthId"/>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import LoginModal from '@/components/user/login/LoginModal.vue'; // 모달 컴포넌트 임포트
+import { ref, onMounted  } from 'vue';
 import { useRouter } from 'vue-router';
+import LoginModal from '@/components/user/login/LoginModal.vue'; // 모달 컴포넌트 임포트
 
+import PrivacyPolicyModal from '@/components/user/login/PrivacyPolicyModal.vue'; // PrivacyPolicyModal 모달창
+import AccountReactivationModal from '@/components/user/login/AccountReactivationModal.vue'; // 계정활 성화 모달창
+
+import PasswordResetStep1 from '@/components/user/login/PasswordResetStep1.vue'; // 비밀번호 찾기 Step1 모달창
+import PasswordResetStep2 from '@/components/user/login/PasswordResetStep2.vue'; // 비밀번호 찾기 Step2 모달창
+
+import FindIdStep1 from '@/components/user/login/FindIdStep1.vue'; // 아이디 찾기 Step1 모달창
+import FindIdStep2 from '@/components/user/login/FindIdStep2.vue'; // 아이디 찾기 Step2 모달창
+
+// 라우터 선언
 const router = useRouter();
-const isLoginModalVisible = ref(false);
+// 상태 변수 선언
 
-// 홈으로 돌아가기
-const goHome = () => {
-  router.push('/');
-};
+const isLoginModalVisible = ref(false);// 로그인 모달창
+const isAccountReactivationModalVisible = ref(false);// 계정활성화 모달 상태
+const isPrivacyPolicyModalVisible = ref(false); // 개인정보 처리방침 모달 상
+
+const isPasswordResetModalVisible = ref(false);// 비밀번호 찾기 모달 상태
+const currentPasswordResetStep = ref(1); // 비밀번호 찾기 단계 초기화
+
+const isFindIdModalVisible = ref(false); // 아이디 찾기 모달 상태
+const currentFindIdStep = ref(1); // 현재 아이디 찾기 단계초기화
+
+const userAuthId = ref(''); // 사용자ID 초기화
+const foundNickname = ref(''); // 찾은 유저 닉네임
+const foundUserAuthId = ref('');   // 찾은 유저 아이디
+
+
+ // 비밀번호 찾기 상태 데이터 관리
+ const passwordResetData = ref({
+  user_auth_id: '', // 아이디
+  email: '', // 이메일
+});
 
 // 로그인 모달 열기
 const openLoginModal = () => {
@@ -40,6 +110,75 @@ const openLoginModal = () => {
 // 로그인 모달 닫기
 const closeLoginModal = () => {
   isLoginModalVisible.value = false;
+};
+
+
+// 계정 재활성화 모달 열기
+const openAccountReactivationModal = (authId) => {
+  userAuthId.value = authId;
+  isAccountReactivationModalVisible.value = true;
+};
+
+// 계정 재활성화 모달 닫기
+const closeAccountReactivationModal = () => {
+  isAccountReactivationModalVisible.value = false;
+};
+
+// 개인정보 처리방침 모달 열기
+const openPrivacyPolicyModal = () => {
+	isPrivacyPolicyModalVisible.value = true;
+	isRegisterModalVisible.value = false;
+  };
+  
+  // 개인정보 처리방침 모달 닫기
+  const closePrivacyPolicyModal = () => {
+	isPrivacyPolicyModalVisible.value = false;
+	isRegisterModalVisible.value = true; // 다시 회원가입 모달로 돌아가기
+  };
+
+// 비밀번호 찾기 데이터 업데이트
+const updatePasswordResetData = (newData) => {
+  passwordResetData.value = { ...passwordResetData.value, ...newData };
+};
+
+// 비밀번호 찾기 모달 열기
+const openPasswordResetModal = () => {
+ isLoginModalVisible.value = false; // 로그인 모달 닫기
+  isPasswordResetModalVisible.value = true;
+  currentPasswordResetStep.value = 1;
+};
+
+// 비밀번호 찾기 모달 닫기
+const closePasswordResetModal = () => {
+  isPasswordResetModalVisible.value = false;
+  currentPasswordResetStep.value = 1;  // 비밀번호 찾기 단계를 1로 초기화
+};
+
+// Step2로 이동
+const goToFindIdStep2 = (nickname, userAuthId) => {
+  foundNickname.value = nickname; // 전달받은 아이디 설정
+  foundUserAuthId.value = userAuthId;     // 유저 아이디도 함께 전달
+  currentFindIdStep.value = 2; // Step2로 이동
+};
+
+// 아이디 찾기 모달 열기
+const openFindIdModal = () => {
+console.log('아이디 찾기 모달 열기 함수 호출됨(내비게이션에서)')
+  isFindIdModalVisible.value = true;
+  currentFindIdStep.value = 1; // Step1로 초기화
+};
+
+// 아이디 찾기 모달 닫기
+const closeFindIdModal = () => {
+  isFindIdModalVisible.value = false;
+  currentFindIdStep.value = 1; // 단계 초기화
+};  
+
+
+
+// 홈으로 돌아가기
+const goHome = () => {
+  router.push('/');
 };
 
 // 페이지가 로드되면 자동으로 모달 열기
@@ -70,14 +209,13 @@ onMounted(() => {
 }
 
 .logo-wrapper img {
-  width: 4rem;
-  height: 4rem;
+  width: 6rem;
+  height: 6rem;
 }
 
 .logo-wrapper span {
   font-size: 2rem;
   font-weight: bold;
-  margin-left: 1rem;
   color: #333;
 }
 
@@ -88,13 +226,13 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   position: absolute;
-  right: 13%;; /* 오른쪽에서 20rem 떨어지게 설정 */
+  right: 8%;; /* 오른쪽에서 떨어지게 설정 */
   top: 50%; /* 화면의 세로 중앙에 배치 */
   transform: translateY(-50%); /* 세로 중앙 정렬을 위해 요소를 위로 50% 이동 */
 }
 
 .chef-wrapper img {
-  width: 18rem;
+  width: 32rem;
   height: auto;
   position: relative;
 }
@@ -114,7 +252,7 @@ onMounted(() => {
   color: #000;
   text-align: center;
   width: max-content;
-  max-width: 20rem;
+  max-width: 60rem;
 }
 
 .speech-bubble::after {

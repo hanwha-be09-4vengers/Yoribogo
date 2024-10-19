@@ -165,7 +165,6 @@ VALUES
 (3, "https://www.example.com/egg_soup3.jpg", "소금과 후추로 간을 맞춥니다.", 15);
 
 
-
 -- 나만의 레시피 좋아요
 
 

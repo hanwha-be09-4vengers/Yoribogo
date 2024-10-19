@@ -2,7 +2,7 @@
   <nav id="main-nav" class="main-nav">
     <div id="logo" class="logo">
       <img src="/src/assets/logo.svg" alt="Logo" />
-      <span>Yoribogo</span>
+      <span>요리보고</span>
     </div>
     <ul class="menu">
       <li class="search-recipe" @click="goWiki">

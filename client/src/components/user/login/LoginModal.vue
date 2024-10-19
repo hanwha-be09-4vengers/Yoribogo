@@ -65,8 +65,10 @@
 </template>
   
   <script setup>
-  import { ref, inject } from 'vue';
+  import { ref } from 'vue';
   import { useRouter } from 'vue-router';
+  import {fetchUserByAuthId } from '@/api/user';  // user.js에서 함수 임포트
+  import { useTokenStore } from '@/stores/tokenStore'; // Pinia 토큰 스토어 임포트
   import axios from 'axios';
   import eyeOpenIcon from '@/assets/images/eye_open.png';
   import eyeClosedIcon from '@/assets/images/eye_closed.png';
@@ -81,10 +83,6 @@
   
   // 외부에서 받아온 이벤트 정의
   const emit = defineEmits(['close', 'goToStep1', 'openPasswordReset', 'openFindId']);
-  
-  // 상태와 메서드 inject로 받아오기
-  const token = inject('token'); // 토큰 상태
-  const setTokenData = inject('setTokenData'); // 토큰 데이터 설정 함수
   
   const username = ref('');
   const password = ref('');
@@ -119,55 +117,79 @@
     passwordVisible.value = !passwordVisible.value;
   };
   
-  // 로그인 처리 함수
-  const login = async () => {
-    usernameError.value = '';
-    passwordError.value = '';
-  
-    // 입력값 유효성 검사
-    if (!username.value) {
-      usernameError.value = '아이디를 입력하세요.';
-      return;
+// 로그인 처리 함수
+const login = async () => {
+  usernameError.value = '';
+  passwordError.value = '';
+
+  // 입력값 유효성 검사
+  if (!username.value) {
+    usernameError.value = '아이디를 입력하세요.';
+    return;
+  }
+  if (!password.value) {
+    passwordError.value = '비밀번호를 입력하세요.';
+    return;
+  }
+
+  try {
+    // 절대 경로를 사용하여 로그인 API 호출
+    const response = await axios.post('/login', {
+      user_auth_id: username.value,
+      password: password.value
+    });
+
+    console.log("로그인 이후 response:", response);
+
+    // 응답 처리
+    if (response.data.success) {
+      const tokenStore = useTokenStore();
+
+      // 토큰 데이터 임시 저장 (user_id 없이)
+      const tempTokenData = {
+        user_auth_id: response.data.data.user_auth_id,
+        access_token: response.data.data.access_token,
+        access_token_expiry: response.data.data.access_token_expiry,
+        refresh_token: response.data.data.refresh_token,
+        refresh_token_expiry: response.data.data.refresh_token_expiry,
+      };
+
+      // user_auth_id로 사용자 정보 조회 (accessToken도 포함해서)
+      await tokenStore.setTokenData(tempTokenData); // 먼저 accessToken을 설정해주고
+      const userProfileResponse = await fetchUserByAuthId(tempTokenData.user_auth_id,tempTokenData.access_token); // fetchUserId 호출 시 accessToken 사용
+      const userProfile = userProfileResponse?.data || {};
+
+      // 최종 토큰 데이터에 user_id 추가
+      const tokenData = {
+        ...tempTokenData,
+        user_id: userProfile.user_id,  // 조회한 user_id 추가
+      };
+
+      // 토큰 정보 저장
+      await tokenStore.setTokenData(tokenData);
+
+      console.log('저장된 토큰 정보 tokenData:',tokenData)
+
+      closeModal(); // 모달 닫기
+      // 홈화면으로 리다이렉트
+      router.push('/');
+    } else {
+      passwordError.value = response.data.error?.message || '로그인에 실패했습니다.';
     }
-    if (!password.value) {
-      passwordError.value = '비밀번호를 입력하세요.';
-      return;
-    }
-  
-    try {
-      const response = await axios.post('/login', {
-        user_auth_id: username.value,
-        password: password.value,
-        signup_path: 'NORMAL',
-      });
-  
-      if (response.data.success) {
-        const tokenData = {
-          user_identifier: response.data.data.user_identifier,
-          access_token: response.data.data.access_token,
-          access_token_expiry: response.data.data.access_token_expiry,
-          refresh_token: response.data.data.refresh_token,
-          refresh_token_expiry: response.data.data.refresh_token_expiry,
-        };
-  
-        setTokenData(tokenData); // 토큰 정보 설정
-        closeModal(); // 모달 닫기
+  } catch (error) {
+    if (error.response) {
+      if (error.response.data?.error?.code === 40320) {
+        openAccountReactivationModal(); // 계정 재활성화 모달 열기
       } else {
-        passwordError.value = response.data.error.message || '로그인에 실패했습니다.';
+        passwordError.value = error.response.data?.error?.message || '로그인 요청이 거부되었습니다. 서버 상태를 확인해주세요.';
       }
-    } catch (error) {
-      if (error.response) {
-        if (error.response.data.error.code === 40320) {
-          openAccountReactivationModal(); // 계정 재활성화 모달 열기
-        } else {
-          passwordError.value = error.response.data.error.message || '로그인 요청이 거부되었습니다. 서버 상태를 확인해주세요.';
-        }
-      } else {
-        passwordError.value = '로그인 요청이 실패했습니다. 서버 상태를 확인해주세요.';
-      }
+    } else {
+      passwordError.value = '로그인 요청이 실패했습니다. 서버 상태를 확인해주세요.';
     }
-  };
-  
+  }
+};
+
+
   // 아이디 찾기 모달 열기
   const openFindId = () => {
     emit('openFindId');
