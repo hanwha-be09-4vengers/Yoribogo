@@ -13,16 +13,20 @@ export const sendSignupVerificationEmail = async (email) => {
 };
 
 // 설명. 1.2 이메일 전송 API (아이디 찾기 시 실행)
+// 설명. 1.2 이메일 전송 API (아이디 찾기 시 실행)
 export const sendAuthIdVerificationEmail = async (nickname, email) => {
   try {
     const response = await apiClient.post('/users/verification-email/auth-id', { nickname, email });
     return response.data;
   } catch (error) {
-    console.error('sendAuthIdVerificationEmail 에러:', error);
+    if (error.code === 'ECONNABORTED') {
+      console.error('요청 타임아웃:', error);
+    } else {
+      console.error('sendAuthIdVerificationEmail 에러:', error);
+    }
     throw error;
   }
 };
-
 // 설명. 1.3 이메일 전송 API (비밀번호 찾기 시 실행)
 export const sendPasswordResetVerificationEmail = async (userAuthId, email) => {
   try {
@@ -35,13 +39,28 @@ export const sendPasswordResetVerificationEmail = async (userAuthId, email) => {
 };
 
 // 설명. 2.1 이메일 인증번호 검증 API (회원가입, 아이디, 비밀번호 찾기 실행)
-export const confirmVerificationCode = async (email, code) => {
+export const confirmVerificationCodeAPI = async (email, code) => {
   try {
     const response = await apiClient.post('/users/verification-email/confirmation', { email, code });
     return response.data;
   } catch (error) {
     console.error('confirmVerificationCode 에러:', error);
     throw error;
+  }
+};
+
+// 설명. 2.2 닉네임과 이메일로 사용자 정보 조회 및 인증 API (아이디 찾기 실행)
+export const verifyUserNicknameCode = async (nickname, email, code) => {
+  try {
+    const response = await apiClient.post('/users/nickname/verification-email', {
+      nickname,
+      email,
+      code,
+    });
+    return response.data; // 성공 시 사용자 데이터 반환
+  } catch (error) {
+    console.error('verifyUserNicknameCode 에러:', error);
+    throw error; // 오류 발생 시 예외 던지기
   }
 };
 
