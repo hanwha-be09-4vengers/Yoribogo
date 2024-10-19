@@ -268,7 +268,7 @@ public class UserController {
     }
 
 
-    // 설명. 4.4 사용자 식별자(userId)로 조회->닉네임,프로필 사진,티어이름
+    // 설명. 4.4 사용자 식별자(userId)로 조회 -> 닉네임, 프로필 사진, 티어 이름, 티어 이미지
     @GetMapping("/{userId}/profile")
     public ResponseDTO<ResponseUserProfileDTO> getUserProfileByUserId(@PathVariable("userId") Long userId) {
         UserEntity userEntity = userService.findByUserId(userId);
@@ -276,15 +276,18 @@ public class UserController {
         // 새로운 DTO로 필요한 정보만 추출
         ResponseUserProfileDTO userProfileDTO = ResponseUserProfileDTO.builder()
                 .nickname(userEntity.getNickname())
-                .profileImage(userEntity.getProfileImage())
+                .profileImage(userEntity.getProfileImage() != null ? userEntity.getProfileImage()
+                        : "https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/default_profile.png") // 기본 이미지 처리
                 .email(userEntity.getEmail())
                 .userRole(userEntity.getUserRole().name())
                 .signupPath(userEntity.getSignupPath().name())
                 .tierName(userEntity.getTier() != null ? userEntity.getTier().getTierName() : "No Tier")
+                .tierImage(userEntity.getTier() != null ? userEntity.getTier().getTierImage() : "https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/default_tier.png") // 기본 티어 이미지 처리
                 .build();
 
         return ResponseDTO.ok(userProfileDTO);
     }
+
 
 
     // 설명. 5. 리프레시 토큰으로 액세스 토큰 재발급
