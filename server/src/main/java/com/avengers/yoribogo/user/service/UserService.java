@@ -83,7 +83,7 @@ public class UserService implements UserDetailsService {
     // 설명. 아이디와 이메일로 사용자 찾기
     public UserDTO findUserByUserAuthIdAndEmail(String userAuthId, String email) {
         UserEntity userEntity = userRepository.findByUserAuthIdAndEmail(userAuthId, email)
-                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+                .orElseThrow(() -> new CommonException(ErrorCode.INVALID_INPUT_VALUE));
 
         // UserEntity -> UserDTO 변환
         return convertToUserDTO(userEntity);
@@ -297,7 +297,8 @@ public class UserService implements UserDetailsService {
     // 설명. 로그인 전 사용자 비밀번호 재설정
     public UserDTO updatePassword(String userAuthId, String newPassword) {
         // 1. 사용자 ID를 통해 사용자를 조회
-        UserEntity userEntity = userRepository.findByUserIdentifier("NORMAL_" + userAuthId)
+
+        UserEntity userEntity = userRepository.findByUserAuthId(userAuthId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
 
         // 2. 비번 재설정시 이메일 인증여부 확인

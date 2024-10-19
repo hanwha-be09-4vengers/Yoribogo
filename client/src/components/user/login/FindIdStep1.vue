@@ -1,7 +1,7 @@
 <template>
   <div class="modal-content">
     <div class="modal-header">
-      <button class="back-btn" @click="goBack">
+      <button class="back-btn" @click="goToLogin">
         <i class="fa-solid fa-arrow-left"></i> <!-- Font Awesome 아이콘 -->
       </button>
       <h2>요리보고</h2>
@@ -249,7 +249,7 @@ const formattedTime = computed(() => {
 
 @keyframes slide-up {
   from {
-    transform: translate(-50%, 30%);
+    transform: translate(-50%, -40%);
     opacity: 0;
   }
   to {
