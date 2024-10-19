@@ -4,6 +4,7 @@
       <i class="fa-solid fa-bell"></i>
     </div>
     <ul class="notification-list" v-show="isMenuVisible">
+      <!-- 알림 목록을 반복해서 보여줌 -->
       <li class="notification" v-for="notification in notifications" :key="notification.id">
         <span>{{ notification.notificationContent }}</span>
       </li>
@@ -16,18 +17,22 @@ import { ref } from 'vue'
 import { connectSSE } from '@/api/sserequest'
 
 const notifications = ref([]); // 알림 리스트
-const isMenuVisible = ref(false);
+const isMenuVisible = ref(false); // 알림 창 보임 여부
 
 // SSE 연결 함수 호출
 const eventSource = connectSSE();
+
+// SSE에서 'notification' 이벤트를 수신할 때마다 알림을 배열에 추가
 eventSource.addEventListener('notification', (event) => {
-  // 서버에서 전송된 알림을 notifications 배열에 추가
-  notifications.value.push({ id: Date.now(), notificationContent: event.data });
+  notifications.value.push({
+    id: Date.now(), // 고유 ID 생성 (시간 기반)
+    notificationContent: event.data, // 서버로부터 받은 알림 데이터
+  });
 });
 
 // 알림 메뉴를 열고 닫는 함수
 const toggleMenu = () => {
-  isMenuVisible.value = !isMenuVisible.value;
+  isMenuVisible.value = !isMenuVisible.value; // 클릭 시 토글
 }
 </script>
 
