@@ -6,7 +6,6 @@ import com.avengers.yoribogo.answer.service.AnswerService;
 import com.avengers.yoribogo.common.Role;
 import com.avengers.yoribogo.common.Status;
 import com.avengers.yoribogo.inquiry.service.InquiryService;
-import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.domain.enums.AcceptStatus;
 import com.avengers.yoribogo.user.domain.enums.ActiveStatus;
 import com.avengers.yoribogo.user.domain.enums.SignupPath;
@@ -90,8 +89,8 @@ public class AnswerTests {
 
         Answer result = new Answer();
 
-        if (writer == Role.ADMIN) result = answerService.insertAnswer(new AnswerDTO("답변 생성 테스트 내용", Role.ADMIN, 1, modelMapper.map(admin, UserEntity.class)));
-        else result = answerService.insertAnswer(new AnswerDTO("답변 생성 테스트 내용", Role.ENTERPRISE, 1, modelMapper.map(user, UserEntity.class)));
+        if (writer == Role.ADMIN) result = answerService.insertAnswer(new AnswerDTO("답변 생성 테스트 내용", Role.ADMIN, 1, admin));
+        else result = answerService.insertAnswer(new AnswerDTO("답변 생성 테스트 내용", Role.ENTERPRISE, 1, user));
 
         Status status = inquiryService.findInquiryById(1).getAnswerStatus();
 

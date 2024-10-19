@@ -5,7 +5,6 @@ import com.avengers.yoribogo.answer.dto.AnswerDTO;
 import com.avengers.yoribogo.answer.service.AnswerService;
 import com.avengers.yoribogo.common.ResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
