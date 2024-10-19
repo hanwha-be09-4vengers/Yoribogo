@@ -112,7 +112,7 @@ const selectTab = (tab) => {
 
 /* 탭 이름 스타일 */
 .tab-title {
-  font-size: 2.4rem;
+  font-size: 2.8rem;
   font-weight: bold;
   margin-bottom: 1rem; /* 탭 버튼과의 간격 */
   margin-top: 0; /* 여백이 위쪽으로 밀리지 않도록 */
@@ -132,11 +132,11 @@ const selectTab = (tab) => {
 .tab-button {
   background-color: #DADADA;
   border: none;
-  padding: 1rem 3.6rem;
-  margin: 0 -1.4rem; /* 버튼들이 겹치게 하는 마진 */
+  padding: 1rem 3.4rem;
+  margin: 0 -1.8rem; /* 버튼들이 겹치게 하는 마진 */
   border-radius: 30px;
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   color: white;
   z-index: 1; /* 기본 z-index 값 */
   position: relative;
