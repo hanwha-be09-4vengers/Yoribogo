@@ -11,6 +11,7 @@
         <AttributeImageInput
           :name="'대표 사진'"
           :placeholder="'여기에 이미지를 드래그하거나 클릭하여 추가'"
+          v-model="board_image"
         ></AttributeImageInput>
         <AttributeIngredientInput
           :name="'재료'"
@@ -46,7 +47,7 @@
 </template>
 
 <script setup>
-import { ref, onBeforeUnmount, onMounted } from 'vue';
+import { ref, onBeforeUnmount, onMounted, watch } from 'vue';
 import AttributeTextInput from '@/components/recipe-board/AttributeMenuNameInput.vue';
 import AttributeImageInput from '@/components/recipe-board/AtrributeImageInput.vue';
 import AtrributeTextAndImageInput from '@/components/recipe-board/AtrributeTextAndImageInput.vue';
@@ -71,11 +72,16 @@ const manual_step = ref([]);
 const loadFromLocalStorage = () => {
 
     const storedMenuName = localStorage.getItem('menu_name');
+    const storedFileName = localStorage.getItem('board_image');
     const storedIngredients = localStorage.getItem('ingredients');
     const storedSteps = localStorage.getItem('manual_step');
 
     if (storedMenuName) {
       menu_name.value = storedMenuName;
+    }
+
+    if(storedFileName) {
+      board_image.value = storedFileName;
     }
 
     if (storedIngredients) {
@@ -92,13 +98,14 @@ const loadFromLocalStorage = () => {
 
 onMounted(() => {
   window.addEventListener('resize', handleResize);
-  console.log("초기화된 배열")
-  console.log(ingredients.value);
+  // console.log("초기화된 배열")
+  // console.log(ingredients.value);
 
   loadFromLocalStorage(); // 페이지 로드 시 로컬 스토리지에서 데이터 불러오기
 
   console.log("로컬스토리지에서 가져온 배열")
     console.log('메뉴명', menu_name.value);
+    console.log('이미지', board_image.value);
     console.log('재료들', ingredients.value);
     console.log('조리방법:', manual_step.value);
 });
@@ -106,6 +113,20 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize);
 });
+
+// 메뉴가 변경되는 경우 로컬스토리지 변경사항 저장
+watch(menu_name, (newValue) => {
+  localStorage.setItem('menu_name', newValue);
+  console.log("메뉴명 변경이 감지됨")
+  console.log(menu_name.value)
+});
+
+// 대표사진이 변경되는 경우 로컬스토리지 변경사항 저장
+watch(board_image, (newValue) => {
+  localStorage.setItem('board_image', newValue);
+  console.log("사진 변경이 감지됨")
+  console.log(board_image.value)
+})
 
 // 재료 추가 함수
 const addIngredient = (ingredient) => {
@@ -124,6 +145,8 @@ const removeIngredient = (index) => {
   console.log("removeIngredient 메소드 작동")
   console.log(ingredients.value);
 };
+
+
 
 // 조리 순서 추가 함수
 const addStep = ({ step, image }) => {

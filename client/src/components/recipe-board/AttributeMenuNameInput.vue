@@ -32,18 +32,27 @@ const props = defineProps({
     default: ''
   }
 })
-
-
 import {ref} from 'vue'
+
+// `modelValue`를 `inputValue`로 설정
+const inputValue = ref(props.modelValue);
 
 // 이벤트 상위 컴포넌트로 전송
 const emit = defineEmits(['update:modelValue']);
-// 입력값 담기 
-const inputValue = ref('');
+
+
+// const updateValue = () => {
+//   emit('update:modelValue', inputValue.value)
+//   console.log("새로 입력된 메뉴명", inputValue.value)
+
+// }
+
+
 
 // 새로운 값이 입력되면 상위 컴포넌트로 그 값을 전송하기 
 watch(inputValue, (newValue) => {
   emit('update:modelValue', newValue); // 사용자가 입력한 값을 상위로 전송
+  console.log("변경된 메뉴", newValue)
 });
 
 

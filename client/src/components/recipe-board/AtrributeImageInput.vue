@@ -27,24 +27,30 @@ const props = defineProps({
   placeholder: {
     type: String,
     required: true
+  },
+  modelValue: { // v-model을 사용하려면 modelValue prop을 받아야 함
+    type: [String, Object], // 파일 또는 문자열을 허용 (상황에 따라)
+    default: ''
   }
 })
 
-const emit = defineEmits(['add']); // 'add' 이벤트 발생
+const emit = defineEmits(['update:modelValue']); // 'add' 이벤트 발생
 
 const handleFileChange = (event) => {
   const file = event.target.files[0]
   if (file) {
-    uploadedFileName.value = file.name // 선택된 파일 이름을 저장
-    emit('add', { image: file }); // 파일을 상위 컴포넌트로 전달 (optional)
+    // uploadedFileName.value = file.name // 선택된 파일 이름을 저장
+    // emit('add', { image: file }); // 파일을 상위 컴포넌트로 전달 (optional)
+    emit('update:modelValue', file); 
   }
 }
 
 const handleFileDrop = (event) => {
   const file = event.dataTransfer.files[0]
   if (file) {
-    uploadedFileName.value = file.name // 드롭된 파일 이름을 저장
-    emit('add', { image: file }); // 파일을 상위 컴포넌트로 전달 (optional)
+    // uploadedFileName.value = file.name // 드롭된 파일 이름을 저장
+    // emit('add', { image: file }); // 파일을 상위 컴포넌트로 전달 (optional)
+    emit('update:modelValue', file); 
   }
 }
 </script>
