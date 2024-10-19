@@ -3,7 +3,7 @@ package com.avengers.yoribogo.notification.weeklypopularrecipe.service;
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.InsertLikeToMongoEvent;
-import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.WeeklyPopularRecipe;
+import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.WeeklyPopularRecipeEntity;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.repository.WeeklyPopularRecipeMongoRepository;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Random;
 
 @Service
 public class WeeklyPopularRecipeService {
@@ -26,8 +25,8 @@ public class WeeklyPopularRecipeService {
         this.weeklyPopularRecipeMongoRepository = weeklyPopularRecipeMongoRepository;
     }
 
-    public List<WeeklyPopularRecipe> getAllWeeklyPopularRecipes() {
-        List<WeeklyPopularRecipe> recipes = weeklyPopularRecipeMongoRepository.findAll();
+    public List<WeeklyPopularRecipeEntity> getAllWeeklyPopularRecipes() {
+        List<WeeklyPopularRecipeEntity> recipes = weeklyPopularRecipeMongoRepository.findAll();
         if (recipes.isEmpty()) {
             throw new CommonException(ErrorCode.NOT_FOUND_RECIPE);
         }
@@ -35,8 +34,8 @@ public class WeeklyPopularRecipeService {
     }
 
     // mostliked
-    public WeeklyPopularRecipe getMostLikedRecipe() {
-        WeeklyPopularRecipe recipe = weeklyPopularRecipeMongoRepository.findTopByOrderByLikeIdDesc();    // MongoDB Search
+    public WeeklyPopularRecipeEntity getMostLikedRecipe() {
+        WeeklyPopularRecipeEntity recipe = weeklyPopularRecipeMongoRepository.findTopByOrderByLikeIdDesc();    // MongoDB Search
         if (recipe == null) {
             throw new CommonException(ErrorCode.NOT_FOUND_RECIPE);
         }
@@ -48,7 +47,7 @@ public class WeeklyPopularRecipeService {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleInsertLikeDataToMongo(InsertLikeToMongoEvent event) {
 
-        WeeklyPopularRecipe newLike = new WeeklyPopularRecipe();
+        WeeklyPopularRecipeEntity newLike = new WeeklyPopularRecipeEntity();
 
         newLike.setUserId(event.getUserId());
         newLike.setMyRecipeId(event.getPostId());
@@ -57,7 +56,7 @@ public class WeeklyPopularRecipeService {
         weeklyPopularRecipeMongoRepository.save(newLike);
     }
 
-    public List<WeeklyPopularRecipe> getTop3LikedRecipes() {
+    public List<WeeklyPopularRecipeEntity> getTop3LikedRecipes() {
         // 일주일 전의 날짜 계산
         LocalDateTime oneWeekAgo = LocalDateTime.now().minus(7, ChronoUnit.DAYS);
 

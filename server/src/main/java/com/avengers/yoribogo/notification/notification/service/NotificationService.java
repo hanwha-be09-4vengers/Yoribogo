@@ -5,7 +5,7 @@ import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.notification.notification.dto.NotificationEntity;
 import com.avengers.yoribogo.notification.notification.dto.NotificationStatus;
 import com.avengers.yoribogo.notification.notification.repository.NotificationRepository;
-import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.WeeklyPopularRecipe;
+import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.WeeklyPopularRecipeEntity;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.service.WeeklyPopularRecipeService;
 import com.avengers.yoribogo.recipeboard.recipeboard.dto.RecipeBoardEntity;
 import com.avengers.yoribogo.recipeboard.recipeboard.repository.RecipeBoardRepository;
@@ -100,10 +100,10 @@ public class NotificationService {
     }
 
 
-    // 레시피 알림 저장 로직 (점심/저녁 여부를 받아 처리)
+    // 레시피 알림 저장 로직
     public void saveRecipeNotification(String mealType) {
         // 상위 3개의 레시피 가져오기
-        List<WeeklyPopularRecipe> top3Recipes = weeklyPopularRecipeService.getTop3LikedRecipes();
+        List<WeeklyPopularRecipeEntity> top3Recipes = weeklyPopularRecipeService.getTop3LikedRecipes();
 
         if (top3Recipes.isEmpty()) {
             log.info("(Service) Top3 레시피 조회에 실패하였습니다");
@@ -111,7 +111,7 @@ public class NotificationService {
         }
 
         // 랜덤으로 하나 선택
-        WeeklyPopularRecipe selectedRecipe = top3Recipes.get(new Random().nextInt(top3Recipes.size()));
+        WeeklyPopularRecipeEntity selectedRecipe = top3Recipes.get(new Random().nextInt(top3Recipes.size()));
 
         // 선택된 레시피의 객체 조회
         RecipeBoardEntity recipe = recipeBoardRepository.findById(Long.parseLong(selectedRecipe.getMyRecipeId()))
@@ -121,6 +121,7 @@ public class NotificationService {
         List<UserEntity> users = userRepository.findAll();
 
         if (users.isEmpty()) {
+            log.info("(Service) 알림 생성에 필요한 회원 조회에 실패하였습니다.");
             new CommonException(ErrorCode.NOT_FOUND_USER);
             return;
         }
@@ -130,9 +131,9 @@ public class NotificationService {
             // 알림 메시지 설정 (점심/저녁에 따른 메시지 변경)
             String notificationContent;
             if ("lunch".equals(mealType)) {
-                notificationContent = "🍽️ [점심 추천 레시피] 🍽️\n\n오늘의 추천 레시피: " + recipe.getRecipeBoardMenuName();
+                notificationContent = " [점심 추천 레시피] 오늘의 추천 레시피: " + recipe.getRecipeBoardMenuName();
             } else {
-                notificationContent = "🍴 [저녁 추천 레시피] 🍴\n\n오늘의 추천 레시피: " + recipe.getRecipeBoardMenuName();
+                notificationContent = " [저녁 추천 레시피] 오늘의 추천 레시피: " + recipe.getRecipeBoardMenuName();
             }
 
             // 알림 저장 (DB에 저장)
