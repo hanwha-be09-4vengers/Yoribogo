@@ -70,8 +70,8 @@
               <div class="content2">
                 <p>{{ ans.answerContent }}</p>
               </div>
-              <div v-if="ans.user.userId === user.userId" v-bind="user">
-                <p class="delete-btn">삭제</p>
+              <div v-if="ans.user.userId === user.user_id" v-bind="user">
+                <p class="delete-btn" @click="delAnswer(ans)">삭제</p>
               </div>
             </div>
           </div>
@@ -146,13 +146,14 @@
   }
 
   const sendAnswer = async () => {
-    if (inquiry.value.userId === user.value.user_id ||
+    if (inquiry.value.user.userId === user.value.user_id ||
           user.value.user_role === 'ADMIN') {
       setDTO();
       const result = await addAnswer(toRaw(dto.value));
       router.go(0);    
     } else {
       alert('문의 작성자만 작성 가능합니다.');
+      writeAns.value = '';
     };
   };
 
@@ -164,21 +165,23 @@
 
   // 수정 페이지로 이동
   const edit = () => {
-    if (inquiry.value.userId === user.value.user_id) {
+    if (inquiry.value.user.userId === user.value.user_id) {
       router.push(`/qna/edit/${inquiry.value.inquiryId}`);
     } else {
       alert('문의 작성자만 수정 가능합니다.');
+      toggle();
     }
   }
 
   // 삭제 후 목록으로 이동
   const remove = () => {
-    if (inquiry.value.userId === user.value.user_id) {
+    if (inquiry.value.user.userId === user.value.user_id) {
       const result = deleteInquiry(inquiry.value.inquiryId);
       alert('문의가 삭제되었습니다.');
       router.push('/qna');
     } else {
       alert('작성자만 삭제 가능합니다.');
+      toggle();
     }
   }
 </script>

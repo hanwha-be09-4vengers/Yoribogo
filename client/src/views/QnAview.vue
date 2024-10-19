@@ -95,6 +95,8 @@
   const setinquiry = (data) => {
     for (let i=0; i<data.data.length; i++)
       data.data[i].inquiryCreatedAt = data.data[i].inquiryCreatedAt.split('T')[0];
+    if (data.data.length > 5) next.value = 5;
+    else next.value = data.data.length;
     inquiry.value =data.data.reverse();
     list.value = inquiry.value;
     filtd.value = inquiry.value;
@@ -104,7 +106,7 @@
 
   const nums = ref([]);
   const index = ref(0);
-  const next = ref(5);
+  const next = ref(0);
 
   const goBack = () => {
     if (index.value > 0) {
@@ -184,7 +186,6 @@
     } else {
       router.push(`/qna/${inquiry.inquiryId}`);
     }
-    router.push(`/qna/${inquiry.inquiryId}`);
   };
 
   const goCreate = () => {
@@ -264,7 +265,6 @@
   justify-content: space-between;
   align-items: center;
   padding: 0 5% 0 5%;
-
 }
 .L1 p {
   cursor: pointer;
@@ -272,16 +272,16 @@
   font-weight: bold;
 }
 .search {
-  display: flex;
-  justify-content: flex-end;
+  display: grid;
+  grid-template-columns: 15% 80%;
   align-items: center;
-  column-gap: 10px;
   margin: 10px 0 0 0;
   width: 230px;
-  height: 25px;
+  height: 30px;
   border-radius: 3px;
   border: 1px solid #AEB3BB;
-
+  text-align: center;
+  justify-content: center;
 }
 
 .search img {
@@ -292,11 +292,12 @@
 input[type=search] {
   border: none;
   outline: none;
+  font-size: 2rem;
 }
 input[type=search]::placeholder {
-  color: #AEB3BB;
+  color: #9a9fa7;
   font-weight: 100;
-  font-size: smaller;
+  font-size: 2.7rem;
 }
 .L2 {
   display: flex;
@@ -309,11 +310,11 @@ input[type=search]::placeholder {
   column-gap: 20px;
   padding: 0 5% 0 5%;
   justify-items: center;
-  font-size: 15px;
   color: #AEB3BB;
 }
 .L2 div p {
   cursor: pointer;
+  font-size: 2.5rem;
 }
 
 .L2 div p:first-child {
@@ -321,18 +322,23 @@ input[type=search]::placeholder {
   color: black;
 }
 .create-btn {
+  display: flex;
   width: 1fr;
   margin-right: 10px;
   text-align: center;
+  justify-content: flex-end;
+  margin: 0;
 }
 .create-btn button {
-  height: 20px;
-  width: 60px;
+  height: 30px;
+  width: 80px;
   font-size: 6px;
   border: none;
   color: white;
   background-color: black;
   cursor: pointer;
+  border-radius: 3px;
+  font-size: 2rem;
 }
 
 .L3 {
