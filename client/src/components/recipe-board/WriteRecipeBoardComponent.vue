@@ -24,6 +24,7 @@
           :name="'조리 순서'"
           :placeholder="'단계별 요리법을 작성해주세요'"
           @add="addStep"
+          v-model="manual_step"
         ></AtrributeTextAndImageInput>
       </div>
 
@@ -149,17 +150,21 @@ const removeIngredient = (index) => {
 };
 
 // 조리 방법 추가 함수
-const addStep = ({step, image=''}) => {
+const addStep = ({ step, image = '' }) => {
+  console.log("manual_step.value:", manual_step.value); // 상태 확인
+  console.log("addStep 메소드 실행됨");
+
   if (step) {
-    manual_step.value.push({step, image});
-    //로컬 스토리지 저장
+    if (!Array.isArray(manual_step.value)) {
+      manual_step.value = []; // 배열로 초기화
+    }
+    manual_step.value.push({ step, image });
     saveToLocalStorage();
-    console.log("조리 순서 추가됨", {step, image})
-  } else{
-    console.log("조리방법은 반드시 추가해야합니다. 이미지는 필수 아님 ")
+    console.log("조리 순서 추가됨", { step, image });
+  } else {
+    console.log("조리방법은 반드시 추가해야 합니다. 이미지는 필수 아님");
   }
-  
-}
+};
 
 
 
@@ -167,7 +172,7 @@ const addStep = ({step, image=''}) => {
 const saveToLocalStorage = () => {
   try {
     localStorage.setItem('menu_name', menu_name.value);
-    localStorage.setItem('image_board', board_image.value);
+    localStorage.setItem('board_image', board_image.value);
     localStorage.setItem('ingredients', JSON.stringify(ingredients.value));
     localStorage.setItem('manual_step', JSON.stringify(manual_step.value));
   } catch (e) {

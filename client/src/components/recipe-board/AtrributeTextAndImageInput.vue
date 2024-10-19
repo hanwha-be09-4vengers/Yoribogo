@@ -44,6 +44,7 @@
   // const imageUploadName = ref(''); // 파일 이름을 저장할 변수
   const stepText = ref('');
 
+
   const props = defineProps({
     name: {
       type: String,
@@ -72,7 +73,9 @@
 
     console.log("파일 변경이 감지됨 by click: 조리방법", file.name);
 
-    emit('update:modelValue', file); 
+    // emit('update:modelValue', file); 
+    uploadedFileName.value = '';
+    uploadedImageUrl.value = ''
   }
 }
 
@@ -81,23 +84,40 @@
     const file = event.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
       uploadedFileName.value = file.name // 파일 이름 저장
-    uploadedImageUrl.value = URL.createObjectURL(file) // 이미지 미리보기 URL 생성
+      uploadedImageUrl.value = URL.createObjectURL(file) // 이미지 미리보기 URL 생성
 
     console.log("파일 변경이 감지됨 by drop: 조리방법", file.name);
 
-    emit('update:modelValue', file); 
+    // emit('update:modelValue', file); 
+
     }
   };
 
-  // "추가" 버튼 클릭 시 호출할 함수
-  const handleAdd = () => {
-    if (stepText.value || imageUploadName.value) {
-      emit('add', { step: stepText.value, image: imageUploadName.value });  // 객체로 전달
-      stepText.value = ''; // 입력 필드 초기화
-      imageUploadName.value = ''; // 파일 이름 초기화
-      console.log("Added step:", stepText.value, "with image:", imageUploadName.value); // 추가된 내용 출력
-    }
+
+
+// "추가" 버튼 클릭 시 호출할 함수
+const handleAdd = () => {
+  if (stepText.value) { // stepText가 반드시 있어야 함
+    const newStep = {
+      step: stepText.value,
+      image: uploadedFileName.value
+    };
+
+
+    // 상위 컴포넌트에 emit
+    emit('add', newStep); // 전체 배열을 emit
+
+
+    console.log("Added step:", newStep); // 추가된 내용 출력
+
+    // 입력 필드 초기화
+    stepText.value = ''; 
+    uploadedFileName.value = ''; 
+    uploadedImageUrl.value = '';
+  } else {
+    console.log("조리 방법을 입력해야 합니다."); // 조리 방법이 없을 경우 경고 메시지
   }
+}
 </script>
 
 
