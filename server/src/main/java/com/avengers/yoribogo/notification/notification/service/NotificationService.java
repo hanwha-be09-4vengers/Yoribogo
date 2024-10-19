@@ -153,6 +153,10 @@ public class NotificationService {
         // 1. 해당 사용자의 알림 목록 조회 (DELETED 되지 않은 것들만)
         List<NotificationEntity> userNotifications = notificationRepository.findByUserIdAndNotificationStatusNot(userId, NotificationStatus.DELETED);
 
+        if (userNotifications.isEmpty()) {
+            throw new CommonException(ErrorCode.NOT_FOUND_NOTIFICATION);
+        }
+
         // 2. 알림 데이터를 SSE로 전송
         List<SseEmitter> deadEmitters = new ArrayList<>();
         for (SseEmitter emitter : emitters) {
@@ -160,7 +164,6 @@ public class NotificationService {
                 for (NotificationEntity notification : userNotifications) {
                     String notificationContent = notification.getNotificationContent();
                     emitter.send(SseEmitter.event().name("notification").data(notificationContent));
-                    log.info("User ID {}에게 알림 전송: {}", userId, notificationContent);
                 }
             } catch (IOException e) {
                 deadEmitters.add(emitter); // 실패한 emitter 목록에 추가

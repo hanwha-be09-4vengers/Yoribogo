@@ -4,17 +4,8 @@
       <i class="fa-solid fa-bell"></i>
     </div>
     <ul class="notification-list" v-show="isMenuVisible">
-      <li class="notification" @click="goMyPage">
-        <span>알림: 회원가입을 축하합니다!</span>
-      </li>
-      <li class="notification">
-        <span>알림: 요리보고에 오신것을 환영합니다~~</span>
-      </li>
-      <li class="notification">
-        <span>알림: 요리보고에 오신것을 환영합니다~~</span>
-      </li>
-      <li class="notification">
-        <span>알림: 요리보고에 오신것을 환영합니다~~</span>
+      <li class="notification" v-for="notification in notifications" :key="notification.id">
+        <span>{{ notification.notificationContent }}</span>
       </li>
     </ul>
   </div>
@@ -22,11 +13,21 @@
 
 <script setup>
 import { ref } from 'vue'
+import { connectSSE } from '@/api/sserequest'
 
-const isMenuVisible = ref(false)
+const notifications = ref([]); // 알림 리스트
+const isMenuVisible = ref(false);
 
+// SSE 연결 함수 호출
+const eventSource = connectSSE();
+eventSource.addEventListener('notification', (event) => {
+  // 서버에서 전송된 알림을 notifications 배열에 추가
+  notifications.value.push({ id: Date.now(), notificationContent: event.data });
+});
+
+// 알림 메뉴를 열고 닫는 함수
 const toggleMenu = () => {
-  isMenuVisible.value = !isMenuVisible.value
+  isMenuVisible.value = !isMenuVisible.value;
 }
 </script>
 

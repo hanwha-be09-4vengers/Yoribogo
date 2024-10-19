@@ -43,6 +43,7 @@ public class NotificationController {
 
     // 사용자에게 알림을 전송하고, 전송된 알림 데이터를 Response로 반환
     @GetMapping("/send/{userId}")
+    // 시큐리티 적용 시 PathVariable 방식 쓸 필요 없음 수정 필요.
     public ResponseEntity<ResponseDTO<List<NotificationEntity>>> sendUserNotifications(@PathVariable("userId") Long userId) {
             List<NotificationEntity> userNotifications = notificationService.sendNotificationsToUser(userId);
 
