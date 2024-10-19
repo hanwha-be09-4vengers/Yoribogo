@@ -64,7 +64,7 @@
     background-color: white;
     border-radius: 10px;
     width: 380px;
-    height: 240px;
+    height: 280px;
     padding: 2rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     position: relative;

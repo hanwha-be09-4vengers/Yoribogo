@@ -181,6 +181,7 @@ const confirmVerificationCode = async () => {
 // 다음 버튼 활성화 여부 계산
 const canProceed = computed(() => {
   return nickname.value !== '' && isEmailValid.value && isVerified.value;
+  // return true;
 });
 
 // 모달 닫기 함수
@@ -234,7 +235,7 @@ const formattedTime = computed(() => {
   background-color: white;
   border-radius: 10px;
   width: 400px;
-  height: 480px;
+  height: 500px;
   padding: 2rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: relative;
@@ -259,21 +260,35 @@ const formattedTime = computed(() => {
 }
 
 .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.2rem 1rem; /* 상단 여백을 줄여서 위로 밀기 */
   position: relative;
   width: 100%;
-  text-align: center;
-  margin-bottom: 2rem;
+  margin-top: 6rem;
+  margin-bottom: 4rem; /* 모달 내용과의 간격 줄이기 */
+}
+
+.modal-header h2 {
+  font-size: 3.6rem; /* 조금 더 작게 */
+  color: #000000;
+  margin: 0; /* 텍스트 기본 여백 제거 */
+  position: absolute; /* 텍스트를 중앙에 고정 */
+  top: 50%; /* 부모 높이의 중앙 */
+  left: 50%; /* 부모 너비의 중앙 */
+  transform: translate(-50%, -50%); /* 중앙 정렬 */
 }
 
 .back-btn {
   position: absolute;
-  left: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
+  left: 1rem; /* 좌측 여백 */
+  top: 50%; /* 중앙에 맞춤 */
+  transform: translateY(-50%); /* 세로 정렬 */
   background-color: black;
   border-radius: 50%;
-  width: 3.7rem;
-  height: 3.7rem;
+  width: 3.5rem; /* 크기 살짝 줄임 */
+  height: 3.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -283,13 +298,7 @@ const formattedTime = computed(() => {
 
 .back-btn i {
   color: white;
-  font-size: 1.6rem;
-}
-
-.modal-header h2 {
-  font-size: 3.8rem;
-  color: #000000;
-  margin: 2rem;
+  font-size: 1.4rem; /* 아이콘도 조금 작게 */
 }
 
 /* 모달 바디 */
