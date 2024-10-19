@@ -27,8 +27,12 @@ public class NotificationService {
             emitter.send(SseEmitter.event().name("connect").data("Connected!"));
             log.info("(Service)SSE 연결 및 메세지 전송 완료!!");
         } catch (IOException e) {
-            //Erorrcode 삽입 필!
-            log.info("(service)SSE 연결이 종료된 객체입니다.!");
+            /*
+            Web 새로고침 시 SSE 연결된 객체는 죽고 다시 재연결 되기 때문에
+            연결된 객체에게 한 번 메세지를 보내려고 하여
+            "현재 연결은 사용자의 호스트 시스템의 소프트웨어의 의해 중단되었습니다"
+            문구가 콘솔에 뜹니다.
+            */
             emitter.completeWithError(e);
 
         }
