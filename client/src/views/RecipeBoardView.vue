@@ -6,7 +6,7 @@
       <HomeButton></HomeButton>
     </header>
     <MainBoard :cur="'recipe-board'">
-      <WriteRecipeBoardComponent> </WriteRecipeBoardComponent>
+      <router-view></router-view>
     </MainBoard>
   </div>
 </template>

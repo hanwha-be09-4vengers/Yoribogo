@@ -6,8 +6,8 @@
     <div class="attribute-input-wrapper" @dragover.prevent @drop.prevent="handleFileDrop">
       <label for="file-upload" class="custom-file-upload">
         <i class="fa-solid fa-image"></i>
-        <span v-if="!fileName">{{ props.placeholder }}</span>
-        <span v-else>{{ fileName }}</span>
+        <span v-if="!uploadedFileName">{{ props.placeholder }}</span>
+        <span v-else>{{ uploadedFileName }}</span>
       </label>
       <input id="file-upload" type="file" @change="handleFileChange" />
     </div>
@@ -17,7 +17,7 @@
 <script setup>
 import { ref } from 'vue'
 
-const fileName = ref('') // 파일 이름을 저장할 변수
+const uploadedFileName = ref('') // 파일 이름을 저장할 변수
 
 const props = defineProps({
   name: {
@@ -30,20 +30,26 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['add']); // 'add' 이벤트 발생
+
 const handleFileChange = (event) => {
   const file = event.target.files[0]
   if (file) {
-    fileName.value = file.name // 선택된 파일 이름을 저장
+    uploadedFileName.value = file.name // 선택된 파일 이름을 저장
+    emit('add', { image: file }); // 파일을 상위 컴포넌트로 전달 (optional)
   }
 }
 
 const handleFileDrop = (event) => {
   const file = event.dataTransfer.files[0]
   if (file) {
-    fileName.value = file.name // 드롭된 파일 이름을 저장
+    uploadedFileName.value = file.name // 드롭된 파일 이름을 저장
+    emit('add', { image: file }); // 파일을 상위 컴포넌트로 전달 (optional)
   }
 }
 </script>
+
+
 
 <style scoped>
 .attribute-input-container {
@@ -94,5 +100,12 @@ const handleFileDrop = (event) => {
 
 .attribute-input-wrapper input[type='file'] {
   display: none;
+}
+
+.custom-file-upload span{
+  color: gray;
+}
+.fa-solid{
+  color: gray;
 }
 </style>

@@ -2,11 +2,10 @@
   <div class="attribute-input-container">
     <div class="attribute-name-wrapper">
       <span>{{ props.name }}</span>
+      <button @click="handleAdd"> 추가 + </button>
     </div>
+
     <div class="attribute-input-wrapper">
-      <div class="text-input">
-        <input type="text" :placeholder="props.placeholder" />
-      </div>
       <div
         class="image-input"
         @dragover.prevent
@@ -16,56 +15,68 @@
       >
         <label for="file-upload" class="custom-file-upload">
           <i class="fa-solid fa-image"></i>
-          <span v-if="!fileName">{{ props.placeholder }}</span>
-          <span v-else>{{ fileName }}</span>
-          <!-- 파일 이름 표시 -->
+          <span v-if="!imageUploadName">
+            {{ "여기에 이미지를 드래그하거나 클릭하여 추가"}}
+            <!-- {{ props.name === '조리 순서' ? '여기에 이미지를 드래그하거나 클릭하여 추가' : props.placeholder }} -->
+          </span>
+          <span v-else>{{ imageUploadName }}</span>
         </label>
         <input id="file-upload" type="file" @change="handleFileChange" />
+      </div>
+      <div class="text-input">
+        <input type="text" :placeholder="props.placeholder" v-model="stepText" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+  import { ref, defineProps, defineEmits } from 'vue';
 
-const isDragging = ref(false)
-const fileName = ref('') // 파일 이름을 저장할 변수
+  const imageUploadName = ref(''); // 파일 이름을 저장할 변수
+  const stepText = ref('');
 
-const props = defineProps({
-  name: {
-    type: String,
-    required: true
-  },
-  placeholder: {
-    type: String,
-    required: true
-  }
-})
+  const props = defineProps({
+    name: {
+      type: String,
+      required: true,
+    },
+    placeholder: {
+      type: String,
+      required: true,
+    },
+  });
 
-const handleFileChange = (event) => {
+  const emit = defineEmits(['add']);
+
+  const handleFileChange = (event) => {
   const file = event.target.files[0]
   if (file) {
-    fileName.value = file.name // 선택된 파일 이름 저장
+    uploadedFileName.value = file.name // 선택된 파일 이름을 저장
+    emit('add', { image: file }); // 파일을 상위 컴포넌트로 전달 (optional)
   }
 }
 
-const handleFileDrop = (event) => {
-  const file = event.dataTransfer.files[0]
-  if (file) {
-    fileName.value = file.name // 드롭된 파일 이름 저장
+
+  const handleFileDrop = (event) => {
+    const file = event.dataTransfer.files[0];
+    if (file) {
+      imageUploadName.value = file.name; // 드롭된 파일 이름 저장
+      console.log("Dropped file name:", imageUploadName.value); // 드롭된 파일 이름 콘솔 출력
+    }
+  };
+
+  // "추가" 버튼 클릭 시 호출할 함수
+  const handleAdd = () => {
+    if (stepText.value || imageUploadName.value) {
+      emit('add', { step: stepText.value, image: imageUploadName.value });  // 객체로 전달
+      stepText.value = ''; // 입력 필드 초기화
+      imageUploadName.value = ''; // 파일 이름 초기화
+      console.log("Added step:", stepText.value, "with image:", imageUploadName.value); // 추가된 내용 출력
+    }
   }
-  isDragging.value = false
-}
-
-const handleDragEnter = () => {
-  isDragging.value = true
-}
-
-const handleDragLeave = () => {
-  isDragging.value = false
-}
 </script>
+
 
 <style scoped>
 .attribute-input-container {
@@ -76,6 +87,11 @@ const handleDragLeave = () => {
 }
 
 .attribute-name-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.attribute-name-wrapper span{
   display: flex;
   justify-content: center;
   align-items: center;
@@ -91,6 +107,7 @@ const handleDragLeave = () => {
 
 .attribute-input-wrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -103,17 +120,27 @@ const handleDragLeave = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 50%;
   height: 70%;
-  border-right: 1px solid #dcdcdc;
+  width: 90%;
+  border-top: 1px solid #DCDCDC;
+  position: relative;
 }
 
 .image-input {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 50%;
+  height: 50%;
   transition: background-color 0.3s ease;
+  position: relative;
+}
+
+/* 이미지 아이콘 색 */
+.fa-solid{
+  color: gray;
+}
+.file-upload span{
+  color: gray;
 }
 
 /* 드래그 중일 때 배경색 변경 */
@@ -132,6 +159,20 @@ const handleDragLeave = () => {
   text-align: center;
 }
 
+/* 추가 버튼 */
+.attribute-name-wrapper button{
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--pink-color);
+  color: white;
+  border: none;
+  border-radius: 0.5rem 0.5rem 0 0;
+  cursor: pointer;
+  top: 0px;
+  right: 0px;
+  font-size: 1.5rem;
+}
+
 .image-input i {
   font-size: 4rem;
   text-align: center;
@@ -144,8 +185,12 @@ const handleDragLeave = () => {
   padding: 0.5rem 1rem;
   gap: 1rem;
   cursor: pointer;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
+.custom-file-upload span{
+  color: gray;
+}
+
 
 .image-input input[type='file'] {
   display: none;
@@ -156,8 +201,8 @@ const handleDragLeave = () => {
     font-size: 1.4rem;
   }
 
-  .custom-file-upload {
-    font-size: 1.4rem;
+  .custom-file-upload span{
+    color: gray;
   }
 }
 

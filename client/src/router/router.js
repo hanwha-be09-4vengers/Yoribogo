@@ -2,6 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import KakaoCallback from '@/components/user/sns/KakaoCallback.vue' // 콜백 처리용 컴포넌트
 import NaverCallback from '@/components/user/sns/NaverCallback.vue' // 콜백 처리용 컴포넌트
+import SignupView from '@/views/user/SignupView.vue'
+import LoginView from '@/views/user/LoginView.vue'
+
+import WriteRecipeBoardComponent from '@/components/recipe-board/WriteRecipeBoardComponent.vue'
+import RecipeListView from '@/components/recipe-board/RecipeListView.vue'
 
 const routes = [
   {
@@ -12,12 +17,12 @@ const routes = [
   {
     path: '/signup',
     name: 'Signup',
-    component: Signup
+    component: SignupView
   },
   {
     path: '/login',
     name: 'Login',
-    component: Login
+    component: LoginView
   },
   {
     path: '/question/:qid',
@@ -54,7 +59,7 @@ const routes = [
       },
       {
         path: 'write',  // 레시피 작성 페이지
-        component: WriteRecipeView
+        component: WriteRecipeBoardComponent
       }
     ]
   },

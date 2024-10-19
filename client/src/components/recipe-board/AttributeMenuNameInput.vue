@@ -4,12 +4,16 @@
       <span>{{ props.name }}</span>
     </div>
     <div class="attribute-input-wrapper">
-      <input type="text" :placeholder="props.placeholder" />
+      <input type="text" :placeholder="props.placeholder" v-model="inputValue"/>
+      
     </div>
   </div>
 </template>
 
 <script setup>
+
+import { watch } from 'vue'
+
 const props = defineProps({
   name: {
     type: String,
@@ -18,8 +22,31 @@ const props = defineProps({
   placeholder: {
     type: String,
     required: true
+  },
+  showButton: {
+    type: Boolean,
+    default: false
+  },
+  modelValue: { // modelValue prop 추가
+    type: String,
+    default: ''
   }
 })
+
+
+import {ref} from 'vue'
+
+// 이벤트 상위 컴포넌트로 전송
+const emit = defineEmits(['update:modelValue']);
+// 입력값 담기 
+const inputValue = ref('');
+
+// 새로운 값이 입력되면 상위 컴포넌트로 그 값을 전송하기 
+watch(inputValue, (newValue) => {
+  emit('update:modelValue', newValue); // 사용자가 입력한 값을 상위로 전송
+});
+
+
 </script>
 
 <style scoped>
@@ -30,7 +57,7 @@ const props = defineProps({
   height: fit-content;
 }
 
-.attribute-name-wrapper {
+.attribute-name-wrapper span{
   display: flex;
   justify-content: center;
   align-items: center;
@@ -44,12 +71,18 @@ const props = defineProps({
   font-weight: 500;
 }
 
+.attribute-name-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
 .attribute-input-wrapper {
   display: flex;
   width: 100%;
   min-height: 9rem;
   background-color: var(--light-gray-color);
   border-radius: 0 0.8rem 0.8rem 0.8rem;
+  position: relative;
 }
 
 .attribute-input-wrapper input {
@@ -58,6 +91,17 @@ const props = defineProps({
   border: none;
   outline: none;
   padding-left: 3rem;
+  font-size: 1.5rem;
+}
+
+.attribute-name-wrapper button {
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--pink-color);
+  color: white;
+  border: none;
+  border-radius: 0.5rem 0.5rem 0 0;
+  cursor: pointer;
   font-size: 1.5rem;
 }
 </style>
