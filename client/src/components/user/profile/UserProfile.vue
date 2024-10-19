@@ -13,8 +13,11 @@
         <img :src="userProfile.tierImage" alt="티어 이미지" class="tier-image" />
       </div>
 
-      <button @click="editProfile">회원정보 수정</button>
+      <button @click="openEditProfileModal">회원정보 수정</button>
     </div>
+
+    <!-- 프로필 수정 모달 -->
+    <ProfileEditModal v-if="isModalOpen" @close="closeEditProfileModal" />
   </div>
 
   <!-- 프로필 정보 로딩 중 표시 -->
@@ -24,36 +27,43 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineEmits } from 'vue';
 import { useTokenStore } from '@/stores/tokenStore'; // Pinia store 사용
 import { fetchUserDetailProfile } from '@/api/user'; // user.js의 새로운 프로필 API 호출
+import ProfileEditModal from './ProfileEditModal.vue'; // 모달 컴포넌트 임포트
 
 // 사용자 프로필 상태
 const userProfile = ref(null);
 
+// 모달 상태 관리
+const isModalOpen = ref(false);
+
 // Pinia의 tokenStore 사용
 const tokenStore = useTokenStore();
 
-// 프로필 수정 이벤트
-const editProfile = () => {
-  emit('editProfile');
+// 프로필 수정 모달 열기 함수
+const openEditProfileModal = () => {
+  isModalOpen.value = true;
+};
+
+// 프로필 수정 모달 닫기 함수
+const closeEditProfileModal = () => {
+  isModalOpen.value = false;
 };
 
 // API 호출을 통해 사용자 프로필 정보 로드
 const loadUserProfile = async () => {
   try {
-    // tokenStore에서 userId와 accessToken 가져오기
     const userId = tokenStore.token.userId;
     const accessToken = tokenStore.token.accessToken;
 
     if (userId && accessToken) {
-      const profileData = await fetchUserDetailProfile(userId, accessToken); // API 호출
+      const profileData = await fetchUserDetailProfile(userId, accessToken);
       if (profileData.success) {
-        // 프로필 데이터 설정 (이미지가 null일 경우 기본 이미지 사용)
         userProfile.value = {
-          profileImage: profileData.data.profileImage || defaultProfileImage, // 기본 이미지 처리
+          profileImage: profileData.data.profileImage || defaultProfileImage,
           nickname: profileData.data.nickname || '닉네임 없음',
-          tierImage: profileData.data.tierImage || defaultTierImage, // 기본 티어 이미지 처리
+          tierImage: profileData.data.tierImage || defaultTierImage,
         };
       } else {
         console.error('프로필 정보를 불러오는 데 실패했습니다.');
@@ -75,38 +85,37 @@ onMounted(() => {
 <style scoped>
 .profile-container {
   display: flex;
-  flex-direction: column; /* 세로 방향으로 정렬 */
-  align-items: center; /* 중앙 정렬 */
+  flex-direction: column;
+  align-items: center;
   gap: 1.5rem;
-  background-color: transparent; /* 흰색 배경 */
+  background-color: transparent;
   padding: 2rem;
-  border-radius: 80px 80px 10px 10px; /* 상단은 둥글게, 하단은 살짝 둥글게 */
-  max-width: 300px; /* 적당한 너비 설정 */
-  margin: auto; /* 화면 중앙에 배치 */
+  border-radius: 80px 80px 10px 10px;
+  max-width: 300px;
+  margin: auto;
 }
 
 .avatar img {
-  width: 120px; /* 프로필 사진 크기 */
+  width: 120px;
   height: 120px;
-  border-radius: 50%; /* 원형으로 만들기 */
+  border-radius: 50%;
   object-fit: cover;
-  border: 5px solid white; /* 테두리 추가 */
+  border: 5px solid white;
 }
 
 .user-info {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center; /* 텍스트 가운데 정렬 */
+  text-align: center;
 }
 
-/* 이름과 티어 이미지를 가로로 배치 */
 .name-tier-container {
   display: flex;
-  align-items: center; /* 세로 중앙 정렬 */
-  justify-content: center; /* 가로 중앙 정렬 */
-  gap: 0.5rem; /* 이름과 티어 이미지 사이 간격 */
-  margin-bottom: 1rem; /*프로필 수정 버튼과 간격*/ 
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .name-tier-container h2 {
@@ -114,19 +123,15 @@ onMounted(() => {
   font-size: 3rem;
   font-weight: bold;
   color: #333;
-  line-height: 1; /* 텍스트의 라인 높이를 조정 */
-  display: inline-block; /* 이미지가 텍스트와 겹치지 않게 조정 */
+  line-height: 1;
 }
 
 .tier-image {
-  width: 2.8rem; /* 티어 이미지 크기 */
+  width: 2.8rem;
   height: 2.8rem;
-  object-fit: contain; /* 이미지 비율 유지 */
-  margin-left: 0.5rem; /* 이름과 티어 이미지 간격 추가 */
-  /* 더 이상 position을 사용하지 않음 */
+  object-fit: contain;
+  margin-left: 0.5rem;
 }
-
-
 
 button {
   background-color: #ececec;
@@ -135,24 +140,15 @@ button {
   padding: 0.7rem 1.5rem;
   border-radius: 5px;
   cursor: pointer;
-  margin-top: 1rem; /* 버튼 위에 간격 추가 */
-  
-  /* 폰트 설정 */
-  font-family: 'Noto Sans KR', 'Noto Sans', sans-serif;  /* Noto Sans KR 폰트 적용 */
-  font-size: 1.4rem;  /* 폰트 크기 조정 */
-  font-weight: 500;   /* 글씨 두께 조정 (보통) */
-
-  /* 그림자 추가 */
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);  /* x축, y축, 번짐, 투명도 */
-  transition: box-shadow 0.2s ease;  /* 그림자 애니메이션 추가 */
+  margin-top: 1rem;
+  font-family: 'Noto Sans KR', 'Noto Sans', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 500;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.2s ease;
 }
 
 button:hover {
-  background-color: #ececec;
-
-  /* hover 시 그림자 조금 더 강하게 */
-  box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);  /* 그림자 진하게 */
+  box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
 }
-
-
 </style>
