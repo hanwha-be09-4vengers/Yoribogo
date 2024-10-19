@@ -2,8 +2,10 @@ package com.avengers.yoribogo.user.service;
 
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
+import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.domain.enums.SignupPath;
 import com.avengers.yoribogo.user.dto.UserDTO;
+import com.avengers.yoribogo.user.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,8 @@ public class EmailVerificationService {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
     private final long VERIFICATION_CODE_TTL = 5; // 5분
     private final long COOLDOWN_SECONDS = 30; // 30초 쿨다운
@@ -129,5 +133,25 @@ public class EmailVerificationService {
         long currentTimestamp = System.currentTimeMillis() / 1000; // 필기. 초 단위 시간
         stringRedisTemplate.opsForValue()
                 .set(email + ":cooldown", String.valueOf(currentTimestamp), COOLDOWN_SECONDS, TimeUnit.SECONDS); // 필기. TTL 30초
+    }
+
+    //필기. 닉네임의 회원의 이메일의 코드가 일치하는지 확인하는 코드
+    public UserEntity verifyUserNicknameCode(String nickname, String email, String code) {
+        // Redis에서 저장된 코드 가져오기
+        String savedCode = stringRedisTemplate.opsForValue().get(email);
+
+        // 사용자 정보 조회
+        UserEntity userEntity =userRepository.findByNickname(nickname)
+                      .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_USER));
+
+        // 인증 코드가 없거나 일치하지 않으면 예외 발생
+        if (savedCode == null || !savedCode.equals(code)) {
+            throw new CommonException(ErrorCode.INVALID_VERIFICATION_CODE);
+        }
+
+        // 인증 성공 시 Redis에 "verified" 저장하고 TTL을 1시간으로 설정
+        stringRedisTemplate.opsForValue().set(email, "verified", 1, TimeUnit.HOURS);
+
+        return userEntity;
     }
 }
