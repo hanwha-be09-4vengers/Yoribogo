@@ -13,7 +13,9 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class WeeklyPopularRecipeService {
@@ -54,4 +56,13 @@ public class WeeklyPopularRecipeService {
 
         weeklyPopularRecipeMongoRepository.save(newLike);
     }
+
+    public List<WeeklyPopularRecipe> getTop3LikedRecipes() {
+        // 일주일 전의 날짜 계산
+        LocalDateTime oneWeekAgo = LocalDateTime.now().minus(7, ChronoUnit.DAYS);
+
+        // 일주일 이내의 상위 3개 레시피 조회
+        return weeklyPopularRecipeMongoRepository.findTop3LikedRecipesWithinLastWeek(oneWeekAgo);
+    }
+
 }

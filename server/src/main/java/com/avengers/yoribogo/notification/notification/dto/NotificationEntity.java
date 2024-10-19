@@ -20,7 +20,7 @@ public class NotificationEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "notification_read_status", nullable = false)
-    private NotificationStatus notificationStatus;
+    private NotificationStatus notificationStatus = NotificationStatus.UNREAD;
 
     @Column(name = "notification_created_at", nullable = false)
     private LocalDateTime notificationCreatedAt;

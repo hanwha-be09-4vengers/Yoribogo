@@ -1,32 +1,49 @@
 package com.avengers.yoribogo.notification.notification.domain;
 
+import com.avengers.yoribogo.notification.notification.dto.NotificationStatus;
 import com.avengers.yoribogo.notification.notification.service.NotificationService;
-import com.avengers.yoribogo.notification.weeklypopularrecipe.service.WeeklyPopularRecipeService;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.WeeklyPopularRecipe;
+import com.avengers.yoribogo.notification.weeklypopularrecipe.service.WeeklyPopularRecipeService;
+import com.avengers.yoribogo.notification.notification.dto.NotificationEntity;
+import com.avengers.yoribogo.notification.notification.repository.NotificationRepository;
+import com.avengers.yoribogo.common.exception.CommonException;
+import com.avengers.yoribogo.common.exception.ErrorCode;
+import com.avengers.yoribogo.recipeboard.recipeboard.dto.RecipeBoardEntity;
+import com.avengers.yoribogo.recipeboard.recipeboard.repository.RecipeBoardRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Random;
 
 @Component
 @Slf4j
 public class NotificationScheduler {
 
     private final WeeklyPopularRecipeService weeklyPopularRecipeService;
+    private final RecipeBoardRepository recipeBoardRepository;
+    private final NotificationRepository notificationRepository;
     private final NotificationService notificationService;
 
-    public NotificationScheduler(WeeklyPopularRecipeService weeklyPopularRecipeService, NotificationService notificationService) {
+    public NotificationScheduler(WeeklyPopularRecipeService weeklyPopularRecipeService, RecipeBoardRepository recipeBoardRepository, NotificationRepository notificationRepository, NotificationService notificationService) {
         this.weeklyPopularRecipeService = weeklyPopularRecipeService;
+        this.recipeBoardRepository = recipeBoardRepository;
+        this.notificationRepository = notificationRepository;
         this.notificationService = notificationService;
     }
 
-    // 30초마다 실행되는 테스트 스케줄러 (매일 11시, 17시에 실행하려면 cron 설정 사용)
-    @Scheduled(fixedRate = 30000)
-    public void sendMostLikedRecipeNotification() {
-        // 좋아요가 가장 많은 레시피 가져오기
-        WeeklyPopularRecipe mostLikedRecipe = weeklyPopularRecipeService.getMostLikedRecipe();
-        log.info("좋아요가 가장 많은 레시피 선택됨.");
-        // 알림 전송
-        String message = "가장 많은 좋아요를 받은 레시피는: " + mostLikedRecipe.getMyRecipeId();
-        notificationService.sendNotification(message);  // SSE로 클라이언트에 전송
+    // 11시에 실행되는 스케줄러
+    @Scheduled(cron = "0 0 11 * * ?")
+    public void saveLunchRecipeNotification() {
+        notificationService.saveRecipeNotification("lunch");
     }
+
+    // 17시에 실행되는 스케줄러
+    @Scheduled(cron = "0 0 17 * * ?")
+    public void saveDinnerRecipeNotification() {
+        notificationService.saveRecipeNotification("dinner"); 
+    }
+
 }
