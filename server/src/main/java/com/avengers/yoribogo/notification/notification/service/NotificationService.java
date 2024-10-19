@@ -1,16 +1,28 @@
 package com.avengers.yoribogo.notification.notification.service;
 
+import com.avengers.yoribogo.notification.notification.dto.NotificationEntity;
+import com.avengers.yoribogo.notification.notification.dto.NotificationStatus;
+import com.avengers.yoribogo.notification.notification.repository.NotificationRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Slf4j
 public class NotificationService {
+
+    @Autowired
+    private final NotificationRepository notificationRepository;
+
+    public NotificationService(NotificationRepository notificationRepository) {
+        this.notificationRepository = notificationRepository;
+    }
 
     private final List<SseEmitter> emitters = new ArrayList<>();
 
@@ -40,7 +52,7 @@ public class NotificationService {
         return emitter;
     }
 
-    // 메시지를 클라이언트로 전송
+    // 메시지를 클라이언트로 전송 (보류)
     public void sendNotification(String data) {
         List<SseEmitter> deadEmitters = new ArrayList<>();
         for (SseEmitter emitter : emitters) {
@@ -54,4 +66,18 @@ public class NotificationService {
         // 실패한 emitter 제거
         emitters.removeAll(deadEmitters);
     }
+
+    // 알림 저장 로직
+    public NotificationEntity createNotification() {
+        NotificationEntity notification = new NotificationEntity();
+
+        // 여기에서 필요한 데이터를 직접 설정
+        notification.setUserId(2L);  // 예시로 userId 1L 설정
+        notification.setNotificationContent("테스트 알림 내용");
+        notification.setNotificationCreatedAt(LocalDateTime.now());
+        notification.setNotificationStatus(NotificationStatus.UNREAD);  // 기본 상태로 설정
+
+        return notificationRepository.save(notification);
+    }
+
 }

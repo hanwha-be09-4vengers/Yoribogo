@@ -82,7 +82,7 @@ CREATE TABLE inquiry (
 
 CREATE TABLE notification (
     notification_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    notification_read_status VARCHAR(255) NOT NULL DEFAULT 'WAIT' CHECK(notification_read_status IN ('READ', 'WAIT')),
+    notification_read_status VARCHAR(255) NOT NULL DEFAULT 'UNREAD' CHECK(notification_read_status IN ('READ', 'UNREAD','DELETED')),
     notification_created_at TIMESTAMP NOT NULL,
     notification_read_at TIMESTAMP,
     notification_content TEXT NOT NULL,
