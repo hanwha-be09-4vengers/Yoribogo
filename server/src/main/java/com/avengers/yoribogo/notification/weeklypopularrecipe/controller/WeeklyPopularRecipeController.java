@@ -27,6 +27,8 @@ public class WeeklyPopularRecipeController {
         return ResponseEntity.ok(ResponseDTO.ok(recipes));
     }
 
+    // LocalDateTime 테스트용 insert API
+
     // MongoDB에서 가장 많은 좋아요를 가진 레시피 추출하는 API (추후에 일주일 타임 걸어두는 로직 추가 필요)
     @GetMapping("/mostliked")
     public ResponseEntity<ResponseDTO<WeeklyPopularRecipe>> getMostLikedRecipe() {

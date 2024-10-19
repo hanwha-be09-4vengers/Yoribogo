@@ -56,7 +56,7 @@ public class RecipeBoardLikeService {
         RecipeBoardLikeEntity newLike = new RecipeBoardLikeEntity();
         newLike.setUser(user);
         newLike.setRecipeBoard(recipeBoard);
-        newLike.setLikeCreatedAt(LocalDateTime.now());
+        newLike.setLikeCreatedAt(LocalDateTime.now().withNano(0));
         recipeBoardLikeRepository.save(newLike);
 
         // 4. 게시글의 좋아요 수 +1

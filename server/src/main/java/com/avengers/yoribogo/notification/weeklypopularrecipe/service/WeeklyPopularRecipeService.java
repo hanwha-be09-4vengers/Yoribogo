@@ -11,6 +11,8 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -48,7 +50,7 @@ public class WeeklyPopularRecipeService {
 
         newLike.setUserId(event.getUserId());
         newLike.setMyRecipeId(event.getPostId());
-        newLike.setCreatedAt(LocalDateTime.now());
+        newLike.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).withNano(0));  // KST로 현재 시간 저장
 
         weeklyPopularRecipeMongoRepository.save(newLike);
     }

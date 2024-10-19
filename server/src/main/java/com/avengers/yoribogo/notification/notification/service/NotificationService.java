@@ -25,7 +25,7 @@ public class NotificationService {
         // 연결 즉시 메시지 전송
         try {
             emitter.send(SseEmitter.event().name("connect").data("Connected!"));
-            log.info("(Service)SSE 연결 및 메세지 전송 완료!!");
+            log.info("(Service)SSE 최초 연결 및 메세지 전송 완료!!");
         } catch (IOException e) {
             /*
             Web 새로고침 시 SSE 연결된 객체는 죽고 다시 재연결 되기 때문에

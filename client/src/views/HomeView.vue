@@ -6,6 +6,7 @@
       <MainNav></MainNav>
     </header>
     <main>
+      <NotificationButton/>
       <section id="start-section" class="start-section">
         <div class="catchphrase">
           <span class="emphasize">맛있는 선택의 시작.</span>
@@ -25,6 +26,7 @@ import MainNav from '@/components/MainNav.vue'
 import { useRouter } from 'vue-router'
 import { onMounted, onUnmounted } from 'vue'
 import { connectSSE } from '@/api/sserequest'
+import NotificationButton from '@/components/NotificationButton.vue';
 
 const router = useRouter()
 let eventSource;
