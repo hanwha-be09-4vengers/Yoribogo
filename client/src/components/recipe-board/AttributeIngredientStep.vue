@@ -6,9 +6,12 @@
                 <div class="section-content" style="width: 100%;">
                     <span v-if="ingredients.length === 0">재료 항목이 비어있습니다.</span>
                     <div v-else v-for="(ingredient, index) in ingredients" :key="index" class="ingredient-item">
-                        <div style="display: flex; justify-content: space-evenly; gap: 4px;">
-                            &nbsp;
-                            {{ ingredient }}
+                        <div style="display: flex; justify-content: space-evenly; align-items: center; gap: 4px;  ">
+                            <span style="max-width: 16rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                &nbsp;
+                                {{ ingredient }}
+                            </span>
+
                             <button @click="removeItem(index)">✕</button>
 
                         </div>
@@ -21,9 +24,14 @@
                 <div class="section-header">조리 순서</div>
                 <div class="section-content">
                     <span v-if="steps.length === 0">요리 방법 항목이 비어있습니다.</span>
-                    <ul v-else>
-                        <li v-for="(step, index) in steps" :key="index">{{ step }}</li>
-                    </ul>
+                    <div v-else v-for="(step, index) in steps" :key="index">
+                        <WriteStepInput 
+                            :index="index" 
+                            :initialStep="step" 
+                            @add-step="addStep" 
+                            @remove-step="removeStep" 
+                            @update-step="updateStep(index, $event)" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -31,6 +39,7 @@
     
     <script setup>
     import { ref,  watch } from 'vue';
+    import WriteStepInput from '@/components/recipe-board/WriteStepInput.vue';
     
     // 재료와 조리 순서 배열 선언 (초기값이 없으면 비어있는 메시지 출력)
     const ingredients = ref([]);
@@ -40,14 +49,17 @@
         ingredients: {
             type: Array,
             required: true
+        },
+
+        manual_step: {
+            type: Array,
+            required: true
+
         }
     });
 
-
-
-
     // 재료 삭제 함수 
-    const emit = defineEmits(['remove-item'])
+    const emit = defineEmits(['remove-item', 'add-step', 'remove-step'])
     const removeItem = (index) => {
         emit('remove-item', index);
     };
@@ -56,9 +68,32 @@
     // props.ingredients가 변경될 때 ingredients를 업데이트
     watch(() => props.ingredients, (newIngredients) => {
         ingredients.value = newIngredients;
-        console.log("변경된 배열" ,props.ingredients);
+        console.log("변경된 ingredients 배열" ,props.ingredients);
     });
+
+    // props.manual_step이 변경될 때 즉각반영
+    watch(() => props.manual_step, (newSteps) => {
+    steps.value = newSteps; // steps 배열에 연결
+    console.log("변경된 manual_step 배열:", newSteps); // 배열의 내용을 출력
+    });
+
+    /*  조리 방법 추가, 삭제 메소드 */
+    // 조리 방법 추가 
+    const addStep = (index) => {
+        emit('add-step', index);
+
+    };
+
+    // 조리 방법 삭제
+    const removeStep = (index) => {
+        emit('remove-step', index); // 이벤트 발생
+    }
     
+
+    // 조리 방법 수정
+    const updateStep = (index, updatedStep) => {
+        emit('update-step', index, updatedStep);
+    };
 
     </script>
     

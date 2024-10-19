@@ -26,6 +26,15 @@
           @add="addStep"
           v-model="manual_step"
         ></AtrributeTextAndImageInput>
+<!-- 
+        <AtrributeTextAndImageInput
+          :name="'조리 순서'"
+          :placeholder="'단계별 요리법을 작성해주세요'"
+          @add="addStep"
+          @remove-step="removeStep"
+          @update-step="updateStep"
+          v-model="manual_step"
+        ></AtrributeTextAndImageInput> -->
       </div>
 
       <div class="attribute-board second" v-if="!isSmallScreen">
@@ -131,7 +140,7 @@ watch(board_image, (newValue) => {
   console.log(board_image.value)
 })
 
-// 재료 추가 함수
+// 배열에 재료 추가 함수
 const addIngredient = (ingredient) => {
   if (ingredient) {
     ingredients.value.push(ingredient);
@@ -141,7 +150,7 @@ const addIngredient = (ingredient) => {
 
   }
 };
-//재료 삭제 함수
+//배열에 재료 삭제 함수
 const removeIngredient = (index) => {
   ingredients.value.splice(index, 1);
   saveToLocalStorage();
@@ -149,24 +158,32 @@ const removeIngredient = (index) => {
   console.log(ingredients.value);
 };
 
-// 조리 방법 추가 함수
-const addStep = ({ step, image = '' }) => {
-  console.log("manual_step.value:", manual_step.value); // 상태 확인
-  console.log("addStep 메소드 실행됨");
-
-  if (step) {
-    if (!Array.isArray(manual_step.value)) {
-      manual_step.value = []; // 배열로 초기화
-    }
-    manual_step.value.push({ step, image });
-    saveToLocalStorage();
-    console.log("조리 순서 추가됨", { step, image });
-  } else {
-    console.log("조리방법은 반드시 추가해야 합니다. 이미지는 필수 아님");
-  }
+// 배열에 조리 방법 추가 함수
+const addStep = (newStep) => {
+  manual_step.value.push(newStep); // 새로운 단계 추가
+  saveToLocalStorage(); // 추가 후 로컬 스토리지 업데이트
+  console.log("추가된 조리 방법:", newStep);
 };
 
 
+const steps = ref([]);
+// // 배열에 조리 방법 추가 함수
+// // addStep: steps 배열에 새로운 단계를 추가
+// const addStep = (index) => {
+//   manual_step.value.splice(index + 1, 0, { step: '', image: '' });
+// };
+
+// // 베열 조리 방법 삭제 함수
+// // removeStep: manual_step 배열에서 단계를 삭제
+// const removeStep = (index) => {
+//   manual_step.value.splice(index, 1);
+// };
+
+// // 배열 조리 방법 수정 함수
+// // updateStep: 특정 단계의 내용을 업데이트
+// const updateStep = (index, updatedStep) => {
+//   manual_step.value[index] = updatedStep;
+// };
 
 // 로컬 스토리지에 저장하는 함수
 const saveToLocalStorage = () => {

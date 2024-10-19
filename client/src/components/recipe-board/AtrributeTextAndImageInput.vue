@@ -13,7 +13,7 @@
         @drop.prevent="handleFileDrop"
         @dragenter="handleDragEnter"
       >
-        <label for="file-upload" class="custom-file-upload">
+        <label for="file-upload-step" class="custom-file-upload">
           <i v-if="!uploadedFileName" class="fa-solid fa-image"></i>
           <!-- 이미지 미리보기 -->
           <div v-if="uploadedImageUrl" style="display: flex; justify-content: center; align-items: center;">
@@ -25,7 +25,7 @@
           </span>
           <span v-else>{{ uploadedFileName }}</span>
         </label>
-        <input id="file-upload" type="file" @change="handleFileChange" />
+        <input id="file-upload-step" type="file" @change="handleFileChange" />
       </div>
       <div class="text-input">
         <input type="text" :placeholder="props.placeholder" v-model="stepText" />
@@ -60,7 +60,7 @@
     }
   });
 
-  const emit = defineEmits(['update:modelValue']);
+  const emit = defineEmits(['update:modelValue', 'add']);
 
 
   const handleFileChange = (event) => {
@@ -72,10 +72,6 @@
     uploadedImageUrl.value = URL.createObjectURL(file) // 이미지 미리보기 URL 생성
 
     console.log("파일 변경이 감지됨 by click: 조리방법", file.name);
-
-    // emit('update:modelValue', file); 
-    uploadedFileName.value = '';
-    uploadedImageUrl.value = ''
   }
 }
 
