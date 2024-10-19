@@ -46,6 +46,7 @@
       @close="closePasswordResetModal"
       @update="updatePasswordResetData" 
       @openPasswordReset="openPasswordResetModal"
+      @openLogin="openLoginModal"
       :passwordResetData="passwordResetData"/>
 
        <!-- 아이디 찾기 Step1 모달 -->
@@ -154,12 +155,19 @@ const closePasswordResetModal = () => {
   currentPasswordResetStep.value = 1;  // 비밀번호 찾기 단계를 1로 초기화
 };
 
-// Step2로 이동
-const goToFindIdStep2 = (nickname, userAuthId) => {
-  foundNickname.value = nickname; // 전달받은 아이디 설정
-  foundUserAuthId.value = userAuthId;     // 유저 아이디도 함께 전달
-  currentFindIdStep.value = 2; // Step2로 이동
+// Step2로 이동하는 함수
+const goToPasswordResetStep2 = (payload) => {
+  if (payload) {
+    // payload가 있을 경우 해당 데이터를 저장
+    passwordResetData.value = {
+      user_auth_id: payload.user_auth_id,
+      email: payload.email,
+    };
+  }
+  // Step2로 이동
+  currentPasswordResetStep.value = 2;
 };
+
 
 // 아이디 찾기 모달 열기
 const openFindIdModal = () => {
@@ -174,7 +182,12 @@ const closeFindIdModal = () => {
   currentFindIdStep.value = 1; // 단계 초기화
 };  
 
-
+// Step2로 이동
+const goToFindIdStep2 = (nickname, userAuthId) => {
+  foundNickname.value = nickname; // 전달받은 아이디 설정
+  foundUserAuthId.value = userAuthId;     // 유저 아이디도 함께 전달
+  currentFindIdStep.value = 2; // Step2로 이동
+};
 
 // 홈으로 돌아가기
 const goHome = () => {

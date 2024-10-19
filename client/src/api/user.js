@@ -1,6 +1,5 @@
 import apiClient from '@/api/axios';  // Axios 설정이 적용된 apiClient 사용
 
-
 // 설명. 1. 이메일 전송 API (회원가입 시 실행)
 export const sendSignupVerificationEmail = async (email) => {
   try {
@@ -12,7 +11,6 @@ export const sendSignupVerificationEmail = async (email) => {
   }
 };
 
-// 설명. 1.2 이메일 전송 API (아이디 찾기 시 실행)
 // 설명. 1.2 이메일 전송 API (아이디 찾기 시 실행)
 export const sendAuthIdVerificationEmail = async (nickname, email) => {
   try {
@@ -27,6 +25,7 @@ export const sendAuthIdVerificationEmail = async (nickname, email) => {
     throw error;
   }
 };
+
 // 설명. 1.3 이메일 전송 API (비밀번호 찾기 시 실행)
 export const sendPasswordResetVerificationEmail = async (userAuthId, email) => {
   try {
@@ -150,7 +149,7 @@ export const updateUserProfile = async (userId, nickname, profileImage, accessTo
 // 설명. 5. 리프레시 토큰으로 액세스 토큰 재발급 - POST 요청 (토큰 필요 없음)
 export const refreshAccessToken = async (refreshToken) => {
   try {
-    const response = await apiClient.post('/users/auth/refresh-token', { refreshToken });
+    const response = await apiClient.post('/users/auth/refresh-token', { refresh_token: refreshToken });
     return response.data;
   } catch (error) {
     console.error('refreshAccessToken 에러:', error);
@@ -194,7 +193,7 @@ export const validateNickname = async (nickname) => {
 // 설명. 9. 아이디 중복 검증 API - POST 요청 (토큰 필요 없음)
 export const validateUserAuthId = async (userAuthId) => {
   try {
-    const response = await apiClient.post('/users/user-id/validate', { userAuthId });
+    const response = await apiClient.post('/users/user-id/validate', { user_auth_id: userAuthId });
     return response.data;
   } catch (error) {
     console.error('validateUserAuthId 에러:', error);
@@ -218,7 +217,7 @@ export const deactivateUser = async (userId, accessToken) => {
 // 설명. 11. 사용자 재활성화 API - POST 요청 (토큰 필요 없음)
 export const reactivateUserByAuthId = async (userAuthId) => {
   try {
-    const response = await apiClient.post('/users/activate', { userAuthId });
+    const response = await apiClient.post('/users/activate', { user_auth_id: userAuthId });
     return response.data;
   } catch (error) {
     console.error('reactivateUserByAuthId 에러:', error);
@@ -227,9 +226,12 @@ export const reactivateUserByAuthId = async (userAuthId) => {
 };
 
 // 설명. 12. 로그인 전 비밀번호 재설정 API - POST 요청 (토큰 필요 없음)
-export const resetPassword = async (userAuthId, password) => {
+export const resetPasswordAPI = async (userAuthId, password) => {
   try {
-    const response = await apiClient.post('/users/re-password', { userAuthId, password });
+    const response = await apiClient.post('/users/re-password', {
+      user_auth_id: userAuthId, // 스네이크 케이스로 수정
+      password: password
+    });
     return response.data;
   } catch (error) {
     console.error('resetPassword 에러:', error);
