@@ -217,7 +217,9 @@ export const deactivateUser = async (userId, accessToken) => {
 // 설명. 11. 사용자 재활성화 API - POST 요청 (토큰 필요 없음)
 export const reactivateUserByAuthId = async (userAuthId) => {
   try {
-    const response = await apiClient.post('/users/activate', { user_auth_id: userAuthId });
+    const response = await apiClient.post('/users/activate', null, { // POST 요청의 body는 null로 설정
+      params: { userAuthId: userAuthId } // RequestParam으로 userAuthId 전달
+    });
     return response.data;
   } catch (error) {
     console.error('reactivateUserByAuthId 에러:', error);
