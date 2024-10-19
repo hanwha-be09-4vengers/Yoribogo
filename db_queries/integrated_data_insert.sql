@@ -70,7 +70,11 @@ VALUES
 
 
 -- 나만의 레시피 게시판
-
+INSERT INTO recipe_board (recipe_board_id, recipe_board_menu_name, recipe_board_ingredient, recipe_board_image, recipe_board_likes, recipe_board_comments, recipe_board_created_at, recipe_board_status, user_id)
+VALUES
+(1, '맛있는 김치찌개', '김치 500g, 돼지고기 200g, 두부 1모, 파 1뿌리', 'https://example.com/kimchi-stew-image.jpg', 1, 0, '2024-10-17 17:19:23', 'ACTIVE', 7),
+(2, '맛있는 김치찌개2', '김치 500g, 돼지고기 200g, 두부 1모, 파 1뿌리', 'https://example.com/kimchi-stew-image.jpg', 0, 0, '2024-10-17 17:30:07', 'ACTIVE', 7),
+(3, '맛있는 김치찌개3', '김치 500g, 돼지고기 200g, 두부 1모, 파 1뿌리', 'https://example.com/kimchi-stew-image.jpg', 0, 0, '2024-10-17 17:30:10', 'ACTIVE', 7);
 
 
 -- 나만의 레시피 좋아요

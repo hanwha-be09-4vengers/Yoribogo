@@ -2,7 +2,7 @@
   <nav id="main-nav" class="main-nav">
     <div id="logo" class="logo" @click="goHome">
       <img src="/src/assets/logo.svg" alt="Logo" />
-      <span>Yoribogo</span>
+      <span>요리보고</span>
     </div>
     
     <ul class="menu">
@@ -52,11 +52,6 @@ watch(
   { immediate: true } // 초기에도 바로 실행
 );
 
-// 로그아웃 처리
-const logout = () => {
-  tokenStore.logout(); // Pinia 스토어의 로그아웃 함수 호출
-  router.push('/'); // 로그아웃 후 홈으로 이동
-};
 
 // 위키 페이지로 이동
 const goWiki = () => {
@@ -98,7 +93,7 @@ const goHome = () => {
 
 .logo span {
   font-size: 2rem;
-  font-weight: 600;
+  font-weight: bold;
   color: var(--black-color);
 }
 
