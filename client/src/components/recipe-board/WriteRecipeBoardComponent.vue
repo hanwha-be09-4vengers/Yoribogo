@@ -114,6 +114,8 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize);
 });
 
+
+/* 레시피 작성 메소드 */
 // 메뉴가 변경되는 경우 로컬스토리지 변경사항 저장
 watch(menu_name, (newValue) => {
   localStorage.setItem('menu_name', newValue);
@@ -146,20 +148,26 @@ const removeIngredient = (index) => {
   console.log(ingredients.value);
 };
 
-
-
-// 조리 순서 추가 함수
-const addStep = ({ step, image }) => {
-  if (step || image) {
-    manual_step.value.push({ step, image });
-    saveToLocalStorage(); // 추가 후 로컬 스토리지 업데이트
+// 조리 방법 추가 함수
+const addStep = ({step, image=''}) => {
+  if (step) {
+    manual_step.value.push({step, image});
+    //로컬 스토리지 저장
+    saveToLocalStorage();
+    console.log("조리 순서 추가됨", {step, image})
+  } else{
+    console.log("조리방법은 반드시 추가해야합니다. 이미지는 필수 아님 ")
   }
-};
+  
+}
+
+
 
 // 로컬 스토리지에 저장하는 함수
 const saveToLocalStorage = () => {
   try {
     localStorage.setItem('menu_name', menu_name.value);
+    localStorage.setItem('image_board', board_image.value);
     localStorage.setItem('ingredients', JSON.stringify(ingredients.value));
     localStorage.setItem('manual_step', JSON.stringify(manual_step.value));
   } catch (e) {
@@ -179,11 +187,13 @@ const saveToLocalStorage = () => {
 <style scoped>
 .write-recipe-board {
   display: flex;
-  justify-content: space-between;
-  width: 90%;
-  height: 100rem;
-  margin-top: 8rem;
-  margin-bottom: 8rem;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 90%;
+    height: auto;
+    margin-top: 8rem;
+    margin-bottom: 8rem;
+    gap: 3rem;
 }
 
 .attribute-board {
