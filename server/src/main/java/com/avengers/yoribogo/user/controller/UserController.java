@@ -7,6 +7,7 @@ import com.avengers.yoribogo.security.JwtUtil;
 import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.domain.enums.SignupPath;
 import com.avengers.yoribogo.user.domain.vo.ResponseUserVO;
+import com.avengers.yoribogo.user.domain.vo.UserIdEmailVerificationVO;
 import com.avengers.yoribogo.user.domain.vo.email.EmailVerificationSignupVO;
 import com.avengers.yoribogo.user.domain.vo.email.EmailVerificationVO;
 import com.avengers.yoribogo.user.domain.vo.email.ResponseEmailMessageVO;
@@ -114,7 +115,7 @@ public class UserController {
     }
 
 
-    //설명. 2.1 이메일 인증번호 검증 API (회원가입,아이디,비밀번호 찾기 실행)
+    //설명. 2.1 이메일 인증번호 검증 API (회원가입,비밀번호 찾기 실행)
     @PostMapping("/verification-email/confirmation")
     public ResponseDTO<?> verifyEmail(@RequestBody @Validated EmailVerificationVO request) {
         boolean isVerified = emailVerificationService.verifyCode(request.getEmail(), request.getCode());
@@ -125,6 +126,19 @@ public class UserController {
             return ResponseDTO.ok(responseEmailMessageVO);
         } else {
             return ResponseDTO.fail(new CommonException(ErrorCode.INVALID_VERIFICATION_CODE));
+        }
+    }
+
+    //설명. 2.2 이메일 인증번호 검증 API (아이디 찾기 실행)
+    @PostMapping("/nickname/verification-email")
+    public ResponseDTO<?> verifyUserIdEmail(@RequestBody @Validated UserIdEmailVerificationVO request) {
+        try {
+            // 이메일과 인증 코드 검증
+            UserEntity userEntity = emailVerificationService.verifyUserNicknameCode(request.getNickname(), request.getEmail(), request.getCode());
+            return ResponseDTO.ok(userEntity);
+        } catch (CommonException e) {
+            // 검증 실패 시 예외 처리
+            return ResponseDTO.fail(e);
         }
     }
 

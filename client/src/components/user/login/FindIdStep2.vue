@@ -3,7 +3,7 @@
       <div class="modal-content">
         <button class="close-btn" @click="closeModal">×</button>
         <div class="modal-header">
-          <h2>SGMA</h2>
+          <h2>요리보고</h2>
         </div>
         <div class="modal-body">
           <div class="message-box">
@@ -103,16 +103,16 @@
   
   .modal-header h2 {
     margin-bottom: 1rem;
-    font-size: 3rem;
-    color: #a1b872;
+    font-size: 4rem;
+    color: #000000;
   }
   
   /* 메시지 박스 */
   .message-box {
     font-size: 2.2rem;
     color: #525150;
+    margin-top: 4rem;
     margin-bottom: 2rem;
-    margin-bottom: 40px;
   }
   
   .user-id {
@@ -125,7 +125,7 @@
   .login-btn {
     width: 240px;
     height: 40px;
-    background-color: #a1b872;
+    background-color: #2c3e60;
     color: white;
     border: none;
     border-radius: 5px;
