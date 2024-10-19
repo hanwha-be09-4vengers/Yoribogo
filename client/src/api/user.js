@@ -126,6 +126,19 @@ export const fetchUserById = async (userId, accessToken) => {
   }
 };
 
+// 설명. userId로 프로필 정보 조회 - GET 요청 (액세스 토큰 필요)
+export const fetchUserDetailProfile = async (userId, accessToken) => {
+  try {
+    const response = await apiClient.get(`/users/${userId}/profile`, {
+      headers: { Authorization: `Bearer ${accessToken}` }, // 토큰 추가
+    });
+    return response.data;  // 반환된 사용자 프로필 정보
+  } catch (error) {
+    console.error('프로필 정보 조회 중 오류:', error);
+    throw error;
+  }
+};
+
 // 설명. 4.4 사용자 프로필 변경 (닉네임, 사진) - PATCH 요청 (액세스 토큰 필요)
 export const updateUserProfile = async (userId, nickname, profileImage, accessToken) => {
   try {
