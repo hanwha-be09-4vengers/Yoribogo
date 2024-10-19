@@ -23,14 +23,26 @@
 <script setup>
 import MainNav from '@/components/MainNav.vue'
 import { useRouter } from 'vue-router'
+import { onMounted, onUnmounted } from 'vue'
+import { connectSSE } from '@/api/sserequest'
 
 const router = useRouter()
+let eventSource;
+
+onMounted(() => {
+  eventSource = connectSSE();
+})
+
+onUnmounted(() => {
+  if (eventSource) {
+    eventSource.close();
+  }
+})
 
 const goQuestion = () => {
   router.push('/question/1')
 }
 </script>
-
 <style scoped>
 .home-view {
   position: relative;
