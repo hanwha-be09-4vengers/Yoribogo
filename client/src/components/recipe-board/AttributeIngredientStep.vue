@@ -22,7 +22,7 @@
             <!-- 조리 순서 영역 -->
             <div class="section">
                 <div class="section-header">조리 순서</div>
-                <div class="section-content">
+                <div class="section-content scroll-container">
                     <span v-if="steps.length === 0">요리 방법 항목이 비어있습니다.</span>
                     <div v-else v-for="(step, index) in steps" :key="index">
                         <WriteStepInput 
@@ -102,7 +102,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 10rem;
+        gap: 5rem;
     }
     
     .section {
@@ -184,5 +184,14 @@
     li {
         padding: 0.5rem 0;
         font-size: 1.3rem;
+    }
+
+    .scroll-container{
+    max-height: 500px;
+    overflow-y: auto;
+    /* border: solid; */
+    padding: 10px;
+    border-radius: 0px;
+
     }
     </style>

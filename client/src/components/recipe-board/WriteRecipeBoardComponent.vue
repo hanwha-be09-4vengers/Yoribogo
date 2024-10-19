@@ -238,16 +238,6 @@ const saveToLocalStorage = () => {
   /* align-items: flex-end; */
 }
 
-.write-recipe-board {
-  display: flex;
-  flex-direction: column; /* 수직으로 배치 */
-  justify-content: space-between; /* 공간 배분 */
-  width: 90%;
-  height: 100rem;
-  margin-top: 8rem;
-  margin-bottom: 8rem;
-  gap: 3rem; /* 내용 간격 */
-}
 
 .submit-button-container{
   justify-content: center;
