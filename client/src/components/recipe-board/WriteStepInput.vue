@@ -23,7 +23,7 @@
 
 <script setup>
 
-    import { ref , onMounted} from 'vue';
+    import { ref , onMounted, watch, onBeforeUnmount} from 'vue';
 
     // Props: 현재 단계 인덱스와 초기 데이터
     const props = defineProps({
@@ -55,6 +55,7 @@
     }
 });
 
+
 const onImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -73,16 +74,46 @@ const onImageChange = (e) => {
         console.log('stepImage:', stepImage); // ref 객체
         
         emit('update-step', { step: stepText.value, image: stepImage.value }); // Emit으로 업데이트
+
+                // Blob URL이 생성된 후 확인
+                if (!stepImage.value) {
+            console.error("Blob URL 생성 실패");
+            return;
+        }
     }
 };
-    // 조리 순서 추가
-    const addStep = () => {
-    emit('add-step', props.index);
-    };
 
-    // 조리 순서 삭제
-    const removeStep = () => {
-    emit('remove-step', props.index);
+// 컴포넌트 언마운트 시 Blob URL 정리
+onBeforeUnmount(() => {
+    if (stepImage.value) {
+        URL.revokeObjectURL(stepImage.value);
+    }
+});
+
+
+
+// 단계 정보를 업데이트하는 메소드
+const updateLocalStorage = () => {
+    const manualSteps = JSON.parse(localStorage.getItem('manual_step')) || [];
+    manualSteps[props.index] = { step: stepText.value, image: stepImage.value };
+    localStorage.setItem('manual_step', JSON.stringify(manualSteps));
+    console.log('로컬 스토리지 업데이트:', manualSteps);
+};
+
+
+    // 텍스트와 이미지의 변화를 감시
+    watch([stepText, stepImage], () => {
+        console.log("변화 감지");
+    updateLocalStorage(); // 값이 변경될 때마다 로컬 스토리지에 업데이트
+    });
+
+
+
+
+    // 단계 삭제
+    const removeStep = (index) => {
+    steps.value.splice(index, 1); // 해당 인덱스의 단계 삭제
+    localStorage.setItem('manual_step', JSON.stringify(steps.value)); // 업데이트된 배열을 로컬 스토리지에 저장
     };
 
     // 조리 순서 추가 버튼이 클릭되면 활성화될 메소드
@@ -90,6 +121,8 @@ const onImageChange = (e) => {
         // 빈 단계 객체 추가
         emit('add-step', { step: '', image: '' });
     }
+
+
 
 
 
