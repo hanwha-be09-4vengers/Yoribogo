@@ -61,9 +61,26 @@ public class InquiryTests {
     @DisplayName("문의 생성 확인 테스트")
     @Test
     public void testAddInquiry() {
+        UserDTO user = new UserDTO(4L,
+                "조국찬",
+                "password456",
+                "조국찬",
+                "changuk0308@naver.com",
+                "abc123xyz",
+                ActiveStatus.ACTIVE,
+                LocalDateTime.parse("2023-08-03T12:00:00"),
+                null,
+                null,
+                AcceptStatus.Y,
+                SignupPath.NORMAL,
+                UserRole.ENTERPRISE,
+                15L,
+                4L,
+                "NORMAL_abc123xyz");
+
         Inquiry result = inquiryService.insertInquiry(
-                new InquiryDTO("문의 생성 테스트", "문의 생성 테스트 내용", 3));
-        Assertions.assertTrue(result.getInquiryId() != 0);
+                new InquiryDTO("문의 생성 테스트", "문의 생성 테스트 내용", user));
+        Assertions.assertTrue(result.getInquiryId() > 0);
     }
 
     @DisplayName("문의 수정 확인 테스트")
@@ -103,6 +120,6 @@ public class InquiryTests {
     @Test
     public void testDeleteInquiry() {
         Inquiry result = inquiryService.removeInquiry(4);
-        Assertions.assertTrue(result.getInquiryStatus() == Status.INACTIVE);
+        Assertions.assertSame(result.getInquiryStatus(), Status.INACTIVE);
     }
 }

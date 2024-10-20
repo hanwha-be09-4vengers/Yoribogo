@@ -120,106 +120,75 @@ const closeAccountDeactivationModal = () => {
 const route = useRoute()
 const router = useRouter()
 
-const satisfiedRecipeList = ref([])
-const bookmarkedRecipeList = ref([])
-const myRecipeList = ref([])
-const menuList = ref(bookmarkedRecipeList.value)
-const pageInfo = ref({})
-const isEmpty = ref(true)
 const userId = ref(null);
+const menuList = ref([]);
+const pageInfo = ref({});
+const isEmpty = ref(true);
 
-// 만족했던 레시피
-const fetchSatisfiedRecipes = async (userId, page) => {
+const fetchRecipes = async (userId, page) => {
   try {
-    const response = (await axios.get(`/api/recommended-menus?user=${userId}&page=${page}`)).data
+    let response;
+    if (currentTab.value === '만족했던 레시피') {
+      response = (await axios.get(`/api/recommended-menus?user=${userId}&page=${page}`)).data;
+    } else if (currentTab.value === '북마크한 레시피') {
+      response = (await axios.get(`/api/recipe-board/favorites/users/${userId}?pageNo=${page}`)).data;
+    } else if (currentTab.value === '내가 작성한 레시피') {
+      response = (await axios.get(`/api/recipe-board/users/${userId}/boards?pageNo=${page}`)).data;
+    }
+    
     if (response.success) {
-      satisfiedRecipeList.value = response.data.content
+      menuList.value = response.data.content;
+      pageInfo.value = response.data.page;
+      isEmpty.value = menuList.value.length === 0;
     } else {
-      satisfiedRecipeList.value = []
+      menuList.value = [];
+      isEmpty.value = true;
     }
   } catch (error) {
-    console.error('Failed to fetch data:', error)
-  }
-}
-
-// 북마크한 레시피
-const fetchBookmarkedRecipes = async (userId,page) => {
-  try {
-    const response = (await axios.get(`/api/recipe-board/favorites/users/${userId}?pageNo=${page}`)).data
-    if (response.success) {
-      bookmarkedRecipeList.value = response.data.content
-    } else {
-      bookmarkedRecipeList.value = []
-    }
-  } catch (error) {
-    console.error('Failed to fetch data:', error)
-  }
-}
-
-// 내가 작성한 레시피
-const fetchMyRecipes = async (userId, page) => {
-  try {
-    const response = (await axios.get(`/api/recipe-board/users/${userId}/boards?pageNo=${page}`)).data
-    if (response.success) {
-      myRecipeList.value = response.data.content
-    } else {
-      myRecipeList.value = []
-    }
-  } catch (error) {
-    console.error('Failed to fetch data:', error)
-  }
-}
-
-// 페이지 변경 핸들러
-const handlePageChange = async (newPage) => {
-  router.push({ query: { ...route.query, page: newPage } });
-
-  // Fetch data based on current tab
-  if (currentTab.value === '만족했던 레시피') {
-    await fetchSatisfiedRecipes(userId, newPage);
-  } else if (currentTab.value === '북마크한 레시피') {
-    await fetchBookmarkedRecipes(userId, newPage);
-  } else if (currentTab.value === '내가 작성한 레시피') {
-    await fetchMyRecipes(userId, newPage);
+    console.error('Failed to fetch data:', error);
   }
 };
 
-// URL에 있는 page 값 가져오기 (기본값: 1)
-const getPageFromQuery = () => parseInt(route.query.page || '1', 10);
+// 페이지 변경 핸들러
+const handlePageChange = (newPage) => {
+  router.push({ query: { ...route.query, page: newPage } });
+};
 
 // 페이지 변경을 감지하고 fetch 요청
 watch(
-  () => route.path,
-  async (newPath) => {
-    userId.value = JSON.parse(localStorage.getItem('token')).userId;
+  () => [route.query.page, route.path],
+  async ([newPage, newPath]) => {
+    const page = parseInt(newPage || '1', 10);
+    
     if (newPath.includes('satisfied')) {
       currentTab.value = '만족했던 레시피';
-      await fetchSatisfiedRecipes(userId.value, getPageFromQuery());
-      menuList.value = satisfiedRecipeList.value;
     } else if (newPath.includes('bookmarked')) {
       currentTab.value = '북마크한 레시피';
-      await fetchBookmarkedRecipes(userId.value, getPageFromQuery());
-      menuList.value = bookmarkedRecipeList.value;
     } else if (newPath.includes('my-recipes')) {
       currentTab.value = '내가 작성한 레시피';
-      await fetchMyRecipes(userId.value, getPageFromQuery());
-      menuList.value = myRecipeList.value;
     }
 
-    if(menuList.value.length === 0) isEmpty.value = true;
-    else isEmpty.value = false;
-  },
-  { immediate: true }
+    await fetchRecipes(userId.value, page);
+  }
 );
 
-// 컴포넌트가 마운트될 때 기본 페이지 fetch
-onMounted(async () => {
+onMounted(() => {
   const tokenStore = useTokenStore();
-  
   if (!tokenStore.token.accessToken) {
     alert('마이페이지를 보시려면 로그인이 필요합니다!');
-    router.push('/login'); // 로그인 페이지로 리다이렉트
-    return;
+    router.push('/login');
+  } else {
+    userId.value = JSON.parse(localStorage.getItem('token')).userId;
+    
+    if (route.path.includes('satisfied')) {
+      currentTab.value = '만족했던 레시피';
+    } else if (route.path.includes('bookmarked')) {
+      currentTab.value = '북마크한 레시피';
+    } else if (route.path.includes('my-recipes')) {
+      currentTab.value = '내가 작성한 레시피';
+    }
+
+    fetchRecipes(userId.value, 1);
   }
 });
 </script>

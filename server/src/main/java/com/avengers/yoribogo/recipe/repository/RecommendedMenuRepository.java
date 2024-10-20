@@ -25,4 +25,7 @@ public interface RecommendedMenuRepository extends JpaRepository<RecommendedMenu
             @Param("status") RecommendedMenuStatus status,
             Pageable pageable);
 
+    // 기존 추천된 요리 조회
+    RecommendedMenu findByRecipeIdAndUserId(Long recipeId, Long userId);
+
 }

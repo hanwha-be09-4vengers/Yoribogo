@@ -65,6 +65,16 @@ public class RecommendedMenuServiceImpl implements RecommendedMenuService {
     @Override
     @Transactional
     public RecommendedMenuDTO registRecommendedMenu(RecommendedMenuDTO registRecommendedMenuDTO) {
+        // 기존 엔티티 조회
+        RecommendedMenu existingMenu = recommendedMenuRepository.findByRecipeIdAndUserId(
+                registRecommendedMenuDTO.getRecipeId(), registRecommendedMenuDTO.getUserId());
+
+        // 이미 있을 경우 정보 수정
+        if (existingMenu != null) {
+            existingMenu.setRecommendedMenuStatus(registRecommendedMenuDTO.getRecommendedMenuStatus());
+            return modelMapper.map(existingMenu, RecommendedMenuDTO.class);
+        }
+
         RecommendedMenuDTO newRecommendedMenuDTO = RecommendedMenuDTO
                 .builder()
                 .satisfaction(registRecommendedMenuDTO.getSatisfaction())
