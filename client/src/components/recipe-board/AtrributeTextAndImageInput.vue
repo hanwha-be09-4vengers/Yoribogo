@@ -15,12 +15,10 @@
       >
         <label for="file-upload-step" class="custom-file-upload">
           <i v-if="!uploadedFileName" class="fa-solid fa-image"></i>
-          <!-- 이미지 미리보기 -->
           <div v-if="uploadedImageUrl" style="display: flex; justify-content: center; align-items: center;">
-            <img :src="uploadedImageUrl" alt="미리보기 이미지" style="max-height: 15rem;"/>
+            <img :src="uploadedImageUrl" alt="미리보기 이미지" style="max-height: 15rem;" />
           </div>
           <span v-if="!uploadedFileName">
-            <!-- {{ "여기에 이미지를 드래그하거나 클릭하여 추가"}} -->
             {{ props.name === '조리 순서' ? '여기에 이미지를 드래그하거나 클릭하여 추가' : props.placeholder }}
           </span>
           <span v-else>{{ uploadedFileName }}</span>
@@ -35,103 +33,60 @@
 </template>
 
 <script setup>
-  import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps, defineEmits } from 'vue';
 
-  const uploadedFileName = ref('') // 파일 이름을 저장할 변수
-  const uploadedImageUrl = ref('') // 이미지 URL 저장
+const uploadedFileName = ref('') // 파일 이름을 저장할 변수
+const uploadedImageUrl = ref('') // 이미지 URL 저장
+const stepText = ref(''); // 단계 텍스트 저장
 
-
-  // const imageUploadName = ref(''); // 파일 이름을 저장할 변수
-  const stepText = ref('');
-
-
-  const props = defineProps({
-    name: {
-      type: String,
-      required: true,
-    },
-    placeholder: {
-      type: String,
-      required: true,
-    },
-    modelValue: { // v-model을 사용하려면 modelValue prop을 받아야 함
-    type: [String, Object], // 파일 또는 문자열을 허용 (상황에 따라)
-    default: ''
-    },
-    index: { // index 추가
+const props = defineProps({
+  name: {
+    type: String,
+    required: true,
+  },
+  placeholder: {
+    type: String,
+    required: true,
+  },
+  index: { // index 추가
     type: Number,
     required: true,
-    }
-  });
-
-  const emit = defineEmits(['update:modelValue', 'add']);
-
-
-  const handleFileChange = (event) => {
-  const file = event.target.files[0];
-  console.log("파일 선택 이벤트 발생:", file); // 로그 추가
-
-  if (file && file.type.startsWith('image/')) {
-    uploadedFileName.value = file.name // 파일 이름 저장
-    uploadedImageUrl.value = URL.createObjectURL(file) // 이미지 미리보기 URL 생성
-
-    // localStorage에 이미지 URL 저장
-    localStorage.setItem(`step_image_${props.index}`, uploadedImageUrl.value);
-    console.log(`step_image_${props.index}`)
-
-
-    console.log("파일 변경이 감지됨 by click: 조리방법", file.name);
   }
-}
+});
 
+const emit = defineEmits(['add']);
 
-  const handleFileDrop = (event) => {
-    const file = event.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-      uploadedFileName.value = file.name // 파일 이름 저장
-      uploadedImageUrl.value = URL.createObjectURL(file) // 이미지 미리보기 URL 생성
-
-      // localStorage에 이미지 URL 저장
-    localStorage.setItem(`step_image_${props.index}`, uploadedImageUrl.value);
-
-
-    console.log("파일 변경이 감지됨 by drop: 조리방법", file.name);
-
-    // emit('update:modelValue', file); 
-
-    }
-  };
-
-
-
-// "추가" 버튼 클릭 시 호출할 함수
-const handleAdd = () => {
-  if (stepText.value) {
-    const newStep = {
-      step: stepText.value,
-      image: uploadedImageUrl.value // Blob URL 저장
-    };
-
-    // 로컬스토리지에 저장
-    const manualSteps = JSON.parse(localStorage.getItem('manual_step')) || [];
-    manualSteps.push(newStep);
-    localStorage.setItem('manual_step', JSON.stringify(manualSteps)); // 업데이트
-
-    // 상위 컴포넌트에 emit
-    emit('add', newStep);
-    
-    console.log("Added step:", newStep);
-
-    // 입력 필드 초기화
-    stepText.value = ''; 
-    uploadedFileName.value = ''; 
-    uploadedImageUrl.value = '';
-  } else {
-    console.log("조리 방법을 입력해야 합니다.");
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  if (file && file.type.startsWith('image/')) {
+    uploadedFileName.value = file.name;
+    uploadedImageUrl.value = URL.createObjectURL(file);
   }
 };
 
+// "추가" 버튼 클릭 시 호출할 함수
+const handleAdd = () => {
+  // 단계 텍스트와 이미지를 담은 객체 생성
+  const newStep = {
+    content: stepText.value,
+    image: uploadedImageUrl.value || null
+  };
+
+  if (newStep.content.trim() === "") {
+    alert("조리 방법을 입력하세요.");
+    return;
+  }
+
+  // 상위 컴포넌트에 emit
+  emit('add', newStep);
+  
+  // 입력 필드 초기화
+  stepText.value = ''; 
+  uploadedFileName.value = ''; 
+  uploadedImageUrl.value = '';
+};
 </script>
+
 
 
 <style scoped>
