@@ -1,56 +1,75 @@
 <template>
-    <div class="recipe-list">
-      <div class="recipe-grid">
-        <div v-for="recipe in myRecipes" :key="recipe.id" class="recipe-card">
-          <img :src="recipe.image" alt="Recipe Image" />
-          <h3>{{ recipe.title }}</h3>
-        </div>
-      </div>
+  <div class="recipe-container">
+    <div class="not-found" v-if="props.isEmpty">
+      <span>요리가 존재하지 않습니다.</span>
     </div>
-  </template>
+    <div class="recipe-list" v-if="!props.isEmpty">
+      <MenuItem
+        v-for="item in props.menuList"
+        :key="item.recipe_id"
+        :menuName="item.menu_name"
+        :menuImage="item.menu_image || ''"
+        @click="goDetail(item.recipe_id)"
+      ></MenuItem>
+    </div>
+  </div>
+</template>
   
-  <script setup>
-  import { ref } from 'vue';
+<script setup>
+import MenuItem from '../recipe/MenuItem.vue';
+import { useRouter } from 'vue-router' // Vue Router 사용
+
+const router = useRouter() // 라우터 인스턴스 가져오기
+
+const props = defineProps({
+  menuList: {
+    type: Object,
+    required: true
+  },
+  isEmpty: {
+    type: Boolean,
+    required: true
+  }
+})
+
+const goDetail = (recipeId) => {
+  router.push(`/wiki/${recipeId}`)
+}
+</script>
   
-  // 내가 작성한 레시피 데이터 (예시 데이터)
-  const myRecipes = ref([
-    { id: 1, title: '샐러드', image: 'https://example.com/recipe6.jpg' },
-    { id: 2, title: '매운요거트 토마토샐러드', image: 'https://example.com/recipe7.jpg' },
-    { id: 3, title: '해산물샐러드와 미나리소스', image: 'https://example.com/recipe8.jpg' },
-    // 추가 레시피 데이터...
-  ]);
-  </script>
-  
-  <style scoped>
+<style scoped>
+.not-found {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 4rem;
+  font-size: 2.4rem;
+  color: var(--black-color);
+}
+
+.recipe-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+
+.recipe-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  width: 80%;
+  margin-top: 6rem;
+  margin-bottom: 8rem;
+}
+
+@media screen and (max-width: 960px) {
   .recipe-list {
-    padding: 2rem;
-    text-align: center;
+    grid-template-columns: repeat(2, 1fr);
   }
-  
-  .recipe-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-  
-  .recipe-card {
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    text-align: center;
-  }
-  
-  .recipe-card img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-  }
-  
-  .recipe-card h3 {
-    margin: 1rem 0;
-    font-size: 1.4rem;
-    color: #333;
-  }
-  </style>
+}
+
+</style>
   
