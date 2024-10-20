@@ -7,8 +7,11 @@
     </div>
     <div class="notification-modal" v-show="isMenuVisible">
       <ul class="notification-list">
-        <li class="notification" v-for="notification in notifications" :key="notification.notificationId"
-            :class="{ 'unread': notification.notificationStatus === 'UNREAD' }">
+        <li class="notification" 
+            v-for="notification in notifications" 
+            :key="notification.notificationId"
+            :class="{ 'unread': notification.notificationStatus === 'UNREAD' }"
+            @click="markAsRead(notification)">
           <span>{{ notification.notificationContent }}</span>
           <span class="notification-date">{{ formatDate(notification.notificationCreatedAt) }}</span>
         </li>
@@ -18,16 +21,19 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { connectSSE } from '@/api/sserequest'
+import { ref, computed } from 'vue';
+import { connectSSE } from '@/api/sserequest';
 
+// 상태 및 데이터 설정
 const notifications = ref([]);
 const isMenuVisible = ref(false);
 
+// 읽지 않은 알림 카운트 계산
 const unreadCount = computed(() => {
   return notifications.value.filter(notification => notification.notificationStatus === 'UNREAD').length;
 });
 
+// SSE 연결 설정
 const eventSource = connectSSE();
 
 eventSource.addEventListener('notification', (event) => {
@@ -41,14 +47,38 @@ eventSource.addEventListener('notification', (event) => {
   });
 });
 
+// 알림 상태를 읽음으로 변경하는 함수
+const markAsRead = async (notification) => {
+  if (notification.notificationStatus === 'READ') return;  // 이미 읽은 알림이면 무시
+
+  try {
+    // PUT 요청으로 서버에 상태 업데이트 요청
+    const response = await fetch(`/api/notification/updateStatus/${notification.notificationId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (response.ok) {
+      // 성공적으로 업데이트되면 클라이언트 측 상태 변경
+      notification.notificationStatus = 'READ';
+    } else {
+      console.error('Failed to update notification status');
+    }
+  } catch (error) {
+    console.error('Error updating notification status:', error);
+  }
+};
+
+// 메뉴 토글 함수
 const toggleMenu = () => {
   isMenuVisible.value = !isMenuVisible.value;
-}
+};
 
+// 날짜 포맷 함수
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleString();
-}
+};
 </script>
 
 <style scoped>
@@ -60,7 +90,7 @@ const formatDate = (dateString) => {
 }
 
 .notification-icon-wrapper {
-  position: relative; /* 자식 요소를 위한 상대 위치 설정 */
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -83,11 +113,10 @@ const formatDate = (dateString) => {
   box-shadow: 0rem 0.4rem 0.4rem 0.1rem rgba(60, 60, 60, 0.5);
 }
 
-/* 카운트를 아이콘의 상단 우측에 고정 */
 .notification-count {
   position: absolute;
-  top: -0.5rem; /* 아이콘 위쪽으로 살짝 띄우기 */
-  right: -0.5rem; /* 오른쪽으로 살짝 이동 */
+  top: -0.5rem;
+  right: -0.5rem;
   background-color: red;
   color: white;
   border-radius: 50%;
