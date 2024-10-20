@@ -220,8 +220,8 @@ const clearTimer = () => {
   // 홈으로 이동
   const goToHome = () => {
     clearTimer(); // 타이머 정리
-    emit('close'); // 회원가입 모달 닫기
     router.push('/');
+    emit('close'); // 회원가입 모달 닫기
   };
 
   // 다음 단계로 이동하는 함수

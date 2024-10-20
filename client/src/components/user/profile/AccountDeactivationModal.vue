@@ -37,8 +37,10 @@
   import { deactivateUser } from '@/api/user'; // 회원 탈퇴 API 호출 함수
   import YesNoButton from '@/components/common/YesNoButton.vue'; // YesNoButton 컴포넌트 임포트
   
+  import { useTokenStore } from '@/stores/tokenStore'; // Pinia 토큰 스토어 임포트
+
+  const tokenStore = useTokenStore();
   const emit = defineEmits(['close']); // 부모에게 close 이벤트 방출
-  const token = inject('token'); // 토큰 정보를 주입
   const router = useRouter(); // Vue Router 사용 설정
   
   // 모달 닫기 함수
@@ -48,19 +50,15 @@
   
   // 로그아웃 및 토큰 삭제 함수
 const logout = () => {
-  localStorage.removeItem('token'); // 로컬스토리지에 저장된 토큰 삭제 (필요시)
-  // 여기서 `token`을 삭제하고, 애플리케이션에서 로그아웃 처리를 추가하세요.
-  token.accessToken = null; // Vue 앱에서 주입된 토큰 값을 제거
-  token.userId = null; // 주입된 사용자 ID 값을 제거
-  // 로그아웃 후 홈페이지로 리다이렉트
-  router.push('/');
+  tokenStore.logout(); // Pinia 스토어의 로그아웃 함수 호출
+  router.push('/'); // 로그아웃 후 홈으로 이동
 };
 
 // 회원 탈퇴 요청 함수
 const deactivateAccount = async () => {
   if (confirm('정말로 회원 탈퇴를 진행하시겠습니까?')) {
     try {
-      const response = await deactivateUser(token.userId, token.accessToken);
+      const response = await deactivateUser(tokenStore.token.userId,tokenStore.token.accessToken);
       if (response.success) {
         alert('회원 탈퇴가 완료되었습니다. 이용해주셔서 감사합니다.');
         logout(); // 로그아웃 함수 호출

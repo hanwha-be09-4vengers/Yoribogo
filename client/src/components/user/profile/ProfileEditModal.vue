@@ -47,7 +47,9 @@
     import YesNoButton from '@/components/common/YesNoButton.vue'; // YesNoButton 컴포넌트 임포트
     import { updateUserProfile, validateNickname } from '@/api/user'; // 필요한 API 함수들 임포트
     import { useRouter } from 'vue-router'; // vue-router 임포트
-    
+    import { useTokenStore } from '@/stores/tokenStore'; // Pinia 토큰 스토어 임포트
+    import { resetPasswordAPI } from '@/api/user';  // user.js에서 함수 임포트
+
     // 이벤트 방출 함수
     const emit = defineEmits(['close']);
     
@@ -55,7 +57,7 @@
     const router = useRouter();
     
     // 토큰 정보 주입
-    const token = inject('token');
+    const tokenStore = useTokenStore();
     
     // 닉네임과 프로필 사진을 위한 데이터
     const nickname = ref('');
@@ -82,71 +84,64 @@
     };
     
     // 닉네임 중복 확인 함수
-    const checkNicknameDuplication = async () => {
-      nicknameError.value = '';
-      nicknameDuplicationStatus.value = '';
-      isNicknameAvailable.value = false;
-    
-      if (!nickname.value) {
-        nicknameError.value = '닉네임을 입력해주세요.';
-        return;
+const checkNicknameDuplication = async () => {
+  nicknameError.value = '';
+  nicknameDuplicationStatus.value = '';
+  isNicknameAvailable.value = false;
+
+  if (!nickname.value) {
+    nicknameError.value = '닉네임을 입력해주세요.';
+    return;
+  }
+
+  try {
+    const response = await validateNickname(nickname.value);
+    if (response && response.success) {
+      if (!response.data.exist) {
+        nicknameDuplicationStatus.value = '사용 가능한 닉네임입니다.';
+        isNicknameAvailable.value = true;
+      } else {
+        nicknameError.value = '이미 사용 중인 닉네임입니다.';
       }
-    
-      try {
-        const response = await validateNickname(nickname.value);
-        if (response && response.success) {
-          if (!response.data.exist) {
-            nicknameDuplicationStatus.value = '사용 가능한 닉네임입니다.';
-            isNicknameAvailable.value = true;
-          } else {
-            nicknameError.value = '이미 사용 중인 닉네임입니다.';
-          }
-        } else {
-          nicknameError.value = '닉네임 중복 확인 중 오류가 발생했습니다.';
-        }
-      } catch (error) {
-        nicknameError.value = '닉네임 중복 확인 중 오류가 발생했습니다.';
-        console.error('checkNicknameDuplication 에러:', error);
-      }
-    };
-    
-    // completeUpdateProfile 함수
-    const completeUpdateProfile = async () => {
-      if (!canComplete.value) return;
-    
-      try {
-        // FormData 객체 생성
-        const formData = new FormData();
-        formData.append('nickname', nickname.value);
-    
-        // profilePicture가 있을 때는 파일을, 없을 때는 null을 추가
-        if (profilePicture.value) {
-          formData.append('profile_image', profilePicture.value);
-        } else {
-          formData.append('profile_image', null); // 파일이 선택되지 않은 경우 null로 추가
-        }
-    
-        console.log("userId:", token.userId);
-        console.log("accessToken:", token.accessToken); // accessToken 값을 출력하여 확인
-    
-        const response = await updateUserProfile(token.userId, formData, token.accessToken);
-    
-        if (response.success) {
-          alert('프로필이 성공적으로 업데이트되었습니다!');
-          closeModal();
-          router.push('/mypage'); // 마이페이지로 이동
-        } else {
-          alert(`프로필 수정 중 오류가 발생했습니다: ${response.message}`);
-        }
-      } catch (error) {
-        if (error.response && error.response.status === 403) {
-          alert('접근 권한이 없습니다. 다시 로그인해주세요.');
-        } else {
-          alert('프로필 수정 중 오류가 발생했습니다. 다시 시도해주세요.');
-        }
-        console.error('completeUpdateProfile 에러:', error);
-      }
-    };
+    } else {
+      nicknameError.value = '닉네임 중복 확인 중 오류가 발생했습니다.';
+    }
+  } catch (error) {
+    nicknameError.value = '닉네임 중복 확인 중 오류가 발생했습니다.';
+    console.error('checkNicknameDuplication 에러:', error);
+  }
+};
+
+// 프로필 업데이트 함수
+const completeUpdateProfile = async () => {
+  if (!canComplete.value) return;
+
+  try {
+    // FormData 객체 생성 (이미 user.js에 정의된 updateUserProfile 함수는 이미 formData를 사용하므로 따로 만들 필요 없음)
+    const profileImage = profilePicture.value || null; // 이미지가 없을 경우 null 처리
+
+    console.log("userId:", tokenStore.token.userId);
+    console.log("accessToken:", tokenStore.token.accessToken); // accessToken 값을 출력하여 확인
+
+    // updateUserProfile 함수를 호출
+    const response = await updateUserProfile(tokenStore.token.userId, nickname.value, profileImage, tokenStore.token.accessToken);
+
+    if (response.success) {
+      alert('프로필이 성공적으로 업데이트되었습니다!');
+      closeModal();
+      router.push('/mypage'); // 마이페이지로 이동
+    } else {
+      alert(`프로필 수정 중 오류가 발생했습니다: ${response.message}`);
+    }
+  } catch (error) {
+    if (error.response && error.response.status === 403) {
+      alert('접근 권한이 없습니다. 다시 로그인해주세요.');
+    } else {
+      alert('프로필 수정 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
+    console.error('completeUpdateProfile 에러:', error);
+  }
+};
     
     // 모달 닫기 함수
     const closeModal = () => {
@@ -205,15 +200,48 @@
     
     /* 모달 헤더 */
     .modal-header {
-      text-align: center;
-    }
-    
-    .modal-header h2 {
-      margin: 2rem;
-      font-size: 3rem;
-      color: #a1b872;
-    }
-    
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.2rem 1rem; /* 상단 여백을 줄여서 위로 밀기 */
+  position: relative;
+  width: 100%;
+  margin-top: 6rem;
+  margin-bottom: 4rem; /* 모달 내용과의 간격 줄이기 */
+}
+
+.modal-header h2 {
+  font-size: 3.6rem; /* 조금 더 작게 */
+  color: #000000;
+  margin: 0; /* 텍스트 기본 여백 제거 */
+  position: absolute; /* 텍스트를 중앙에 고정 */
+  top: 50%; /* 부모 높이의 중앙 */
+  left: 50%; /* 부모 너비의 중앙 */
+  transform: translate(-50%, -50%); /* 중앙 정렬 */
+}
+
+    /* 인사말 텍스트 */
+  /* 인사말 텍스트 */
+.message-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* 왼쪽 정렬 */
+  padding-left: 1rem; /* 약간의 왼쪽 여백 추가 */
+}
+
+.first-text {
+  font-size: 2.2rem;
+  color: #525150;
+}
+
+.second-text {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #525150;
+  margin-bottom: 1rem;
+}
+
+
     /* 모달 바디 */
     .modal-body {
       display: flex;
