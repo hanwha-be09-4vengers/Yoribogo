@@ -20,7 +20,8 @@
           >
           </ResultBoard>
         </div>
-        <div class="response-board-container" v-show="!isLoading">
+       <!-- 로그인된 사용자만 ResponseBoard가 보이도록 설정 -->
+       <div class="response-board-container" v-show="!isLoading && isLoggedIn">
           <ResponseBoard
             :class="{ flipped: isFlipped }"
             @good="postRecommendData('GOOD')"
@@ -46,11 +47,17 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import ResponseBoard from '@/components/recommend/ResponseBoard.vue'
+import { useTokenStore } from '@/stores/tokenStore'
 
 const router = useRouter()
 
 const isFlipped = ref(false)
 const isLoading = ref(true)
+
+// Pinia 스토어에서 토큰 정보를 가져와서 로그인 상태를 확인
+const tokenStore = useTokenStore()
+const isLoggedIn = ref(false)
+
 
 const menuName = ref('')
 const menuImage = ref(
@@ -111,6 +118,8 @@ const postRecommendData = async (satisfaction) => {
 }
 
 onMounted(() => {
+   // 토큰이 있는지 확인하여 로그인 여부 설정
+   isLoggedIn.value = !!tokenStore.token.accessToken
   fetchRecommendedMenu()
 })
 </script>
