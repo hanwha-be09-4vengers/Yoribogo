@@ -32,7 +32,7 @@ header {
   justify-content: center;
   align-items: center;
   width: 100%;
-  min-height: 8rem;
+  min-height: 10rem;
   z-index: 3;
 }
 

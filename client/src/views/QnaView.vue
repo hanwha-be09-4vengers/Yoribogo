@@ -8,15 +8,15 @@
     <MainBoard :cur="'qna'">
       <div class="wrapper">
         <div class="L1">
-          <p @click="goHome">문의 게시판</p>
-          <div class="search">
-            <img src="/src/assets/images/search_icon.png">
+          <p @click="goHome">Q & A</p>
+          <form class="search" @submit.prevent="searchText">
+            <i class="fa-solid fa-magnifying-glass" @click="searchText"></i>
             <input class="inputValue" type="search" @keyup.enter="searchText" v-model="sTxt" placeholder="문의사항 검색">
-          </div>
+          </form>
         </div>
         <div class="L2">
           <div class="p-container">
-            <p @click="changeList($event.target.innerText)">전체</p>
+            <p @click="changeList($event.target.innerText)" class="active">전체</p>
             <p @click="changeList($event.target.innerText)">답변대기</p>
             <p @click="changeList($event.target.innerText)">답변완료</p>
           </div>
@@ -60,11 +60,10 @@ import ProfileButton from '@/components/common/ProfileButton.vue';
 import NotificationButton from '@/components/common/NotificationButton.vue';
 
   import {ref, onMounted} from 'vue';
-  import {useRoute, useRouter} from 'vue-router';
+  import { useRouter } from 'vue-router';
   import { useTokenStore } from '@/stores/tokenStore';
   import {getInquiries, getUserInfo} from '@/api/qna.js';
 
-  const route = useRoute();
   const router = useRouter();
   const tokenStroe = useTokenStore();
   const inquiry = ref([]);
@@ -143,13 +142,11 @@ import NotificationButton from '@/components/common/NotificationButton.vue';
 
   const changeList = (elemt) => {
     const tags = document.querySelectorAll('.L2 p');
-    for(let i=0; i < tags.length; i++) {
+    for (let i = 0; i < tags.length; i++) {
       if (tags[i].innerText === elemt) {
-        tags[i].style.fontWeight = 'bold';
-        tags[i].style.color = 'black';
+        tags[i].classList.add('active');
       } else {
-        tags[i].style.fontWeight = 'normal',
-        tags[i].style.color = '#AEB3BB'
+        tags[i].classList.remove('active');
       }
     }
 
@@ -228,179 +225,270 @@ import NotificationButton from '@/components/common/NotificationButton.vue';
 }
 
 .wrapper {
-  display: grid;
-  grid-template-rows: 12% 8% 75% 5%;
-  width: 100%;
-  height: 100vh;
-  padding: 60px 60px 50px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+  min-height: 60rem;
   font-size: 2.2rem;
+  margin-top: 8rem;
 }
+
 .L1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 5% 0 5%;
+  width: 100%;
 }
+
 .L1 p {
   cursor: pointer;
   font-size: 4rem;
-  font-weight: bold;
+  font-weight: 700;
+  color: var(--black-color);
 }
+
 .search {
   display: grid;
   grid-template-columns: 15% 80%;
   align-items: center;
-  margin: 10px 0 0 0;
-  width: 230px;
-  height: 30px;
-  border-radius: 3px;
+  margin-top: 1rem;
+  width: 28rem;
+  height: 5rem;
+  border-radius: 1rem;
   border: 1px solid #AEB3BB;
   text-align: center;
   justify-content: center;
 }
 
-.search img {
-  width: 18px;
-  height: 18px;
+.search i {
+  color: #AEB3BB;
 }
 
 input[type=search] {
+  align-items: center;
   border: none;
   outline: none;
-  font-size: 2rem;
+  font-size: 2.2rem;
 }
+
 input[type=search]::placeholder {
-  color: #9a9fa7;
-  font-weight: 100;
-  font-size: 2.7rem;
+  color: #AEB3BB;
+  font-weight: 400;
+  font-size: 2.2rem;
 }
+
 .L2 {
   display: flex;
   justify-content: space-between;
-  padding-right: 5%;
+  width: 100%;
   align-items: center;
+  margin-top: 4rem;
+  padding-bottom: 2rem;
+  border-bottom: 0.05rem solid #bfc1c466;
 }
+
 .p-container {
   display: flex;
-  column-gap: 20px;
-  padding: 0 5% 0 5%;
-  justify-items: center;
+  justify-content: space-evely;
   color: #AEB3BB;
 }
+
+.p-container p {
+  position: relative;
+  font-size: 2.5rem;
+  cursor: pointer;
+  color: #AEB3BB;
+  transition: color 0.3s ease;
+}
+
+.p-container p.active {
+  color: var(--black-color);
+  font-weight: bold;
+}
+
+.p-container p::after {
+  content: '';
+  position: absolute;
+  bottom: -2.6rem; 
+  left: 0;
+  width: 0;
+  height: 0.4rem;
+  background-color: var(--black-color);
+}
+
+.p-container p.active::after {
+  width: 100%; /* 밑줄의 길이 */
+}
+
 .L2 div p {
+  display: flex;
+  width: 12rem;
+  justify-content: center;
   cursor: pointer;
   font-size: 2.5rem;
 }
 
-.L2 div p:first-child {
-  font-weight: bold;
-  color: black;
-}
-.create-btn {
-  display: flex;
-  width: 1fr;
-  margin-right: 10px;
-  text-align: center;
-  justify-content: flex-end;
-  margin: 0;
-}
 .create-btn button {
-  height: 30px;
-  width: 80px;
-  font-size: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 4.5rem;
+  width: 12rem;
   border: none;
-  color: white;
-  background-color: black;
+  color: var(--white-color);
+  background-color: var(--navy-color);
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 0.8rem;
   font-size: 2rem;
 }
 
 .L3 {
-  display: grid;
-  grid-template-rows: repeat(10, 10%);
-  padding: 0 5% 0 5%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 2rem;
+  margin-top: 2rem;
 }
 
-.list:first-child {
-  border-top: 0.5px solid #bfc1c466;
-}
 .list {
   display: grid;
   grid-template-columns: 0.5fr 5fr 2fr 2fr 1fr;
-  align-content: center;
-  align-items: center;
   justify-items: center;
+  align-items: center;
   border-bottom: 0.5px solid #bfc1c466;
+  padding-bottom: 2rem;
+  font-size: 2rem;
 }
+
 .L3 .list a, .L3 .list p {
   font-weight: 500;
-  color: black;
+  color: var(--black-color);
 }
 
 .title {
   display: flex;
   justify-self: start;
   align-items: center;
-  padding-left: 10px;
-  gap: 5px;
+  padding-left: 1.5rem;
+  gap: 1rem;
 }
+
 .privateIcon {
-  width: 7px;
-  height: 10px;
+  width: 1.2rem;
+  height: 1.4rem;
 }
+
 .visibility1, .visibility2 {
-  height: 24px;
-  width: 55px;
-  margin-left: 10px;
-  margin-right: 10px;
-  align-content: center;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 4rem;
+  width: 8rem;
 }
+
 .visibility1 {
-  font-size: 6px;
-  border-radius: 16px;
-  background: #EFEFEF;
-  color: #B9B9B9;
+  font-size: 1.2rem;
+  border-radius: 2rem;
+  background: #aaa;
+  color: var(--white-color);
 }
+
 .visibility2 {
-  font-size: 6px;
-  border-radius: 16px;
-  background: #333;
-  color: white;
+  font-size: 1.2rem;
+  border-radius: 2rem;
+  background: var(--pink-color);
+  color: var(--white-color);
 }
 
 .L4 {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  column-gap: 8px;
-  font-family: "Noto Sans KR";
-  height: 100%;
+  gap: 2rem;
+  margin-top: 4rem;
+  margin-bottom: 4rem;
 }
 
 .L4 button, .L4 div, .L4 div button {
   display: flex;
-  flex-direction: column;
   background: none;
   border: none;
-  color: black;
-  text-align: center;
+  color: var(--black-color);
   font-size: 3rem;
   cursor: pointer;
   height: 100%;
-  justify-content: flex-end;
-  align-items: flex-end;
-  text-align: center;
 }
 
+@media screen and (max-width: 768px) {
+  .L2 div p {
+    width: 10rem;
+  }
 
-.notification-btn {
-  position: absolute;
-  top: 7rem;
-  left: 12rem
+  .list {
+    font-size: 1.8rem;
+  }
+
+  .visibility1, .visibility2 {
+    height: 3.2rem;
+    width: 6.4rem;
+    font-size: 1.2rem;
+  }
 }
+
+@media screen and (max-width: 600px) {
+  .search {
+    width: 24rem;
+    height: 5rem;
+  }
+
+  input[type=search] {
+    font-size: 2rem;
+  }
+
+  input[type=search]::placeholder {
+    font-size: 2rem;
+  }
+
+  .list {
+    font-size: 1.6rem;
+  }
+
+  .visibility1, .visibility2 {
+    height: 3rem;
+    width: 6rem;
+    font-size: 1.1rem;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .L2 div p {
+    width: 8rem;
+    font-size: 2rem;
+  }
+
+  .create-btn button {
+    height: 4rem;
+    width: 10rem;
+    font-size: 1.6rem;
+  }
+
+  .list {
+    font-size: 1.5rem;
+  }
+
+  .visibility1, .visibility2 {
+    height: 2.7rem;
+    width: 5.4rem;
+    font-size: 1rem;
+  }
+}
+
 @media screen and (max-width: 480px) {
+  .list {
+    font-size: 1.4rem;
+  }
+
   .notification-btn {
     left: 10rem;
   }
@@ -415,6 +503,33 @@ input[type=search]::placeholder {
 }
 
 @media screen and (max-width: 425px) {
+  .search {
+    width: 22rem;
+    height: 5rem;
+  }
+
+  input[type=search] {
+    font-size: 1.8rem;
+  }
+
+  input[type=search]::placeholder {
+    font-size: 1.8rem;
+  }
+
+  .L2 div p {
+    font-size: 1.8rem;
+  }
+
+  .create-btn button {
+    height: 3.8rem;
+    width: 8.4rem;
+    font-size: 1.4rem;
+  }
+
+  .list {
+    font-size: 1.2rem;
+  }
+
   .notification-btn {
     left: 9rem;
   }
