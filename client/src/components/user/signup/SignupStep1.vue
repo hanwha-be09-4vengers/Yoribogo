@@ -67,7 +67,6 @@
 
   <script setup>
   import { ref, onMounted, onUnmounted, computed, defineEmits, defineProps, watch } from 'vue';
-  import axios from 'axios';
   import YesNoButton from '@/components/common/YesNoButton.vue'; // YesNoButton 컴포넌트 임포트
   import router from '@/router/router';
   // api/user.js에서 정의된 sendSignupVerificationEmail 함수 사용
@@ -209,12 +208,12 @@ const clearTimer = () => {
 
   // 다음 버튼 활성화 여부 계산
   const canProceed = computed(() => {
-    // return (
-    //   localUserData.value.name !== '' &&
-    //   isEmailValid.value &&
-    //   isVerified.value
-    // ); // 이름, 유효한 이메일, 인증 성공 여부 확인
-    return true;
+    return (
+      localUserData.value.name !== '' &&
+      isEmailValid.value &&
+      isVerified.value
+    ); // 이름, 유효한 이메일, 인증 성공 여부 확인
+    // return true;
   });
 
   // 홈으로 이동
