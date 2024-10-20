@@ -23,7 +23,7 @@
 
 <script setup>
 
-    import { ref } from 'vue';
+    import { ref , onMounted} from 'vue';
 
     // Props: 현재 단계 인덱스와 초기 데이터
     const props = defineProps({
@@ -44,14 +44,37 @@
     const stepText = ref(props.initialStep.step);
     const stepImage = ref(props.initialStep.image);
 
-    /* 이벤트 발생 시 상위 컴포넌트로 데이터 emit */
-    // 이미지 변경 시 호출
-    const onImageChange = (e) => {
-    const file = e.target.files[0];
-    stepImage.value = URL.createObjectURL(file);
-    emit('update-step', { step: stepText.value, image: stepImage.value });
-    };
+    onMounted(() => {
+    console.log(`현재 인덱스: ${props.index}`); // 현재 인덱스 확인
+    const storedImage = localStorage.getItem(`step_image_${props.index}`);
+    if (storedImage) {
+        stepImage.value = storedImage;
+        console.log(`로컬 스토리지에서 불러온 이미지: ${storedImage}`);
+    } else {
+        console.log(`로컬 스토리지에서 ${`step_image_${props.index}`} 키로 이미지가 없음`);
+    }
+});
 
+const onImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        stepImage.value = URL.createObjectURL(file); // 이미지 URL 생성
+        console.log('생성된 Blob URL:', stepImage.value); // Blob URL 확인
+
+        // manual_step의 image에 Blob URL을 저장
+        const manualStep = JSON.parse(localStorage.getItem('manual_step')) || {}; // 기존의 manual_step 가져오기
+        manualStep.image = stepImage.value; // 이미지 URL 저장
+        localStorage.setItem('manual_step', JSON.stringify(manualStep)); // 로컬 스토리지에 업데이트
+        
+        // 저장 후 로컬 스토리지의 모든 키와 값을 출력
+        console.log('로컬 스토리지 상태:', localStorage);
+        console.log( "로컬스토리지 저장 확인",`step_image_${props.index}`, stepImage.value);
+        console.log('stepImage.value:', stepImage.value); // Blob URL
+        console.log('stepImage:', stepImage); // ref 객체
+        
+        emit('update-step', { step: stepText.value, image: stepImage.value }); // Emit으로 업데이트
+    }
+};
     // 조리 순서 추가
     const addStep = () => {
     emit('add-step', props.index);

@@ -93,6 +93,7 @@
     // 조리 방법 수정
     const updateStep = (index, updatedStep) => {
         emit('update-step', index, updatedStep);
+        console.log(updatedStep);
     };
 
     </script>

@@ -57,6 +57,10 @@
     modelValue: { // v-model을 사용하려면 modelValue prop을 받아야 함
     type: [String, Object], // 파일 또는 문자열을 허용 (상황에 따라)
     default: ''
+    },
+    index: { // index 추가
+    type: Number,
+    required: true,
     }
   });
 
@@ -71,6 +75,11 @@
     uploadedFileName.value = file.name // 파일 이름 저장
     uploadedImageUrl.value = URL.createObjectURL(file) // 이미지 미리보기 URL 생성
 
+    // localStorage에 이미지 URL 저장
+    localStorage.setItem(`step_image_${props.index}`, uploadedImageUrl.value);
+    console.log(`step_image_${props.index}`)
+
+
     console.log("파일 변경이 감지됨 by click: 조리방법", file.name);
   }
 }
@@ -81,6 +90,10 @@
     if (file && file.type.startsWith('image/')) {
       uploadedFileName.value = file.name // 파일 이름 저장
       uploadedImageUrl.value = URL.createObjectURL(file) // 이미지 미리보기 URL 생성
+
+      // localStorage에 이미지 URL 저장
+    localStorage.setItem(`step_image_${props.index}`, uploadedImageUrl.value);
+
 
     console.log("파일 변경이 감지됨 by drop: 조리방법", file.name);
 
@@ -93,27 +106,31 @@
 
 // "추가" 버튼 클릭 시 호출할 함수
 const handleAdd = () => {
-  if (stepText.value) { // stepText가 반드시 있어야 함
+  if (stepText.value) {
     const newStep = {
       step: stepText.value,
-      image: uploadedFileName.value
+      image: uploadedImageUrl.value // Blob URL 저장
     };
 
+    // 로컬스토리지에 저장
+    const manualSteps = JSON.parse(localStorage.getItem('manual_step')) || [];
+    manualSteps.push(newStep);
+    localStorage.setItem('manual_step', JSON.stringify(manualSteps)); // 업데이트
 
     // 상위 컴포넌트에 emit
-    emit('add', newStep); // 전체 배열을 emit
-
-
-    console.log("Added step:", newStep); // 추가된 내용 출력
+    emit('add', newStep);
+    
+    console.log("Added step:", newStep);
 
     // 입력 필드 초기화
     stepText.value = ''; 
     uploadedFileName.value = ''; 
     uploadedImageUrl.value = '';
   } else {
-    console.log("조리 방법을 입력해야 합니다."); // 조리 방법이 없을 경우 경고 메시지
+    console.log("조리 방법을 입력해야 합니다.");
   }
-}
+};
+
 </script>
 
 
