@@ -1,57 +1,66 @@
 <template>
   <div class="notification-btn">
+    <!-- 알림 아이콘과 카운트가 같은 wrapper 안에 있음 -->
     <div class="notification-icon-wrapper" @click="toggleMenu">
       <i class="fa-solid fa-bell"></i>
+      <span v-if="unreadCount > 0" class="notification-count">{{ unreadCount }}</span>
     </div>
-    <ul class="notification-list" v-show="isMenuVisible">
-      <!-- 알림 목록을 반복해서 보여줌 -->
-      <li class="notification" v-for="notification in notifications" :key="notification.id">
-        <span>{{ notification.notificationContent }}</span>
-      </li>
-    </ul>
+    <div class="notification-modal" v-show="isMenuVisible">
+      <ul class="notification-list">
+        <li class="notification" v-for="notification in notifications" :key="notification.notificationId"
+            :class="{ 'unread': notification.notificationStatus === 'UNREAD' }">
+          <span>{{ notification.notificationContent }}</span>
+          <span class="notification-date">{{ formatDate(notification.notificationCreatedAt) }}</span>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { connectSSE } from '@/api/sserequest'
 
-const notifications = ref([]); // 알림 리스트
-const isMenuVisible = ref(false); // 알림 창 보임 여부
+const notifications = ref([]);
+const isMenuVisible = ref(false);
 
-// SSE 연결 함수 호출
+const unreadCount = computed(() => {
+  return notifications.value.filter(notification => notification.notificationStatus === 'UNREAD').length;
+});
+
 const eventSource = connectSSE();
 
-// SSE에서 'notification' 이벤트를 수신할 때마다 알림을 배열에 추가
 eventSource.addEventListener('notification', (event) => {
-
-  const notification = JSON.parse(event.data);  // 알림 객체를 JSON으로 파싱
-  
-  notifications.value.push({
-
-    id: notification.id,                      // 알림 ID
-    notificationContent: notification.content, // 알림 내용
-    status: notification.status,              // 알림 상태 (UNREAD, READ 등)
-    createdAt: notification.createdAt         // 알림 생성 시간
+  const notification = JSON.parse(event.data);
+  notifications.value.unshift({
+    notificationId: notification.notificationId,
+    notificationContent: notification.notificationContent,
+    notificationStatus: notification.notificationStatus,
+    notificationCreatedAt: notification.notificationCreatedAt,
+    notificationReadAt: notification.notificationReadAt
   });
 });
 
-
-// 알림 메뉴를 열고 닫는 함수
 const toggleMenu = () => {
-  isMenuVisible.value = !isMenuVisible.value; // 클릭 시 토글
+  isMenuVisible.value = !isMenuVisible.value;
+}
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleString();
 }
 </script>
 
 <style scoped>
 .notification-btn {
-  display: flex;
-  flex-direction: column;
-  width: 25rem;
-  gap: 1rem;
+  position: relative;
+  display: inline-block;
+  width: 30em;
+  height: fit-content;
 }
 
 .notification-icon-wrapper {
+  position: relative; /* 자식 요소를 위한 상대 위치 설정 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -74,38 +83,70 @@ const toggleMenu = () => {
   box-shadow: 0rem 0.4rem 0.4rem 0.1rem rgba(60, 60, 60, 0.5);
 }
 
-.notification-list {
+/* 카운트를 아이콘의 상단 우측에 고정 */
+.notification-count {
+  position: absolute;
+  top: -0.5rem; /* 아이콘 위쪽으로 살짝 띄우기 */
+  right: -0.5rem; /* 오른쪽으로 살짝 이동 */
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 0.2rem 0.6rem;
+  font-size: 1.4rem;
+  font-weight: bold;
+  min-width: 2rem;
+  height: 2rem;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.notification-modal {
+  position: absolute;
+  top: 100%;
+  right: 0;
   background-color: var(--white-color);
   width: 28rem;
-  padding: 1rem;
   border-radius: 1.2rem;
   box-shadow: 0.1rem 0.35rem 0.35rem 0rem rgba(60, 60, 60, 0.5);
-  z-index: 9999;
-  max-height: 20rem; /* 최대 높이 설정 */
+  z-index: 9998;
+  max-height: 40rem;
   overflow-y: auto;
+}
+
+.notification-list {
+  padding: 1rem;
+  margin: 0;
+  list-style-type: none;
 }
 
 .notification {
   display: flex;
-  align-items: center;
-  width: 100%;
-  height: 5rem;
-  padding-left: 1rem;
-  gap: 1rem;
+  flex-direction: column;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
   cursor: pointer;
-  border: none;
-  border-radius: 1rem;
-  font-size: 1.6rem;
-  font-weight: 500;
-  color: var(--black-color);
+}
+
+.notification:last-child {
+  border-bottom: none;
+}
+
+.notification.unread {
+  font-weight: bold;
+  background-color: #f0f0f0;
 }
 
 .notification span {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.notification-date {
+  font-size: 1.2rem;
+  color: #666;
+  margin-top: 0.5rem;
 }
 
 .notification:hover {
