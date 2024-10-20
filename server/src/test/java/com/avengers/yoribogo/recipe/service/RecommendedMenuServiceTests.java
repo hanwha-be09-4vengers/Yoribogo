@@ -11,9 +11,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @SpringBootTest
 @Slf4j
@@ -28,9 +27,10 @@ class RecommendedMenuServiceTests {
     void testFindRecommendedMenuByUserId() {
         // Given
         Long userId = 3L;
+        Integer pageNo = 1;
 
         // When
-        List<GoodMenuDTO> recommendedMenuDTOList = recommendedMenuService.findRecommendedMenuByUserId(userId);
+        Page<GoodMenuDTO> recommendedMenuDTOList = recommendedMenuService.findRecommendedMenuByUserId(userId, pageNo);
 
         // Then
         Assertions.assertNotNull(recommendedMenuDTOList, "추천 요리가 null 입니다");

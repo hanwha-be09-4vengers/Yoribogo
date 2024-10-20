@@ -64,9 +64,38 @@ const routes = [
     ]
   },
   {
+    path: '/recipe-board/list',
+    name: 'recipe-board-list',
+    component: () => import('../views/RecipeBoardListView.vue')
+  },
+  {
+    path: '/recipe-board/:board_id',
+    name: 'recipe-board-detail',
+    component: () => import('../views/RecipeBoardDetailView.vue'),
+    props: true
+  },
+  {
     path: '/mypage',
     name: 'mypage',
-    component: () => import('../views/MyPageView.vue')
+    redirect: '/mypage/bookmarked', 
+    component: () => import('../views/MyPageView.vue'),
+    children: [
+      {
+        path: 'bookmarked',
+        name: 'BookmarkedRecipes',
+        component: () => import('@/components/mypage/BookmarkedRecipes.vue')
+      },
+      {
+        path: 'satisfied',
+        name: 'SatisfiedRecipes',
+        component: () => import('@/components/mypage/SatisfiedRecipes.vue')
+      },
+      {
+        path: 'my-recipes',
+        name: 'MyRecipes',
+        component: () => import('@/components/mypage/MyRecipes.vue')
+      }
+    ]
   },
   {
     path: '/qna',

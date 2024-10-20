@@ -8,10 +8,10 @@
 
     <!-- 사용자 프로필 -->
     <MainBoard :cur="'mypage'">
-      <div class="user-profile-section">
+      <section class="user-profile-section">
         <!-- 다른 컴포넌트들 -->
         <UserProfile @openEditProfileModal="openEditProfileModal" @openAccountOptionsModal="openAccountOptionsModal" />
-      </div>
+      </section>
 
       <!-- 탭 이름 및 탭 컴포넌트 추가 -->
       <div class="tabs-container">
@@ -19,24 +19,25 @@
         <h2 class="tab-title">{{ currentTab }}</h2>
 
         <!-- 탭 버튼 섹션 -->
-        <div class="tab-section">
-          <button
-            v-for="tab in tabs"
-            :key="tab"
-            @click="selectTab(tab)"
-            :class="{ active: currentTab === tab }"
-            class="tab-button"
-          >
-            {{ tab }}
-          </button>
-        </div>
+        <section class="tab-section">
+          <router-link to="/mypage/satisfied" class="tab-button" exact-active-class="active">
+            만족했던 레시피
+          </router-link>
+          <router-link to="/mypage/bookmarked" class="tab-button" exact-active-class="active">
+            북마크한 레시피
+          </router-link>
+          <router-link to="/mypage/my-recipes" class="tab-button" exact-active-class="active">
+            내가 작성한 레시피
+          </router-link>
+        </section>
 
         <!-- 선택한 탭에 따른 컴포넌트 표시 -->
         <div class="tab-content">
-          <component :is="currentComponent"></component>
+          <router-view :menuList="menuList" :isEmpty="isEmpty"></router-view>
         </div>
       </div>
     </MainBoard>
+    <PaginationComponent :data="pageInfo" @changePage="handlePageChange"></PaginationComponent>
 
     <!-- 회원 관련 모달들 -->
     <ProfileEditModal v-if="isEditProfileModalOpen" @close="closeEditProfileModal" />
@@ -51,9 +52,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router'; // vue-router 임포트
+import { ref, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router'; // vue-router 임포트
 import { useTokenStore } from '@/stores/tokenStore'; // Pinia store 사용
+import axios from 'axios';
 
 import HomeButton from '@/components/common/HomeButton.vue';
 import MainBoard from '@/components/common/MainBoard.vue';
@@ -68,32 +70,9 @@ import AccountDeactivationModal from '@/components/user/profile/AccountDeactivat
 import AccountOptionsModal from '@/components/user/profile/AccountOptionsModal.vue';
 
 // 탭에 보여줄 컴포넌트들 import
-import BookmarkedRecipes from '@/components/mypage/BookmarkedRecipes.vue';
-import SatisfiedRecipes from '@/components/mypage/SatisfiedRecipes.vue';
-import MyRecipes from '@/components/mypage/MyRecipes.vue';
+import PaginationComponent from '@/components/common/PaginationComponent.vue';
 
-// 탭 목록 정의
-const tabs = ['만족했던 레시피', '북마크한 레시피', '내가 작성한 레시피'];
-const currentTab = ref(tabs[0]); // 기본값은 첫 번째 탭
-const currentComponent = ref(BookmarkedRecipes); // 기본 컴포넌트 설정
-
-// 탭 선택 함수
-const selectTab = (tab) => {
-  currentTab.value = tab;
-  switch (tab) {
-    case '북마크한 레시피':
-      currentComponent.value = BookmarkedRecipes;
-      break;
-    case '만족했던 레시피':
-      currentComponent.value = SatisfiedRecipes;
-      break;
-    case '내가 작성한 레시피':
-      currentComponent.value = MyRecipes;
-      break;
-    default:
-      currentComponent.value = SatisfiedRecipes; // 기본값
-  }
-};
+const currentTab = ref("북마크한 레시피");
 
 /* 모달 상태관리 */
 const isEditProfileModalOpen = ref(false);
@@ -138,14 +117,109 @@ const closeAccountDeactivationModal = () => {
 };
 
 // 라우터 사용
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
-// 토큰 확인 및 리다이렉트 처리
-const tokenStore = useTokenStore();
-onMounted(() => {
+const satisfiedRecipeList = ref([])
+const bookmarkedRecipeList = ref([])
+const myRecipeList = ref([])
+const menuList = ref(bookmarkedRecipeList.value)
+const pageInfo = ref({})
+const isEmpty = ref(true)
+const userId = ref(null);
+
+// 만족했던 레시피
+const fetchSatisfiedRecipes = async (userId, page) => {
+  try {
+    const response = (await axios.get(`/api/recommended-menus?user=${userId}&page=${page}`)).data
+    if (response.success) {
+      satisfiedRecipeList.value = response.data.content
+    } else {
+      satisfiedRecipeList.value = []
+    }
+  } catch (error) {
+    console.error('Failed to fetch data:', error)
+  }
+}
+
+// 북마크한 레시피
+const fetchBookmarkedRecipes = async (userId,page) => {
+  try {
+    const response = (await axios.get(`/api/recipe-board/favorites/users/${userId}?pageNo=${page}`)).data
+    if (response.success) {
+      bookmarkedRecipeList.value = response.data.content
+    } else {
+      bookmarkedRecipeList.value = []
+    }
+  } catch (error) {
+    console.error('Failed to fetch data:', error)
+  }
+}
+
+// 내가 작성한 레시피
+const fetchMyRecipes = async (userId, page) => {
+  try {
+    const response = (await axios.get(`/api/recipe-board/users/${userId}/boards?pageNo=${page}`)).data
+    if (response.success) {
+      myRecipeList.value = response.data.content
+    } else {
+      myRecipeList.value = []
+    }
+  } catch (error) {
+    console.error('Failed to fetch data:', error)
+  }
+}
+
+// 페이지 변경 핸들러
+const handlePageChange = async (newPage) => {
+  router.push({ query: { ...route.query, page: newPage } });
+
+  // Fetch data based on current tab
+  if (currentTab.value === '만족했던 레시피') {
+    await fetchSatisfiedRecipes(userId, newPage);
+  } else if (currentTab.value === '북마크한 레시피') {
+    await fetchBookmarkedRecipes(userId, newPage);
+  } else if (currentTab.value === '내가 작성한 레시피') {
+    await fetchMyRecipes(userId, newPage);
+  }
+};
+
+// URL에 있는 page 값 가져오기 (기본값: 1)
+const getPageFromQuery = () => parseInt(route.query.page || '1', 10);
+
+// 페이지 변경을 감지하고 fetch 요청
+watch(
+  () => route.path,
+  async (newPath) => {
+    userId.value = JSON.parse(localStorage.getItem('token')).userId;
+    if (newPath.includes('satisfied')) {
+      currentTab.value = '만족했던 레시피';
+      await fetchSatisfiedRecipes(userId.value, getPageFromQuery());
+      menuList.value = satisfiedRecipeList.value;
+    } else if (newPath.includes('bookmarked')) {
+      currentTab.value = '북마크한 레시피';
+      await fetchBookmarkedRecipes(userId.value, getPageFromQuery());
+      menuList.value = bookmarkedRecipeList.value;
+    } else if (newPath.includes('my-recipes')) {
+      currentTab.value = '내가 작성한 레시피';
+      await fetchMyRecipes(userId.value, getPageFromQuery());
+      menuList.value = myRecipeList.value;
+    }
+
+    if(menuList.value.length === 0) isEmpty.value = true;
+    else isEmpty.value = false;
+  },
+  { immediate: true }
+);
+
+// 컴포넌트가 마운트될 때 기본 페이지 fetch
+onMounted(async () => {
+  const tokenStore = useTokenStore();
+  
   if (!tokenStore.token.accessToken) {
     alert('마이페이지를 보시려면 로그인이 필요합니다!');
     router.push('/login'); // 로그인 페이지로 리다이렉트
+    return;
   }
 });
 </script>
@@ -186,7 +260,6 @@ onMounted(() => {
 .tab-title {
   font-size: 2.8rem;
   font-weight: bold;
-  margin-bottom: 1rem; /* 탭 버튼과의 간격 */
   margin-top: 0; /* 여백이 위쪽으로 밀리지 않도록 */
   text-align: center;
 }
@@ -196,23 +269,21 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   position: relative;
-  margin-bottom: 1rem; /* 탭과 콘텐츠 사이 간격 */
-  margin-top: 1rem; /* 탭 제목과의 간격 */
+  margin-top: 2rem; /* 탭 제목과의 간격 */
 }
 
 /* 탭 버튼 스타일 */
 .tab-button {
   background-color: #DADADA;
   border: none;
-  padding: 1rem 3.4rem;
-  margin: 0 -1.8rem; /* 버튼들이 겹치게 하는 마진 */
-  border-radius: 30px;
+  padding: 1rem 4.4rem;
+  margin: 0 -1.75rem; /* 버튼들이 겹치게 하는 마진 */
+  border-radius: 3rem;
   cursor: pointer;
   font-size: 1.6rem;
   color: white;
   z-index: 1; /* 기본 z-index 값 */
   position: relative;
-  font-family: 'Noto Sans KR', sans-serif; /* Noto Sans KR 폰트 지정 */
 }
 
 .tab-button.active {
@@ -223,10 +294,9 @@ onMounted(() => {
 
 /* 탭 콘텐츠 영역 */
 .tab-content {
-  width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 8rem; /* 탭과 콘텐츠 간의 간격 */
+  width: 100%;
 }
 
 /* 상단 버튼들 위치 */
@@ -246,5 +316,70 @@ onMounted(() => {
   position: absolute;
   top: 7rem;
   right: 20rem;
+}
+
+@media screen and (max-width: 1024px) {
+  .tab-button {
+    padding: 1.1rem 4rem;
+    margin: 0 -1.6rem;
+    font-size: 1.4rem;
+  }
+}
+
+@media screen and (max-width: 960px) {
+  .tab-button {
+    padding: 1.1rem 4rem;
+    margin: 0 -1.4rem;
+    font-size: 1.35rem;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .tab-title {
+    margin-top: 10rem;
+  }
+
+  .tab-section {
+    flex-direction: column;
+    position: absolute;
+    right: -8rem;
+    gap: 1rem;
+  }
+
+  .tab-button {
+    padding: 1rem 3rem;
+    font-size: 1.4rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .tab-section {
+    right: -6.5rem;
+    gap: 1rem;
+  }
+
+  .tab-button {
+    padding: 1rem 2.5rem;
+    font-size: 1.3rem;
+  }
+
+  .user-profile-section {
+    top: -9rem;
+    left: 9rem;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .user-profile-section {
+    top: -9rem;
+    left: 8.5rem;
+  }
+}
+
+@media screen and (max-width: 370px) {
+  .user-profile-section {
+    top: -9rem;
+    left: 8rem;
+  }
 }
 </style>

@@ -4,13 +4,13 @@
       <button class="close-btn" @click="closeModal">×</button>
 
       <div class="modal-header">
-        <h2>SGMA</h2>
+        <h2>프로필 정보 추가</h2>
       </div>
 
       <div class="modal-body">
         <div class="message-container">
           <p class="first-text">어서와요!</p>
-          <p class="second-text">프로필 사진과 닉네임을 설정해주세요.<br>닉네임을 설정하셔야 해요!</p>
+          <p class="second-text">프로필 사진과 닉네임을 설정해주세요.<br>사용하실 닉네임 입력은 필수에요!</p>
         </div>
 
         <div class="profile-picture-container">
@@ -46,21 +46,23 @@
 </template>
 
 <script setup>
-import { ref, computed, inject , onMounted, onUnmounted} from 'vue';
+import { ref, computed, onMounted, onUnmounted} from 'vue';
 import YesNoButton from '@/components/common/YesNoButton.vue';
-import { useRouter, onBeforeRouteLeave  } from 'vue-router';
+import { updateUserProfile, validateNickname } from '@/api/user'; // 필요한 API 함수들 임포트
+import { useRouter  } from 'vue-router';
 import axios from 'axios';
+import { useTokenStore } from '@/stores/tokenStore'; // Pinia 토큰 스토어 임포트
 
-// 상태와 메서드 `inject`로 받아오기
-const token = inject('token');
-const setTokenData = inject('setTokenData');
+// 토큰 정보 주입
+const tokenStore = useTokenStore();
 
 // 모달 가시성을 제어하는 변수
 const showProfileModal = ref(true); // true로 설정하여 모달을 처음에 표시함
 
 // 닉네임과 프로필 사진을 위한 데이터
 const nickname = ref('');
-const profilePicture = ref('');
+const profilePicture = ref(''); // Base64로 변환된 이미지
+const profilePictureFile = ref(null); // 실제 파일 객체를 저장할 변수
 const nicknameError = ref('');
 const isNicknameAvailable = ref(false);
 const nicknameDuplicationStatus = ref('');
@@ -75,9 +77,10 @@ const router = useRouter();
 const handleFileChange = (event) => {
   const file = event.target.files[0];
   if (file) {
+    profilePictureFile.value = file; // 실제 파일을 저장
     const reader = new FileReader();
     reader.onload = (e) => {
-      profilePicture.value = e.target.result;
+      profilePicture.value = e.target.result; // 미리보기를 위한 Base64 URL
     };
     reader.readAsDataURL(file);
   }
@@ -85,84 +88,68 @@ const handleFileChange = (event) => {
 
 // 닉네임 중복 확인 함수
 const checkNicknameDuplication = async () => {
-nicknameError.value = '';
-nicknameDuplicationStatus.value = '';
-isNicknameAvailable.value = false;
+  nicknameError.value = '';
+  nicknameDuplicationStatus.value = '';
+  isNicknameAvailable.value = false;
 
-if (!nickname.value) {
-  nicknameError.value = '닉네임을 입력해주세요.';
-  return;
-}
-
-try {
-  const response = await axios.post('/user-service/api/users/nickname/validate', { nickname: nickname.value });
-  console.log('닉네임 중복 검증 응답',response); // 응답 구조 확인
-  if (response.data.success) {
-
-    if (response.data.data.exist) {
-      console.log('response.data.data.exist:', response.data.data.exist);
-      // exist가 true인 경우, 이미 존재하는 닉네임임
-      nicknameError.value = '이미 사용 중인 닉네임입니다.';
-    } else {
-      console.log('response.data.data.exist:', response.data.data.exist);
-      // exist가 false인 경우, 사용 가능한 닉네임임
-      nicknameDuplicationStatus.value = '사용 가능한 닉네임입니다.';
-      isNicknameAvailable.value = true;
-    }
-  } else {
-    nicknameError.value = '닉네임 중복 확인 중 오류가 발생했습니다.';
+  if (!nickname.value) {
+    nicknameError.value = '닉네임을 입력해주세요.';
+    return;
   }
-} catch (error) {
-  nicknameError.value = '닉네임 중복 확인 중 오류가 발생했습니다.';
-  console.error('checkNicknameDuplication 에러:', error);
-}
+
+  try {
+    const response = await validateNickname(nickname.value);
+    if (response && response.success) {
+      if (!response.data.exist) {
+        nicknameDuplicationStatus.value = '사용 가능한 닉네임입니다.';
+        isNicknameAvailable.value = true;
+      } else {
+        nicknameError.value = '이미 사용 중인 닉네임입니다.';
+      }
+    } else {
+      nicknameError.value = '닉네임 중복 확인 중 오류가 발생했습니다.';
+    }
+  } catch (error) {
+    nicknameError.value = '닉네임 중복 확인 중 오류가 발생했습니다.';
+    console.error('checkNicknameDuplication 에러:', error);
+  }
 };
 
-
-// 프로필 업데이트 완료 함수
+// 프로필 업데이트 함수
 const completeUpdateProfile = async () => {
   if (!canComplete.value) return;
 
   try {
-    const formData = new FormData();
-    formData.append('nickname', nickname.value);
+    const profileImage = profilePictureFile.value || null; // 파일 객체 사용
 
-    if (profilePicture.value) {
-      formData.append('profile_image', profilePicture.value);
-    }
+    console.log("userId:", tokenStore.token.userId);
+    console.log("accessToken:", tokenStore.token.accessToken); // accessToken 값을 출력하여 확인
 
-    const response = await axios.patch(`/user-service/api/users/${token.userId}/profile`, formData, {
-      headers: { Authorization: `Bearer ${token.accessToken}` }
-    });
+    // updateUserProfile 함수를 호출
+    const response = await updateUserProfile(tokenStore.token.userId, nickname.value, profileImage, tokenStore.token.accessToken);
 
-    if (response.data.success) {
+    if (response.success) {
       alert('프로필이 성공적으로 업데이트되었습니다!');
-      closeModal();
-      router.push('/'); // 홈 페이지로 이동
+      
+      // 페이지를 새로고침하는 대신, 특정 페이지로 이동
+      window.location.href = '/mypage';  // 확인 버튼 누르면 마이페이지로 이동
     } else {
-      alert(`프로필 수정 중 오류가 발생했습니다: ${response.data.message}`);
+      alert(`프로필 수정 중 오류가 발생했습니다: ${response.message}`);
     }
   } catch (error) {
-    alert('프로필 수정 중 오류가 발생했습니다. 다시 시도해주세요.');
+    if (error.response && error.response.status === 403) {
+      alert('접근 권한이 없습니다. 다시 로그인해주세요.');
+    } else {
+      alert('프로필 수정 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
     console.error('completeUpdateProfile 에러:', error);
   }
 };
 
-// 로그아웃 함수
+// 로그아웃 처리
 const logout = () => {
-  setTokenData({
-    user_identifier: null,
-    access_token: null,
-    access_token_expiry: null,
-    refresh_token: null,
-    refresh_token_expiry: null,
-  });
-
-  // localStorage 초기화
-  localStorage.removeItem('token');
-  localStorage.removeItem('userId');
-  localStorage.removeItem('groupData');
-  router.push('/'); // 홈 페이지로 이동
+  tokenStore.logout(); // Pinia 스토어의 로그아웃 함수 호출
+  router.push('/'); // 로그아웃 후 홈으로 이동
 };
 
 // 모달 닫기 함수 - 닉네임을 입력하지 않았을 경우 경고창을 표시
@@ -199,39 +186,36 @@ window.removeEventListener('popstate', handlePopState);  // 이벤트 제거
 <style scoped>
 /* 모달 오버레이 */
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 9999; /* 화면 최상위에 오도록 */
 }
 
-/* 모달 콘텐츠 */
 .modal-content {
-  background-color: white;
-  border-radius: 10px;
-  width: 400px;
-  height: 480px; /* 높이를 살짝 늘려줌 */
-  padding: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 강화 */
-  position: relative;
-  text-align: left;
-  animation: slide-up 0.3s ease-out; /* 애니메이션 효과 추가 */
+background-color: white;
+border-radius: 10px;
+width: 400px;
+padding: 2rem;
+box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+text-align: center;
 }
+
 
 /* 슬라이드 애니메이션 */
 @keyframes slide-up {
   from {
-    transform: translateY(50px);
+    transform: translate(-50%, -40%);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translate(-50%, -50%);
     opacity: 1;
   }
 }
@@ -250,35 +234,38 @@ window.removeEventListener('popstate', handlePopState);  // 이벤트 제거
 
 /* 모달 헤더 */
 .modal-header {
-  text-align: center;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0.2rem 1rem; /* 상단 여백을 줄여서 위로 밀기 */
+position: relative;
+width: 100%;
+margin-top: 6rem;
+margin-bottom: 4rem; /* 모달 내용과의 간격 줄이기 */
 }
 
 .modal-header h2 {
-  margin: 2rem;
-  font-size: 5rem;
-  color: #a1b872;
-}
-
-/* 모달 바디 */
-.modal-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* 상단부터 배치 */
-  gap: 1.5rem; /* 간격을 더 넓게 */
-  margin: 0.5rem;
-  padding: 1rem;
+font-size: 3.6rem; /* 조금 더 작게 */
+color: #000000;
+margin: 0; /* 텍스트 기본 여백 제거 */
+position: absolute; /* 텍스트를 중앙에 고정 */
+top: 50%; /* 부모 높이의 중앙 */
+left: 50%; /* 부모 너비의 중앙 */
+transform: translate(-50%, -50%); /* 중앙 정렬 */
 }
 
 /* 인사말 텍스트 */
+/* 인사말 텍스트 */
 .message-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* 인사말은 왼쪽 정렬 */
+display: flex;
+flex-direction: column;
+align-items: flex-start; /* 왼쪽 정렬 */
+padding-left: 1rem; /* 약간의 왼쪽 여백 추가 */
 }
 
 .first-text {
-  font-size: 2.4rem; /* 조금 더 크고 선명하게 */
-  color: #525150;
+font-size: 2.2rem;
+color: #525150;
 }
 
 .second-text {
@@ -286,13 +273,24 @@ window.removeEventListener('popstate', handlePopState);  // 이벤트 제거
   font-weight: 700;
   color: #525150;
   margin-bottom: 1rem;
+  text-align: left; /* 왼쪽 정렬 추가 */
+}
+
+/* 모달 바디 */
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 1.5rem;
+  margin: 0.5rem;
+  padding: 1rem;
 }
 
 /* 프로필 사진과 닉네임 입력 */
 .profile-picture-container {
   display: flex;
   flex-direction: column;
-  align-items: center; /* 프로필 사진과 닉네임을 가운데 정렬 */
+  align-items: center;
   gap: 2rem;
   margin-top: 2rem;
   padding: 1rem;
@@ -310,19 +308,19 @@ window.removeEventListener('popstate', handlePopState);  // 이벤트 제거
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px dashed #a1b872; /* 두께를 늘리고 선명한 색상 */
+  border: 2px dashed #53acff;
   position: relative;
   overflow: hidden;
-  transition: border 0.3s ease-in-out; /* 호버 시 부드럽게 전환 */
+  transition: border 0.3s ease-in-out;
 }
 
 .profile-picture:hover {
-  border: 2px solid #a1b872; /* 호버 시 실선으로 변경 */
+  border: 2px solid #2c3e50;
 }
 
 .profile-picture span {
-  font-size: 4rem; /* 폰트 크기 증가 */
-  color: #a1b872;
+  font-size: 4rem;
+  color: #2c3e50;
 }
 
 .profile-picture img {
@@ -338,7 +336,7 @@ window.removeEventListener('popstate', handlePopState);  // 이벤트 제거
 .nickname-container {
   display: flex;
   align-items: center;
-  gap: 1rem; /* 닉네임 필드와 버튼 간의 간격 */
+  gap: 1rem;
 }
 
 input[type="text"] {
@@ -348,42 +346,36 @@ input[type="text"] {
   border: 1.5px solid #c5ccd2;
   border-radius: 5px;
   font-size: 1.6rem;
-  text-align: center; /* 텍스트 가운데 정렬 */
-  transition: border-color 0.3s ease-in-out; /* 포커스 전환 효과 */
+  text-align: center;
+  transition: border-color 0.3s ease-in-out;
 }
 
 input[type="text"]:focus {
-  border-color: #a1b872; /* 포커스 시 색상 변경 */
+  border-color: #2c3e50;
   outline: none;
 }
 
-/* 중복 확인 버튼 */
 .check-btn {
   padding: 0.6rem 1rem;
   height: 40px;
   font-size: 1.6rem;
   border: none;
   border-radius: 5px;
-  background-color: #a1b872;
+  background-color: #53acff;
   color: white;
   cursor: pointer;
 }
 
 .check-btn:hover {
-  background-color: #8aa15e;
+  background-color: #2c3e50;
 }
 
 /* 모달 푸터 */
 .modal-footer {
-  position: absolute; /* 모달 콘텐츠 내에서 절대 위치 지정 */
-  bottom: 10px; /* 모달 콘텐츠의 하단에 배치 */
-  width: 360px; /* 푸터의 너비 */
-  justify-content: space-between; /* 요소들 간의 공간을 균등 분배 */
-  display: flex; /* 플렉스 박스 사용 */
-  background-color: white; /* 배경색이 바디와 같게 */
-  margin: 0 auto; /* 좌우 가운데 정렬 */
-  left: 0; /* 부모 요소 기준 왼쪽 기준점 */
-  right: 0; /* 부모 요소 기준 오른쪽 기준점 */
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 0;
 }
 
 /* 오류 텍스트 스타일 */
@@ -400,4 +392,5 @@ input[type="text"]:focus {
   margin-top: 0.2rem;
 }
 </style>
+
 

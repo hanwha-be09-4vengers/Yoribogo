@@ -72,8 +72,8 @@ onMounted(() => {
   gap: 1.5rem;
   background-color: transparent;
   padding: 2rem;
-  border-radius: 80px 80px 10px 10px;
-  max-width: 300px;
+  border-radius: 8rem 80rem 1rem 1rem;
+  max-width: 30rem;
   margin: auto;
 }
 
@@ -83,29 +83,29 @@ onMounted(() => {
 }
 
 .avatar img {
-  width: 120px;
-  height: 120px;
+  width: 15rem;
+  height: 15rem;
   border-radius: 50%;
   object-fit: cover;
-  border: 5px solid white;
+  border: 0.5rem solid white;
   transition: transform 0.3s ease, box-shadow 0.3s ease; /* 부드러운 전환 효과 */
 }
 
 .avatar:hover img {
   transform: scale(1.05); /* 이미지 확대 */
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2); /* 그림자 효과 추가 */
+  box-shadow: 0rem 0.6rem 1.2rem rgba(0, 0, 0, 0.2); /* 그림자 효과 추가 */
 }
 
 .avatar::after {
   content: '프로필 수정하기'; /* hover 상태에서 표시할 텍스트 */
   position: absolute;
-  bottom: -10px; /* 텍스트 위치를 이미지 아래로 */
+  bottom: -1rem; /* 텍스트 위치를 이미지 아래로 */
   left: 50%;
   transform: translateX(-50%);
   color: white;
   background-color: #2c3e50;
   padding: 0.4rem 0.8rem;
-  border-radius: 5px;
+  border-radius: 0.5rem;
   font-size: 1.2rem;
   width: max-content;
   opacity: 0; /* 기본 상태에서 숨김 */
@@ -127,23 +127,23 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.3rem;
   margin-bottom: 1rem;
 }
 
 .name-tier-container h2 {
   margin: 0;
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: bold;
   color: #333;
   line-height: 1;
 }
 
 .tier-image {
-  width: 2.8rem;
-  height: 2.8rem;
+  width: 2.4rem;
+  height: 2.4rem;
   object-fit: contain;
-  margin-left: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 button {
@@ -151,17 +151,42 @@ button {
   color: black;
   border: none;
   padding: 0.7rem 1.5rem;
-  border-radius: 5px;
+  border-radius: 0.5rem;
   cursor: pointer;
   margin-top: 1rem;
   font-family: 'Noto Sans KR', 'Noto Sans', sans-serif;
   font-size: 1.4rem;
   font-weight: 500;
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0rem 0.3rem 0.6rem rgba(0, 0, 0, 0.15);
   transition: box-shadow 0.2s ease;
 }
 
 button:hover {
-  box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0rem 0.6rem 0.8rem rgba(0, 0, 0, 0.2);
+}
+
+@media screen and (max-width: 600px) {
+  .profile-container {
+    gap: 1rem;
+  }
+
+  .avatar img {
+    width: 12rem;
+    height: 12rem;
+  }
+
+  .name-tier-container h2 {
+    font-size: 1.6rem;
+  }
+
+  .tier-image {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  button {
+    padding: 0.4rem 1rem;
+    font-size: 1.2rem;
+  }
 }
 </style>

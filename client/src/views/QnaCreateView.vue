@@ -1,7 +1,10 @@
 <template>
     <div class="qna-create-view">
-      <ProfileButton></ProfileButton>
-      <HomeButton></HomeButton>
+      <header>
+      <NotificationButton class="notification-btn"></NotificationButton>
+      <ProfileButton class="profile-btn"></ProfileButton>
+      <HomeButton class="home-btn"></HomeButton>
+      </header>
       <MainBoard :cur="'qna'">
         <div class="wrapper">
           <div class="L1">
@@ -25,10 +28,11 @@
   </template>
   
   <script setup>
-    import HomeButton from '@/components/common/HomeButton.vue'
-    import MainBoard from '@/components/common/MainBoard.vue'
-    import ProfileButton from '@/components/common/ProfileButton.vue'
-  
+    import HomeButton from '@/components/common/HomeButton.vue';
+import MainBoard from '@/components/common/MainBoard.vue';
+import ProfileButton from '@/components/common/ProfileButton.vue';
+import NotificationButton from '@/components/common/NotificationButton.vue';
+
     import {ref, onMounted, toRaw} from 'vue';
     import {useRouter} from 'vue-router';
     import {addInquiry, getUserInfo} from '@/api/qna.js';
@@ -87,41 +91,53 @@
     right: 20rem;
   }
   
-  @media screen and (max-width: 960px) {
-    .wiki-list {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  
+.notification-btn {
+  position: absolute;
+  top: 7rem;
+  left: 12rem
+}
+@media screen and (max-width: 480px) {
+  .notification-btn {
+    left: 10rem;
   }
-  
-  @media screen and (max-width: 480px) {
-    .profile-btn {
-      right: 10rem;
-    }
-  
-    .home-btn {
-      right: 18rem;
-    }
+
+  .profile-btn {
+    right: 10rem;
   }
-  
-  @media screen and (max-width: 425px) {
-    .profile-btn {
-      right: 9rem;
-    }
-  
-    .home-btn {
-      right: 17rem;
-    }
+
+  .home-btn {
+    right: 18rem;
   }
-  
-  @media screen and (max-width: 375px) {
-    .profile-btn {
-      right: 8rem;
-    }
-  
-    .home-btn {
-      right: 16rem;
-    }
+}
+
+@media screen and (max-width: 425px) {
+  .notification-btn {
+    left: 9rem;
   }
+
+  .profile-btn {
+    right: 9rem;
+  }
+
+  .home-btn {
+    right: 17rem;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .notification-btn {
+    left: 8rem;
+  }
+
+  .profile-btn {
+    right: 8rem;
+  }
+
+  .home-btn {
+    right: 16rem;
+  }
+}
   .wrapper {
     display: flex;
     flex-direction: column;

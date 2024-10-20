@@ -32,6 +32,7 @@
         </div>
         <!-- 아이디 입력 에러 메시지 -->
         <span v-if="userAuthIdError" class="error-text">{{ userAuthIdError }}</span>
+        <span v-if="userAuthIdDuplicationStatus" class="success-text">{{ userAuthIdDuplicationStatus }}</span>
 
         <div class="password-input-container">
           <input
@@ -49,7 +50,7 @@
         </div>
         <!-- 비밀번호 입력 에러 메시지 -->
         <span v-if="passwordError" class="error-text">{{ passwordError }}</span>
-
+        
         <!-- 닉네임 입력 및 중복 확인 -->
         <div class="nickname-container">
           <input
@@ -62,6 +63,7 @@
         </div>
         <!-- 닉네임 입력 에러 메시지 -->
         <span v-if="nicknameError" class="error-text">{{ nicknameError }}</span>
+        <span v-if="nicknameDuplicationStatus" class="success-text">{{ nicknameDuplicationStatus }}</span>
       </div>
 
       <div class="terms-container">
@@ -173,92 +175,76 @@
   /**
  * 사용자 아이디 중복 확인 함수
  */
-const checkUserAuthIdDuplication = async () => {
+ const checkUserAuthIdDuplication = async () => {
   // 초기화
   userAuthIdError.value = "";
   userAuthIdDuplicationStatus.value = "";
   isUserAuthIdAvailable.value = false;
 
-  // 입력된 아이디가 없을 경우 에러 처리
   if (!localUserData.value.userAuthId) {
     userAuthIdError.value = "아이디를 입력해주세요.";
     return;
   }
 
   try {
-    // validateUserAuthId API 호출 (아이디 중복 체크)
     const response = await validateUserAuthId(localUserData.value.userAuthId);
 
-    // 응답 데이터 검증
     if (response && response.success) {
-      const isExist = response.data.exist; // 존재 여부 확인
+      const isExist = response.data.exist;
 
-      // 아이디 사용 가능 여부 판단
       if (!isExist) {
         userAuthIdDuplicationStatus.value = "사용 가능한 아이디입니다.";
-        isUserAuthIdAvailable.value = true; // 사용 가능 플래그
+        isUserAuthIdAvailable.value = true;
       } else {
-        userAuthIdError.value = "이미 사용 중인 아이디입니다."; // 중복된 아이디
-        isUserAuthIdAvailable.value = false; // 사용 불가 플래그
+        userAuthIdError.value = "이미 사용 중인 아이디입니다.";
+        isUserAuthIdAvailable.value = false;
       }
     } else {
-      // 성공 응답이 아닌 경우 처리
       userAuthIdError.value = response.message || "아이디 중복 확인 중 문제가 발생했습니다.";
-      console.error("Unexpected response:", response);
-      isUserAuthIdAvailable.value = false; // 사용 불가 플래그
     }
   } catch (error) {
-    // API 호출 중 오류 발생 시 처리
     userAuthIdError.value = "아이디 중복 확인 중 오류가 발생했습니다.";
     console.error("checkUserAuthIdDuplication 에러:", error);
-    isUserAuthIdAvailable.value = false; // 사용 불가 플래그
   }
 };
+
 
 /**
  * 닉네임 중복 확인 함수
  */
-const checkNicknameDuplication = async () => {
+ const checkNicknameDuplication = async () => {
   // 초기화
   nicknameError.value = '';
   nicknameDuplicationStatus.value = '';
   isNicknameAvailable.value = false;
 
-  // 닉네임 입력이 없는 경우 처리
   if (!localUserData.value.nickname) {
     nicknameError.value = '닉네임을 입력해주세요.';
     return;
   }
 
   try {
-    // validateNickname API 호출 (닉네임 중복 체크)
     const response = await validateNickname(localUserData.value.nickname);
 
-    // 응답 데이터 검증
     if (response && response.success) {
-      const isExist = response.data.exist; // 존재 여부 확인
+      const isExist = response.data.exist;
 
-      // 닉네임 사용 가능 여부 판단
       if (!isExist) {
         nicknameDuplicationStatus.value = '사용 가능한 닉네임입니다.';
-        isNicknameAvailable.value = true; // 사용 가능 플래그
+        isNicknameAvailable.value = true;
       } else {
-        nicknameError.value = '이미 사용 중인 닉네임입니다.'; // 중복된 닉네임
-        isNicknameAvailable.value = false; // 사용 불가 플래그
+        nicknameError.value = '이미 사용 중인 닉네임입니다.';
+        isNicknameAvailable.value = false;
       }
     } else {
-      // 성공 응답이 아닌 경우 처리
       nicknameError.value = response.message || '닉네임 중복 확인 중 문제가 발생했습니다.';
-      console.error("Unexpected response:", response);
-      isNicknameAvailable.value = false; // 사용 불가 플래그
     }
   } catch (error) {
-    // API 호출 중 오류 발생 시 처리
     nicknameError.value = '닉네임 중복 확인 중 오류가 발생했습니다.';
     console.error("checkNicknameDuplication 에러:", error);
-    isNicknameAvailable.value = false; // 사용 불가 플래그
   }
 };
+
 
   
   // 다음 버튼 활성화 여부 계산
@@ -486,7 +472,7 @@ const completeSignup = async () => {
   .input-container {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1rem;
     margin-top: 1.5rem;
   }
   

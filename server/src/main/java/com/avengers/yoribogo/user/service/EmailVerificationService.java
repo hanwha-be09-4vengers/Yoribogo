@@ -49,7 +49,7 @@ public class EmailVerificationService {
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             helper.setTo(email);
-            helper.setSubject("SGMA 이메일 인증 코드");
+            helper.setSubject("요리보고 이메일 인증 코드");
 
             //필기. HTML 형식의 이메일 내용 작성
             String content = "<div style='font-family: Arial, sans-serif; color: #333;'>"

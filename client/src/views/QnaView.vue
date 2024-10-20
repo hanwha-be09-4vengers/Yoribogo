@@ -1,7 +1,10 @@
 <template>
   <div class="qna-view">
-    <ProfileButton></ProfileButton>
-    <HomeButton></HomeButton>
+    <header>
+      <NotificationButton class="notification-btn"></NotificationButton>
+      <ProfileButton class="profile-btn"></ProfileButton>
+      <HomeButton class="home-btn"></HomeButton>
+    </header>
     <MainBoard :cur="'qna'">
       <div class="wrapper">
         <div class="L1">
@@ -39,7 +42,7 @@
           </div>
         </div>
         <div class="L4">
-          <button class="back" type="button" @click="goBack"><</button>
+          <button class="back" type="button" @click="goBack"></button>
           <div class="pageNums" v-for="num in nums.length" :key="num.code">
             <button type="button" @click="goPage(num)">{{ num }}</button>
           </div>
@@ -51,9 +54,10 @@
 </template>
 
 <script setup>
-  import HomeButton from '@/components/common/HomeButton.vue'
-  import MainBoard from '@/components/common/MainBoard.vue'
-  import ProfileButton from '@/components/common/ProfileButton.vue'
+import HomeButton from '@/components/common/HomeButton.vue';
+import MainBoard from '@/components/common/MainBoard.vue';
+import ProfileButton from '@/components/common/ProfileButton.vue';
+import NotificationButton from '@/components/common/NotificationButton.vue';
 
   import {ref, onMounted} from 'vue';
   import {useRoute, useRouter} from 'vue-router';
@@ -180,7 +184,7 @@
   /* 문의 상세페이지로 이동 */
   const toInquiry = (inquiry) => {
     if (inquiry.inquiryVisibility === 'PRIVATE' && 
-          inquiry.userId !== user.value.user_id &&
+          inquiry.user.userId !== user.value.user_id &&
           user.value.user_role !== 'ADMIN') {
         alert('비밀글은 작성자와 관리자만 볼 수 있습니다.');
     } else {
@@ -205,6 +209,12 @@
   background-color: var(--yellow-color);
 }
 
+.notification-btn {
+  position: absolute;
+  top: 7rem;
+  left: 12rem;
+}
+
 .profile-btn {
   position: absolute;
   top: 7rem;
@@ -217,41 +227,6 @@
   right: 20rem;
 }
 
-@media screen and (max-width: 960px) {
-  .wiki-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .profile-btn {
-    right: 10rem;
-  }
-
-  .home-btn {
-    right: 18rem;
-  }
-}
-
-@media screen and (max-width: 425px) {
-  .profile-btn {
-    right: 9rem;
-  }
-
-  .home-btn {
-    right: 17rem;
-  }
-}
-
-@media screen and (max-width: 375px) {
-  .profile-btn {
-    right: 8rem;
-  }
-
-  .home-btn {
-    right: 16rem;
-  }
-}
 .wrapper {
   display: grid;
   grid-template-rows: 12% 8% 75% 5%;
@@ -417,5 +392,53 @@ input[type=search]::placeholder {
   justify-content: flex-end;
   align-items: flex-end;
   text-align: center;
+}
+
+
+.notification-btn {
+  position: absolute;
+  top: 7rem;
+  left: 12rem
+}
+@media screen and (max-width: 480px) {
+  .notification-btn {
+    left: 10rem;
+  }
+
+  .profile-btn {
+    right: 10rem;
+  }
+
+  .home-btn {
+    right: 18rem;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .notification-btn {
+    left: 9rem;
+  }
+
+  .profile-btn {
+    right: 9rem;
+  }
+
+  .home-btn {
+    right: 17rem;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .notification-btn {
+    left: 8rem;
+  }
+
+  .profile-btn {
+    right: 8rem;
+  }
+
+  .home-btn {
+    right: 16rem;
+  }
 }
 </style>
