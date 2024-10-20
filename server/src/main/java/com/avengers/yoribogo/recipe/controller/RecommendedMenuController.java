@@ -5,9 +5,8 @@ import com.avengers.yoribogo.recipe.dto.GoodMenuDTO;
 import com.avengers.yoribogo.recipe.dto.RecommendedMenuDTO;
 import com.avengers.yoribogo.recipe.service.RecommendedMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/recommended-menus")
@@ -22,8 +21,9 @@ public class RecommendedMenuController {
 
     // 추천 요리 회원별 조회
     @GetMapping
-    public ResponseDTO<?> getRecommendedMenuByUserId(@RequestParam("user") Long userId) {
-        List<GoodMenuDTO> recommendedMenuList = recommendedMenuService.findRecommendedMenuByUserId(userId);
+    public ResponseDTO<?> getRecommendedMenuByUserId(@RequestParam("user") Long userId,
+                                                     @RequestParam("page") Integer pageNo) {
+        Page<GoodMenuDTO> recommendedMenuList = recommendedMenuService.findRecommendedMenuByUserId(userId, pageNo);
         return ResponseDTO.ok(recommendedMenuList);
     }
 

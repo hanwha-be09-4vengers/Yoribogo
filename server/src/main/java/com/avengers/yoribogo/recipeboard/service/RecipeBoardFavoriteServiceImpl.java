@@ -17,14 +17,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Slf4j
 @Service
 @Transactional
 public class RecipeBoardFavoriteServiceImpl implements RecipeBoardFavoriteService {
 
-    private final Integer ELEMENTS_PER_PAGE = 3;
+    private final Integer ELEMENTS_PER_PAGE = 12;
 
     private final ModelMapper modelMapper;
     private final RecipeBoardFavoriteRepository recipeBoardFavoriteRepository;
