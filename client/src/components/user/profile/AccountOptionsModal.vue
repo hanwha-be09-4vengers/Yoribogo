@@ -60,7 +60,7 @@ const openAccountDeactivationModal = () => {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  font-size: 4rem;
+  font-size: 3rem;
   background: none;
   border: none;
   cursor: pointer;
@@ -71,7 +71,7 @@ const openAccountDeactivationModal = () => {
   margin: 0;
   font-size: 3rem;
   color: #333;
-  margin-bottom: 6rem;
+  margin-bottom: 4rem;
 }
 
 /* 모달 본문 버튼 스타일 */
