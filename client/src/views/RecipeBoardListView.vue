@@ -4,7 +4,7 @@
         <ProfileButton></ProfileButton>
         <HomeButton></HomeButton>
       </header>
-      <MainBoard>
+      <MainBoard :cur="'recipe-board'">
         <div class="recipe-board-container">
           <SearchBar @search="handleSearch"></SearchBar>
           <div class="not-found" v-if="isEmpty">

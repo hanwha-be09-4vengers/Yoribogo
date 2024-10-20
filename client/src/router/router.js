@@ -53,10 +53,10 @@ const routes = [
 
     // 하위 레이아웃 (1. 목록 보여주는 페이지, 2. 작성하는 페이지)
     children: [
-      {
-        path: 'list',  // 레시피 목록 페이지
-        component: RecipeListView
-      },
+      // {
+      //   // path: 'list',  // 레시피 목록 페이지
+      //   // component: RecipeListView
+      // },
       {
         path: 'write',  // 레시피 작성 페이지
         component: WriteRecipeBoardComponent
