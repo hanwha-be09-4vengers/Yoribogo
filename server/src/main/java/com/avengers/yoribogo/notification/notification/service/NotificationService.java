@@ -182,16 +182,20 @@ public class NotificationService {
 
 
     // 알림 상태 업데이트 메서드
-    public void updateNotificationStatus(Long notificationId, String status) {
+    public void updateNotificationStatus(Long notificationId, NotificationStatus status) {
         NotificationEntity notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_NOTIFICATION));
 
-        notification.setNotificationStatus(NotificationStatus.valueOf(status));
-        if ("READ".equals(status)) {
+        // 이미 Enum 타입으로 전달된 상태를 바로 설정
+        notification.setNotificationStatus(status);
+
+        if (status == NotificationStatus.READ) {
             notification.setNotificationReadAt(LocalDateTime.now());
         }
+
         notificationRepository.save(notification);
     }
+
 
 }
 

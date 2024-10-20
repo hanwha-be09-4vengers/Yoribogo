@@ -2,7 +2,7 @@ let eventSource = null;
 
 export function connectSSE() {
   if (!eventSource) {
-    eventSource = new EventSource('/api/notification/sseConnect');
+    eventSource = new EventSource('http://localhost:8080/api/notification/sseConnect');
 
     // SSE 연결 열림
     eventSource.onopen = () => {

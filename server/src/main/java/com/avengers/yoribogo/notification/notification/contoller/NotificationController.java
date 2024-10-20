@@ -5,6 +5,7 @@ import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.notification.notification.domain.NotificationEntity;
 import com.avengers.yoribogo.notification.notification.dto.NotificationDTO;
+import com.avengers.yoribogo.notification.notification.dto.NotificationStatusUpdateRequestDTO;
 import com.avengers.yoribogo.notification.notification.service.NotificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -54,13 +55,14 @@ public class NotificationController {
     }
 
 
-    // 사용자가 알림을 읽으면 ( 클릭하면 ) READ 상태로 바뀌면서 READ_at 이 now().witnano(0)로 바뀌는 api
     @PutMapping("/updateStatus/{notificationId}")
     public ResponseEntity<Void> updateNotificationStatus(
-            @PathVariable("notificationId") Long notificationId,
-            @RequestBody String status
-    ) {
-        notificationService.updateNotificationStatus(notificationId, status);
+            @PathVariable(name = "notificationId") Long notificationId,
+            @RequestBody NotificationDTO notificationDTO) {
+
+        // Enum 타입으로 바로 Service 메서드에 전달
+        notificationService.updateNotificationStatus(notificationId, notificationDTO.getNotificationStatus());
+
         return ResponseEntity.ok().build();
     }
 }

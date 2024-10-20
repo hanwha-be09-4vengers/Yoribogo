@@ -47,15 +47,17 @@ eventSource.addEventListener('notification', (event) => {
   });
 });
 
-// 알림 상태를 읽음으로 변경하는 함수
 const markAsRead = async (notification) => {
   if (notification.notificationStatus === 'READ') return;  // 이미 읽은 알림이면 무시
 
   try {
     // PUT 요청으로 서버에 상태 업데이트 요청
-    const response = await fetch(`/api/notification/updateStatus/${notification.notificationId}`, {
+    const response = await fetch(`http://localhost:8080/api/notification/updateStatus/${notification.notificationId}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        notificationStatus: 'READ'
+      })
     });
 
     if (response.ok) {
@@ -68,6 +70,7 @@ const markAsRead = async (notification) => {
     console.error('Error updating notification status:', error);
   }
 };
+
 
 // 메뉴 토글 함수
 const toggleMenu = () => {
