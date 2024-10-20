@@ -33,6 +33,13 @@
             :manualImage="manual.manual_image"
           ></RecipeManual>
         </div>
+
+        <!-- 즐겨찾기 버튼 -->
+        <div class="favorite-button-container">
+            <button @click="toggleFavorite" class="favorite-button">
+                {{ isFavorited ? '즐겨찾기 취소' : '즐겨찾기' }}
+            </button>
+        </div>
       </MainBoard>
       <aside>
         <GoTopButton></GoTopButton>
@@ -58,6 +65,8 @@
   
   const menuInfo = ref({})
   const menuImageSrc = ref('')
+
+  const isFavorited = ref(false)
   
   const defaultImage = ref(
     'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728804967802_a4720492-2dd2-4e59-8f31-79b55e6a169e_%E1%84%80%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.svg'
@@ -65,15 +74,45 @@
   
   const fetchData = async () => {
     try {
-      const recipeResponse = (await axios.get(`/api/recipe-board/detail/${route.params.recipeBoardId}`)).data
+      const recipeResponse = (await axios.get(`/api/recipe-board/detail/${route.params.board_id}`)).data
       if (recipeResponse.success) {
         menuInfo.value = recipeResponse.data
         menuImageSrc.value = menuInfo.value.board_image || defaultImage.value
+        checkIfFavorited() // 즐겨찾기 상태 확인
       }
     } catch (error) {
       console.error('Failed to fetch data:', error)
     }
   }
+
+  // 즐겨찾기 여부 확인 로직 호출
+  const checkIfFavorited = async () => {
+    try {
+        const response = await axios.get(`/api/recipe-board/favorites/users/${tokenStore.token.userId}/boards/${route.params.recipeBoardId}`)
+        isFavorited.value = response.data.isFavorited
+    } catch (error) {
+        console.error('Failed to check favorite status: ', error)
+    }
+  }
+
+  // 즐겨찾기 토글
+  const toggleFavorite = async () => {
+  try {
+    if (isFavorited.value) {
+      // 즐겨찾기 취소 API 호출
+      await axios.delete(`/api/recipe-board/favorites/users/${tokenStore.token.userId}/boards/${route.params.recipeBoardId}`)
+    } else {
+      // 즐겨찾기 등록 API 호출
+      await axios.post(`/api/recipe-board/favorites`, {
+        userId: tokenStore.token.userId,
+        recipeBoardId: route.params.recipeBoardId
+      })
+    }
+    isFavorited.value = !isFavorited.value
+  } catch (error) {
+    console.error('Failed to toggle favorite:', error)
+  }
+}
   
   // 이미지 로딩 오류 처리 함수
   const handleImageError = () => {
