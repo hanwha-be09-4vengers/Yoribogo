@@ -1,57 +1,38 @@
 <template>
   <div class="profile-container" v-if="userProfile">
-    <!-- 프로필 이미지 -->
-    <div class="avatar">
+    <!-- 프로필 이미지 클릭 시 닉네임 및 사진 수정 모달 열기 -->
+    <div class="avatar" @click="$emit('openEditProfileModal')">
       <img :src="userProfile.profileImage" alt="프로필 사진" />
     </div>
 
     <!-- 사용자 정보 -->
     <div class="user-info">
-      <!-- 이름과 티어 이미지를 가로로 나란히 배치 -->
       <div class="name-tier-container">
         <h2>{{ userProfile.nickname }} 님</h2>
         <img :src="userProfile.tierImage" alt="티어 이미지" class="tier-image" />
       </div>
 
-      <button @click="openEditProfileModal">회원정보 수정</button>
+      <!-- 회원정보 수정 버튼 클릭 시 비밀번호 변경/회원탈퇴 모달 열기 -->
+      <button @click="$emit('openAccountOptionsModal')">회원정보 수정</button>
     </div>
-
-    <!-- 프로필 수정 모달 -->
-    <ProfileEditModal v-if="isModalOpen" @close="closeEditProfileModal" />
   </div>
 
-  <!-- 프로필 정보 로딩 중 표시 -->
   <div v-else>
     <p>프로필 정보를 불러오는 중입니다...</p>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, defineEmits } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useTokenStore } from '@/stores/tokenStore'; // Pinia store 사용
-import { fetchUserDetailProfile } from '@/api/user'; // user.js의 새로운 프로필 API 호출
-import ProfileEditModal from './ProfileEditModal.vue'; // 모달 컴포넌트 임포트
+import { fetchUserDetailProfile } from '@/api/user'; // API 호출 함수
 
-// 사용자 프로필 상태
-const userProfile = ref(null);
+const userProfile = ref(null); // 사용자 프로필 데이터
 
-// 모달 상태 관리
-const isModalOpen = ref(false);
-
-// Pinia의 tokenStore 사용
+// Pinia store에서 토큰 정보 가져오기
 const tokenStore = useTokenStore();
 
-// 프로필 수정 모달 열기 함수
-const openEditProfileModal = () => {
-  isModalOpen.value = true;
-};
-
-// 프로필 수정 모달 닫기 함수
-const closeEditProfileModal = () => {
-  isModalOpen.value = false;
-};
-
-// API 호출을 통해 사용자 프로필 정보 로드
+// API를 호출해 사용자 프로필 정보 가져오기
 const loadUserProfile = async () => {
   try {
     const userId = tokenStore.token.userId;
@@ -76,11 +57,12 @@ const loadUserProfile = async () => {
   }
 };
 
-// 컴포넌트가 마운트될 때 사용자 프로필 로드
+// 컴포넌트가 마운트될 때 프로필 정보 불러오기
 onMounted(() => {
   loadUserProfile();
 });
 </script>
+
 
 <style scoped>
 .profile-container {
