@@ -46,9 +46,10 @@ const routes = [
     component: () => import('../views/RecipeBoardView.vue')
   },
   {
-    path: '/recipe-board-detail',
+    path: '/recipe-board/:recipeBoardId',
     name: 'recipe-board-detail',
-    component: () => import('../views/RecipeBoardDetailView.vue')
+    component: () => import('../views/RecipeBoardDetailView.vue'),
+    props: true
   },
   {
     path: '/mypage',
