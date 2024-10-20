@@ -179,6 +179,15 @@ onMounted(() => {
     router.push('/login');
   } else {
     userId.value = JSON.parse(localStorage.getItem('token')).userId;
+    
+    if (route.path.includes('satisfied')) {
+      currentTab.value = '만족했던 레시피';
+    } else if (route.path.includes('bookmarked')) {
+      currentTab.value = '북마크한 레시피';
+    } else if (route.path.includes('my-recipes')) {
+      currentTab.value = '내가 작성한 레시피';
+    }
+
     fetchRecipes(userId.value, 1);
   }
 });
