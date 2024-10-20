@@ -6,7 +6,7 @@
       <HomeButton></HomeButton>
     </header>
     <MainBoard :cur="'recipe-board'">
-      <WriteRecipeBoardComponent> </WriteRecipeBoardComponent>
+      <router-view></router-view>
     </MainBoard>
   </div>
 </template>
@@ -20,6 +20,14 @@ import WriteRecipeBoardComponent from '@/components/recipe-board/WriteRecipeBoar
 </script>
 
 <style scoped>
+.recipe-board-container{
+  display: flex;
+  align-items: center;
+
+}
+
+
+
 .recipe-board-view {
   position: relative;
   display: flex;
@@ -48,7 +56,20 @@ import WriteRecipeBoardComponent from '@/components/recipe-board/WriteRecipeBoar
   right: 20rem;
 }
 
+.write-recipe-container{
+  position: absolute;
+  bottom: 7rem;
+  right: 8rem;
+}
+
+
+
+
 @media screen and (max-width: 480px) {
+  .search-bar{
+    width: 80%;
+  }
+
   .notification-btn {
     left: 10rem;
   }
