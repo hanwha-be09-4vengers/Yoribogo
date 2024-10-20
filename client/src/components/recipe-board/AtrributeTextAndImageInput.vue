@@ -165,6 +165,17 @@ const handleAdd = () => {
   position: relative;
 }
 
+.text-input input {
+  width: 100%;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    padding-left: 3rem;
+    font-size: 1.5rem;
+    text-align: center;
+    margin-top: 2rem;
+}
+
 .image-input {
   display: flex;
     justify-content: center;

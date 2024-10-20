@@ -62,6 +62,12 @@
     emit('remove-step', props.index);
     };
 
+    // 조리 순서 추가 버튼이 클릭되면 활성화될 메소드
+    const addStepToNextIndex = () => {
+        // 빈 단계 객체 추가
+        emit('add-step', { step: '', image: '' });
+    }
+
 
 
 
