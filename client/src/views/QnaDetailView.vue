@@ -56,8 +56,8 @@
                 </div>
               </div>
               <div class="content1">
-                <p>{{ ans.answerContent }}</p>
-                <div v-if="ans.user.userId === user.user_id" v-bind="user">
+                <p class="answer-content">{{ ans.answerContent }}</p>
+                <div v-if="ans.user.userId === user.user_id">
                   <p class="delete-btn" @click="delAnswer(ans)">x</p>
                 </div>
               </div>
@@ -71,8 +71,8 @@
                 </div>
               </div>
               <div class="content2">
-                <p>{{ ans.answerContent }}</p>
-                <div v-if="ans.user.userId === user.user_id" v-bind="user">
+                <p class="answer-content">{{ ans.answerContent }}</p>
+                <div v-if="ans.user.userId === user.user_id">
                   <p class="delete-btn" @click="delAnswer(ans)">x</p>
                 </div>
               </div>
@@ -245,7 +245,7 @@ import MainBoard from '@/components/common/MainBoard.vue'
 }
 
 h1 {
-  font-size: 30px;
+  font-size: 5rem;
 }
 
 .privateIcon {
@@ -368,6 +368,7 @@ h1 {
   width: 7rem;
   background-color: var(--navy-color);
   cursor: pointer;
+  font-size: 2rem;
 }
 
 .answers {
@@ -382,6 +383,7 @@ h1 {
   height: 9%;
   grid-template-rows: 1fr 2fr 0.5fr;
   padding: 1.2rem;
+  margin-bottom: 1.2rem;
 }
 
 .admin {
@@ -389,18 +391,19 @@ h1 {
 }
 .ans, .inquiry-info {
   display: flex;
-  width: 100%;
   align-items: center;
   font-size: 1.5rem;
+  width: fit-content;
 }
 .info1, .info2 {
   display: flex;
-  column-gap: 1.2rem;
+  gap: 1.2rem;
 }
 .info1 p:first-child,
 .info2 p:first-child {
   font-weight: bold;
 }
+
 .content1, .content2 {
   display: flex;
   justify-content: space-between;
@@ -408,14 +411,19 @@ h1 {
   margin-top: 0.8rem;
 }
 
+.answer-content {
+  display: flex;
+  width: 70%;
+  word-break: break-all;
+}
+
 .icon {
   width: 4rem;
   height: 4rem;
   margin: 0 1.2rem 0 0;
 }
+
 .delete-btn {
-  text-align: right;
-  margin: 0 1.2rem 0.8rem 0;
   color: rgb(75, 75, 75);
   cursor: pointer;
 }
