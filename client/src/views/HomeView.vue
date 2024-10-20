@@ -1,10 +1,10 @@
 <template>
   <div id="home-view" class="home-view">
-    <!-- 기존 코드 유지 -->
     <img class="bg-circle" src="/src/assets/Intersect.png" alt="Background Circle" />
     <img class="chicken" src="/src/assets/chicken.png" alt="Chicken" />
     <header>
-      <HomeNav @open-login-modal="openLoginModal"></HomeNav>
+      <!-- 로그인 상태에 따라 메뉴 및 알림 아이콘 표시 -->
+      <HomeNav @open-login-modal="openLoginModal" />
     </header>
     <main>
       <section id="start-section" class="start-section">
@@ -17,7 +17,6 @@
         </div>
         <button id="start-btn" class="start-btn" @click="goQuestion">시작하기</button>
       </section>
-
     </main>
     <LoginModal
       v-if="isLoginModalVisible"
@@ -32,8 +31,17 @@
 <script setup>
 import LoginModal from '@/components/user/login/LoginModal.vue'
 import HomeNav from '@/components/user/HomeNav.vue'
+import NotificationButton from '@/components/common/NotificationButton.vue'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
+
+// 로그인 상태 확인을 위한 변수
+const isLoggedIn = ref(false)
+const token = localStorage.getItem('token') // 로컬 스토리지에 저장된 토큰 확인
+
+if (token) {
+  isLoggedIn.value = true // 토큰이 있으면 로그인 상태로 설정
+}
 
 const router = useRouter()
 
@@ -41,19 +49,25 @@ const isLoginModalVisible = ref(false) // 로그인 모달 상태
 
 // 로그인 모달 열기
 const openLoginModal = () => {
-  isLoginModalVisible.value = true // 로그인 모달 열기
+  isLoginModalVisible.value = true
 }
 
 // 로그인 모달 닫기
 const closeLoginModal = () => {
-  isLoginModalVisible.value = false // 로그인 모달 닫기
+  isLoginModalVisible.value = false
 }
+
 
 const goQuestion = () => {
   router.push('/question/1')
 }
-
 </script>
+
+
+<style scoped>
+/* 기존 스타일 그대로 유지 */
+</style>
+
 
 <style scoped>
 .home-view {
