@@ -1,4 +1,4 @@
-package com.avengers.yoribogo.notification.notification.dto;
+package com.avengers.yoribogo.notification.notification.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;

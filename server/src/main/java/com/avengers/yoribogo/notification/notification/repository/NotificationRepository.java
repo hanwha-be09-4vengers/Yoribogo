@@ -1,7 +1,7 @@
 package com.avengers.yoribogo.notification.notification.repository;
 
-import com.avengers.yoribogo.notification.notification.dto.NotificationEntity;
-import com.avengers.yoribogo.notification.notification.dto.NotificationStatus;
+import com.avengers.yoribogo.notification.notification.domain.NotificationEntity;
+import com.avengers.yoribogo.notification.notification.domain.NotificationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

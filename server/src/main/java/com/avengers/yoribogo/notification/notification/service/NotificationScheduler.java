@@ -1,6 +1,5 @@
-package com.avengers.yoribogo.notification.notification.domain;
+package com.avengers.yoribogo.notification.notification.service;
 
-import com.avengers.yoribogo.notification.notification.service.NotificationService;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.service.WeeklyPopularRecipeService;
 import com.avengers.yoribogo.notification.notification.repository.NotificationRepository;
 import com.avengers.yoribogo.recipeboard.recipeboard.repository.RecipeBoardRepository;

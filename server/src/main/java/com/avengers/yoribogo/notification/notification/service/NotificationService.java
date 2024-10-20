@@ -2,8 +2,9 @@ package com.avengers.yoribogo.notification.notification.service;
 
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
-import com.avengers.yoribogo.notification.notification.dto.NotificationEntity;
-import com.avengers.yoribogo.notification.notification.dto.NotificationStatus;
+import com.avengers.yoribogo.notification.notification.domain.NotificationEntity;
+import com.avengers.yoribogo.notification.notification.domain.NotificationStatus;
+import com.avengers.yoribogo.notification.notification.dto.NotificationDTO;
 import com.avengers.yoribogo.notification.notification.repository.NotificationRepository;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.WeeklyPopularRecipeEntity;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.service.WeeklyPopularRecipeService;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -77,7 +79,7 @@ public class NotificationService {
         List<SseEmitter> deadEmitters = new ArrayList<>();
         for (SseEmitter emitter : emitters) {
             try {
-                emitter.send(SseEmitter.event().name("notification").data("로그인 성공!! Deleted 되지 않은 알림들을 보냅니다."));
+                emitter.send(SseEmitter.event().name("notification111").data("로그인 성공!! Deleted 되지 않은 알림들을 보냅니다."));
             } catch (IOException e) {
                 deadEmitters.add(emitter);  // 전송 실패한 emitter를 제거 목록에 추가
             }
@@ -148,33 +150,47 @@ public class NotificationService {
         }
     }
 
-    // 특정 사용자의 알림을 전송
-    public List<NotificationEntity> sendNotificationsToUser(Long userId) {
+    public List<NotificationDTO> sendNotificationsToUser(Long userId) {
         // 1. 해당 사용자의 알림 목록 조회 (DELETED 되지 않은 것들만)
         List<NotificationEntity> userNotifications = notificationRepository.findByUserIdAndNotificationStatusNot(userId, NotificationStatus.DELETED);
 
-        if (userNotifications.isEmpty()) {
-            throw new CommonException(ErrorCode.NOT_FOUND_NOTIFICATION);
-        }
+        // Entity를 DTO로 변환
+        List<NotificationDTO> notificationDTOs = userNotifications
+                .stream()
+                .map(NotificationDTO::fromEntity)  // DTO로 변환
+                .collect(Collectors.toList());
 
         // 2. 알림 데이터를 SSE로 전송
         List<SseEmitter> deadEmitters = new ArrayList<>();
         for (SseEmitter emitter : emitters) {
             try {
-                for (NotificationEntity notification : userNotifications) {
-                    String notificationContent = notification.getNotificationContent();
-                    emitter.send(SseEmitter.event().name("notification").data(notificationContent));
+                for (NotificationDTO notification : notificationDTOs) {
+                    // 알림 객체 전체를 JSON 형식으로 전송
+                    emitter.send(SseEmitter.event().name("notification").data(notification));
                 }
             } catch (IOException e) {
-                deadEmitters.add(emitter); // 실패한 emitter 목록에 추가
+                deadEmitters.add(emitter);  // 실패한 emitter 목록에 추가
             }
         }
 
         // 실패한 emitters 제거
         emitters.removeAll(deadEmitters);
 
-        // 전송된 알림 목록 반환
-        return userNotifications;
+        // 전송된 알림 DTO 목록 반환
+        return notificationDTOs;
+    }
+
+
+    // 알림 상태 업데이트 메서드
+    public void updateNotificationStatus(Long notificationId, String status) {
+        NotificationEntity notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new CommonException(ErrorCode.NOT_FOUND_NOTIFICATION));
+
+        notification.setNotificationStatus(NotificationStatus.valueOf(status));
+        if ("READ".equals(status)) {
+            notification.setNotificationReadAt(LocalDateTime.now());
+        }
+        notificationRepository.save(notification);
     }
 
 }

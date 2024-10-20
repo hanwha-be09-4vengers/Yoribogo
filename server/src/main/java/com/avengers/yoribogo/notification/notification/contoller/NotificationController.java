@@ -3,7 +3,8 @@ package com.avengers.yoribogo.notification.notification.contoller;
 import com.avengers.yoribogo.common.ResponseDTO;
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
-import com.avengers.yoribogo.notification.notification.dto.NotificationEntity;
+import com.avengers.yoribogo.notification.notification.domain.NotificationEntity;
+import com.avengers.yoribogo.notification.notification.dto.NotificationDTO;
 import com.avengers.yoribogo.notification.notification.service.NotificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -43,16 +44,23 @@ public class NotificationController {
 
     // 사용자에게 알림을 전송하고, 전송된 알림 데이터를 Response로 반환
     @GetMapping("/send/{userId}")
-    // 시큐리티 적용 시 PathVariable 방식 쓸 필요 없음 수정 필요.
-    public ResponseEntity<ResponseDTO<List<NotificationEntity>>> sendUserNotifications(@PathVariable("userId") Long userId) {
-            List<NotificationEntity> userNotifications = notificationService.sendNotificationsToUser(userId);
-
-        if (userNotifications == null) {
-            throw new CommonException(ErrorCode. NOT_FOUND_NOTIFICATION);
-        } else{
-            return ResponseEntity.ok(ResponseDTO.ok(userNotifications));}
+    public ResponseEntity<ResponseDTO<List<NotificationDTO>>> sendUserNotifications(@PathVariable("userId") Long userId) {
+        List<NotificationDTO> userNotifications = notificationService.sendNotificationsToUser(userId);
+        if (userNotifications.isEmpty()) {
+            throw new CommonException(ErrorCode.NOT_FOUND_NOTIFICATION);
+        } else {
+            return ResponseEntity.ok(ResponseDTO.ok(userNotifications));
+        }
     }
 
 
     // 사용자가 알림을 읽으면 ( 클릭하면 ) READ 상태로 바뀌면서 READ_at 이 now().witnano(0)로 바뀌는 api
+    @PutMapping("/updateStatus/{notificationId}")
+    public ResponseEntity<Void> updateNotificationStatus(
+            @PathVariable("notificationId") Long notificationId,
+            @RequestBody String status
+    ) {
+        notificationService.updateNotificationStatus(notificationId, status);
+        return ResponseEntity.ok().build();
+    }
 }

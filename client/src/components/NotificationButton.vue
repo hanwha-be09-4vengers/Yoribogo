@@ -24,11 +24,18 @@ const eventSource = connectSSE();
 
 // SSE에서 'notification' 이벤트를 수신할 때마다 알림을 배열에 추가
 eventSource.addEventListener('notification', (event) => {
+
+  const notification = JSON.parse(event.data);  // 알림 객체를 JSON으로 파싱
+  
   notifications.value.push({
-    id: Date.now(), // 고유 ID 생성 (시간 기반)
-    notificationContent: event.data, // 서버로부터 받은 알림 데이터
+
+    id: notification.id,                      // 알림 ID
+    notificationContent: notification.content, // 알림 내용
+    status: notification.status,              // 알림 상태 (UNREAD, READ 등)
+    createdAt: notification.createdAt         // 알림 생성 시간
   });
 });
+
 
 // 알림 메뉴를 열고 닫는 함수
 const toggleMenu = () => {
@@ -76,6 +83,8 @@ const toggleMenu = () => {
   border-radius: 1.2rem;
   box-shadow: 0.1rem 0.35rem 0.35rem 0rem rgba(60, 60, 60, 0.5);
   z-index: 9999;
+  max-height: 20rem; /* 최대 높이 설정 */
+  overflow-y: auto;
 }
 
 .notification {
