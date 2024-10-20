@@ -69,7 +69,7 @@ const openAccountDeactivationModal = () => {
 /* 모달 제목 스타일 */
 .modal-header h2 {
   margin: 0;
-  font-size: 4rem;
+  font-size: 3rem;
   color: #333;
   margin-bottom: 6rem;
 }
@@ -84,7 +84,7 @@ const openAccountDeactivationModal = () => {
 
 .modal-btn {
   flex: 1; /* 버튼들이 같은 크기를 차지하도록 설정 */
-  padding: 2.4rem 2rem;
+  padding: 1rem 0.8rem;
   background-color: #ff7d7d;
   color: white;
   border: none;
