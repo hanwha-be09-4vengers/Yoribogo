@@ -13,7 +13,7 @@
       </div>
 
       <!-- 회원정보 수정 버튼 클릭 시 비밀번호 변경/회원탈퇴 모달 열기 -->
-      <button @click="$emit('openAccountOptionsModal')">회원정보 수정</button>
+      <button @click="$emit('openAccountOptionsModal')">계정정보 수정</button>
     </div>
   </div>
 

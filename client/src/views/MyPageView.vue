@@ -39,7 +39,7 @@
       </div>
     </MainBoard>
     
-    <!-- 모달들 -->
+    <!-- 회원 관련 모달들 -->
     <ProfileEditModal v-if="isEditProfileModalOpen" @close="closeEditProfileModal" />
     <AccountOptionsModal v-if="isAccountOptionsModalOpen" 
       @close="closeAccountOptionsModal"
@@ -66,12 +66,12 @@ import AccountDeactivationModal from '@/components/user/profile/AccountDeactivat
 import AccountOptionsModal from '@/components/user/profile/AccountOptionsModal.vue';
 
 // 탭에 보여줄 컴포넌트들 import
-import BookmarkedRecipes from '@/components/mypage/BookmarkedRecipes.vue';
-import SatisfiedRecipes from '@/components/mypage/SatisfiedRecipes.vue';
-import MyRecipes from '@/components/mypage/MyRecipes.vue';
+import BookmarkedRecipes from '@/components/mypage/BookmarkedRecipes.vue'; // 채연,해관님
+import SatisfiedRecipes from '@/components/mypage/SatisfiedRecipes.vue'; //기버님 파트
+import MyRecipes from '@/components/mypage/MyRecipes.vue';                // 채연,해관님
 
 // 탭 목록 정의
-const tabs = ['북마크한 레시피', '만족했던 레시피', '내가 작성한 레시피'];
+const tabs = [ '만족했던 레시피', '북마크한 레시피', '내가 작성한 레시피'];
 const currentTab = ref(tabs[0]); // 기본값은 첫 번째 탭
 const currentComponent = ref(BookmarkedRecipes); // 기본 컴포넌트 설정
 
@@ -89,7 +89,7 @@ const selectTab = (tab) => {
       currentComponent.value = MyRecipes;
       break;
     default:
-      currentComponent.value = BookmarkedRecipes; // 기본값
+      currentComponent.value = SatisfiedRecipes; // 기본값
   }
 };
 

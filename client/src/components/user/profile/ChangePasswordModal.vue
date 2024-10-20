@@ -66,13 +66,14 @@
   
   <script setup>
   import { ref, computed, watch, inject } from 'vue';
-  import axios from 'axios';
   import YesNoButton from '@/components/common/YesNoButton.vue'; // YesNoButton 컴포넌트 임포트
   import eyeOpenIcon from '@/assets/images/eye_open.png';
   import eyeClosedIcon from '@/assets/images/eye_closed.png';
-  
+  import { updateLoginedPassword } from '@/api/user';  // user.js에서 함수 임포트
+  import { useTokenStore } from '@/stores/tokenStore'; // Pinia 토큰 스토어 임포트
+
+  const tokenStore = useTokenStore();
   const emit = defineEmits(['close']); // 모달 닫기 이벤트 정의
-  const token = inject('token');
   const newPassword = ref('');
   const confirmPassword = ref('');
   const passwordError = ref('');
@@ -106,50 +107,45 @@
   });
   
   // 비밀번호 재설정 API 호출 함수
-  const resetPassword = async () => {
-    // 오류 메시지 초기화
-    passwordError.value = '';
-    passwordMatchMessage.value = '';
-  
-    if (!isPasswordValid.value) {
-      passwordError.value = '비밀번호는 6자 이상이어야 합니다.';
-      return;
+const resetPassword = async () => {
+  // 오류 메시지 초기화
+  passwordError.value = '';
+  passwordMatchMessage.value = '';
+
+  // 비밀번호 유효성 검사
+  if (!isPasswordValid.value) {
+    passwordError.value = '비밀번호는 6자 이상이어야 합니다.';
+    return;
+  }
+
+  // 비밀번호 확인 일치 여부 검사
+  if (newPassword.value !== confirmPassword.value) {
+    passwordMatchMessage.value = '비밀번호를 다시 확인해주세요.';
+    passwordMatchClass.value = 'error-text'; // 빨간색 스타일
+    return;
+  }
+
+  try {
+    // 로그인된 유저의 ID와 액세스 토큰 가져오기
+    const userId = tokenStore.token.userId;
+    const accessToken = tokenStore.token.accessToken;
+
+    // API 호출 (api/user.js의 updateLoginedPassword 함수 사용)
+    const response = await updateLoginedPassword(userId, newPassword.value, accessToken);
+
+    // 비밀번호 변경 성공 처리
+    if (response.success) {
+      alert('비밀번호가 성공적으로 변경되었습니다.');
+      closeModal();
+    } else {
+      alert('비밀번호 변경에 실패했습니다.');
     }
-  
-    if (newPassword.value !== confirmPassword.value) {
-      passwordMatchMessage.value = '비밀번호를 다시 확인해주세요.';
-      passwordMatchClass.value = 'error-text'; // 빨간색 스타일
-      return;
-    }
-  
-    try {
-      // 로그인된 유저의 ID를 얻기 위해 API에서 user_id 값을 사용
-      const userId = token.userId; // 현재 로그인된 사용자의 user_id를 동적으로 가져옴
-      const accessToken = token.accessToken;
-  
-      const response = await axios.patch(
-        `/user-service/api/users/${userId}/password`,
-        {
-          password: newPassword.value, // 보낼 데이터
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`, // 토큰 인증 헤더 추가
-          },
-        }
-      );
-  
-      if (response.data.success) {
-        alert('비밀번호가 성공적으로 변경되었습니다.');
-        closeModal();
-      } else {
-        alert('비밀번호 변경에 실패했습니다.');
-      }
-    } catch (error) {
-      alert('서버 오류가 발생했습니다.');
-      console.error(error);
-    }
-  };
+  } catch (error) {
+    alert('서버 오류가 발생했습니다.');
+    console.error(error);
+  }
+};
+
   
   // 모달 닫기 함수
   const closeModal = () => {
@@ -201,7 +197,7 @@
   .modal-header h2 {
     margin: 2rem;
     font-size: 4rem;
-    color: #a1b872;
+    color: #000000;
   }
   
   /* 모달 바디 */
