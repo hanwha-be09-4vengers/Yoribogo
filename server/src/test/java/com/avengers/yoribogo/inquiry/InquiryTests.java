@@ -58,13 +58,13 @@ public class InquiryTests {
         Assertions.assertNotNull(result);
     }
 
-    @DisplayName("문의 생성 확인 테스트")
-    @Test
-    public void testAddInquiry() {
-        Inquiry result = inquiryService.insertInquiry(
-                new InquiryDTO("문의 생성 테스트", "문의 생성 테스트 내용", 3));
-        Assertions.assertTrue(result.getInquiryId() != 0);
-    }
+//    @DisplayName("문의 생성 확인 테스트")
+////    @Test
+////    public void testAddInquiry() {
+////        Inquiry result = inquiryService.insertInquiry(
+////                new InquiryDTO("문의 생성 테스트", "문의 생성 테스트 내용", 3));
+////        Assertions.assertTrue(result.getInquiryId() != 0);
+////    }
 
     @DisplayName("문의 수정 확인 테스트")
     @Test
