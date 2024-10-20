@@ -112,6 +112,9 @@ const goWikiDetail = () => {
 }
 
 .result-board .menu-name {
+  max-width: 75%;
+  word-break: break-word;
+  text-align: center;
   font-size: 4rem;
 }
 

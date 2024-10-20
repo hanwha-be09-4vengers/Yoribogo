@@ -1,10 +1,10 @@
 <template>
   <nav id="main-nav" class="main-nav">
-    <div id="logo" class="logo" @click="goHome">
+    <div class="logo" @click="goHome">
       <img src="/src/assets/logo.svg" alt="Logo" />
-      <span>Yoribogo</span>
+      <span>요리보고</span>
     </div>
-    
+
     <ul class="menu">
       <li class="search-recipe" @click="goWiki">
         <div class="search-bar">
@@ -13,7 +13,7 @@
         </div>
       </li>
 
-      <!-- 로그인 상태에 따라 다른 UI 표시 -->
+      <li v-if="isLoggedIn"><NotificationButton></NotificationButton></li>
       <li v-if="isLoggedIn"><ProfileButton></ProfileButton></li>
       <li v-if="!isLoggedIn" class="signup" @click="goSignup">회원가입</li>
       <li v-if="!isLoggedIn" class="login" @click="goLogin">로그인</li>
@@ -23,6 +23,7 @@
 
 <script setup>
 import ProfileButton from '@/components/common/ProfileButton.vue';
+import NotificationButton from '@/components/common/NotificationButton.vue'; // 알림 버튼 추가
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useTokenStore } from '@/stores/tokenStore'; // Pinia 스토어 임포트
@@ -52,12 +53,6 @@ watch(
   { immediate: true } // 초기에도 바로 실행
 );
 
-// 로그아웃 처리
-const logout = () => {
-  tokenStore.logout(); // Pinia 스토어의 로그아웃 함수 호출
-  router.push('/'); // 로그아웃 후 홈으로 이동
-};
-
 // 위키 페이지로 이동
 const goWiki = () => {
   router.push('/wiki');
@@ -84,7 +79,6 @@ const goHome = () => {
   height: 100%;
   z-index: 9999;
 }
-
 .logo {
   display: flex;
   align-items: center;
@@ -98,10 +92,11 @@ const goHome = () => {
 
 .logo span {
   font-size: 2rem;
-  font-weight: 600;
+  font-weight: bold;
   color: var(--black-color);
 }
 
+/* .menu를 가운데 정렬시키고 각 요소가 한 줄에 나란히 있게 */
 .menu {
   display: flex;
   align-items: center;
@@ -115,6 +110,7 @@ ul li {
   cursor: pointer;
 }
 
+/* 검색창, 알림, 프로필 버튼들이 자연스럽게 나란히 정렬되도록 설정 */
 .search-recipe {
   display: flex;
   background-color: var(--blended-light-color);
@@ -122,12 +118,11 @@ ul li {
   border: none;
   border-radius: 2rem;
 }
-
 .search-bar {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .search-bar span {

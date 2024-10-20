@@ -226,142 +226,147 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @Transactional
     public BaseRecipeDTO registRecommendRecipe(RequestRecommendDTO requestRecommendDTO) {
-        // 1단계: AI에게 추천하는 요리 이름 물어보기
-        String prompt = "다음 정보를 바탕으로 적합한 요리 이름을 하나만 추천해줘: " +
-                "'오늘의 날씨는 어떤가요?' → '" + requestRecommendDTO.getFirst() + "', " +
-                "'오늘의 기분은 어떤가요?' → '" + requestRecommendDTO.getSecond() + "', " +
-                "'몇 명이 먹는 음식인가요?' → '" + requestRecommendDTO.getThird() + "', " +
-                "'채식 또는 비건 식단을 따르시나요?' → '" + requestRecommendDTO.getFourth() + "', " +
-                "'제가 또 알아야 하는 게 있나요?' → '" + requestRecommendDTO.getFifth() + "'." +
-                " 특히 '" + requestRecommendDTO.getFifth() + "'를 가장 중요하게 고려하고, " +
-                "추천하는 요리 이름은 '요리이름(Detailed english description of the dish with dish name)' 형식으로 특수문자 없이 간단히 알려줘.";
+        try {
+            // 1단계: AI에게 추천하는 요리 이름 물어보기
+            String prompt = "날씨: '" + requestRecommendDTO.getFirst() + "', 기분: '" + requestRecommendDTO.getSecond() +
+                    "', 인원: '" + requestRecommendDTO.getThird() + "', 채식 여부: '" + requestRecommendDTO.getFourth() +
+                    "', 추가 사항: '" + requestRecommendDTO.getFifth() + "'. " +
+                    "추가 사항이 요리와 관련된 경우(예: 알레르기 정보, 선호하는 음식, 상황), 그 요청을 우선 고려하여 요리를 추천해줘. " +
+                    "비관련 사항(예: 유명 인물 이름, 해킹 방법 등, 성적인 단어)이 포함된 경우에는 요리를 추천하지 말고 '에러'라고 답해줘. " +
+                    "요리를 추천하는 경우에는 다양한 나라의 요리 중 하나를 " +
+                    "'한국어 요리 이름(Detailed English description including the dish name)' 형식으로 한 문장으로 추천해줘. " +
+                    "영어 설명에는 영어 요리 이름을 포함하고, 설명은 20단어 이내로 간결하게 해줘.";
 
-        String aiAnswerMenu = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
+            String aiAnswerMenu = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
+            System.out.println(aiAnswerMenu);
 
-        // 한국어 이름과 영어 이름 분리
-        String koreanName = aiAnswerMenu.split("\\(")[0].trim();
-        String description = aiAnswerMenu.split("\\(")[1].replace(")", "").trim();
+            // 한국어 이름과 영어 이름 분리
+            String koreanName = aiAnswerMenu.split("\\(")[0].trim();
+            String description = aiAnswerMenu.split("\\(")[1].replace(")", "").trim();
 
-        // 앞뒤 특수문자 제거
-        String trimmedAiAnswerMenu = trimSpecialCharacters(koreanName);
-        String trimmedDescription = trimSpecialCharacters(description);
+            // 앞뒤 특수문자 제거
+            String trimmedAiAnswerMenu = trimSpecialCharacters(koreanName);
+            String trimmedDescription = trimSpecialCharacters(description);
 
-        System.out.println(trimmedAiAnswerMenu);
-        System.out.println(trimmedDescription);
+            System.out.println(trimmedAiAnswerMenu);
+            System.out.println(trimmedDescription);
 
-        // 2단계: 요리 레시피 테이블 조회하기
+            // 2단계: 요리 레시피 테이블 조회하기
 
-        // 비건이 아니고, 추가 요청 사항이 없을 경우
-        if (requestRecommendDTO.getFourth().equals("아니요") && requestRecommendDTO.getFifth().isEmpty()) {
-            List<Recipe> recipeDTOList = recipeRepository.findByMenuNameContaining(trimmedAiAnswerMenu);
+            // 비건이 아니고, 추가 요청 사항이 없을 경우
+            if (requestRecommendDTO.getFourth().equals("아니요") && requestRecommendDTO.getFifth().isEmpty()) {
+                List<Recipe> recipeDTOList = recipeRepository.findByMenuNameContaining(trimmedAiAnswerMenu);
 
-            // 요리 이름을 저장하는 리스트
-            List<String> recipeNameList = new ArrayList<>();
+                // 요리 이름을 저장하는 리스트
+                List<String> recipeNameList = new ArrayList<>();
 
-            // 0번 인덱스는 AI가 추천한 요리
-            recipeNameList.add(trimmedAiAnswerMenu);
+                // 0번 인덱스는 AI가 추천한 요리
+                recipeNameList.add(trimmedAiAnswerMenu);
 
-            // 조회된 요리의 이름 삽입
-            for (Recipe recipeDTO : recipeDTOList) {
-                recipeNameList.add(recipeDTO.getMenuName());
+                // 조회된 요리의 이름 삽입
+                for (Recipe recipeDTO : recipeDTOList) {
+                    recipeNameList.add(recipeDTO.getMenuName());
+                }
+
+                // 난수 발생
+                int idx = (int) (Math.random() * recipeNameList.size());
+
+                // 난수가 0보다 크면 기존에 존재하던 데이터이므로 return
+                if (idx > 0) return modelMapper.map(recipeDTOList.get(idx - 1), RecipeDTO.class);
             }
 
-            // 난수 발생
-            int idx = (int) (Math.random() * recipeNameList.size());
+            // 3단계: 공공데이터 요리 레시피 테이블 조회하기
+            PublicDataRecipeDTO publicDataRecipeDTO =
+                    publicDataRecipeService.findPublicDataRecipeByMenuName(trimmedAiAnswerMenu);
 
-            // 난수가 0보다 크면 기존에 존재하던 데이터이므로 return
-            if (idx > 0) return modelMapper.map(recipeDTOList.get(idx-1), RecipeDTO.class);
+            // 조회되었을 경우
+            if (publicDataRecipeDTO != null) return publicDataRecipeDTO;
+
+            // 4단계: AI 요리 레시피 테이블 조회하기
+            AIRecipeDTO aiRecipeDTO = aiRecipeService.findAIRecipeByMenuName(trimmedAiAnswerMenu);
+
+            // 조회되었을 경우
+            if (aiRecipeDTO != null) return aiRecipeDTO;
+
+            // 5단계: AI가 추천한 요리의 재료를 물어보기
+            String ingredientsPrompt =
+                    trimmedAiAnswerMenu + "에 필요한 재료를 ','로 구분해 양과 함께 알려줘. 예: '설탕 2스푼'. 특수문자나 불필요한 말은 제외.";
+            String aiAnswerIngredients = openAIService.getRecommend(ingredientsPrompt).getChoices().get(0).getMessage().getContent();
+            System.out.println(aiAnswerIngredients);
+
+            // ':'가 있는 경우, ':' 이후의 문자열만 남기기
+            aiAnswerIngredients = parseString(aiAnswerIngredients);
+
+            // 앞뒤 특수문자 제거
+            String trimmedAiAnswerIngredients = trimSpecialCharacters(aiAnswerIngredients);
+
+            // 6단계: AI가 추천한 요리의 레시피를 물어보기
+            String recipePrompt = trimmedAiAnswerMenu + "에 필요한 재료가 " + trimmedAiAnswerIngredients + "일 때, " +
+                    trimmedAiAnswerMenu + "의 레시피를 최대 6단계로 요약해줘. " +
+                    "각 단계에 번호만 붙여 '1. 쌀을 씻습니다.'와 같은 형식으로 간결하게 작성해줘.";
+            String aiAnswerRecipe = openAIService.getRecommend(recipePrompt).getChoices().get(0).getMessage().getContent();
+            System.out.println(aiAnswerRecipe);
+
+            // ':'가 있는 경우, ':' 이후의 문자열만 남기기
+            aiAnswerRecipe = parseString(aiAnswerRecipe);
+
+            // 7단계: AI가 생성한 요리 등록
+
+            // AI 사진 생성
+            String gptImageUrl = registImages(trimmedDescription);
+            System.out.println(gptImageUrl);
+
+            // AI가 생성한 요리 정보 입력
+            RecipeDTO newRecipeDTO = RecipeDTO
+                    .builder()
+                    .menuName(trimmedAiAnswerMenu)
+                    .menuIngredient(aiAnswerIngredients)
+                    .menuImage(null)
+                    .menuType(MenuType.AI)
+                    .userId(1L)
+                    .build();
+
+            // 엔티티 생성
+            newRecipeDTO = registRecipe(newRecipeDTO);
+
+            // S3에 사진 등록
+            String s3ImageUrl = uploadMenuImage(gptImageUrl, newRecipeDTO.getRecipeId());
+
+            // 대표 이미지 업데이트
+            RecipeDTO modifyRecipeDTO = RecipeDTO
+                    .builder()
+                    .recipeId(newRecipeDTO.getRecipeId())
+                    .menuName(newRecipeDTO.getMenuName())
+                    .menuIngredient(newRecipeDTO.getMenuIngredient())
+                    .menuImage(s3ImageUrl)
+                    .menuType(MenuType.AI)
+                    .userId(1L)
+                    .build();
+
+            modifyRecipeDTO = modifyRecipe(modifyRecipeDTO.getRecipeId(), modifyRecipeDTO);
+            log.info(modifyRecipeDTO.toString());
+
+            // 8단계: AI가 생성한 요리 레시피 매뉴얼 등록
+            List<Map<String, String>> manual = new ArrayList<>();
+
+            List<String> contents = Arrays.stream(aiAnswerRecipe.split("\n")).toList();
+            for (String content : contents) {
+                Map<String, String> map = new HashMap<>();
+                map.put("content", content);
+                manual.add(map);
+            }
+
+            RequestRecipeManualDTO requestRecipeManualDTO = RequestRecipeManualDTO
+                    .builder()
+                    .manual(manual)
+                    .build();
+
+            recipeManualService.registRecipeManual(modifyRecipeDTO.getRecipeId(), requestRecipeManualDTO);
+
+            return modifyRecipeDTO;
+        } catch (Exception e) {
+            throw new CommonException(ErrorCode.INVALID_REQUEST_BODY);
         }
-
-        // 3단계: 공공데이터 요리 레시피 테이블 조회하기
-        PublicDataRecipeDTO publicDataRecipeDTO =
-                publicDataRecipeService.findPublicDataRecipeByMenuName(trimmedAiAnswerMenu);
-
-        // 조회되었을 경우
-        if (publicDataRecipeDTO != null) return publicDataRecipeDTO;
-
-        // 4단계: AI 요리 레시피 테이블 조회하기
-        AIRecipeDTO aiRecipeDTO = aiRecipeService.findAIRecipeByMenuName(trimmedAiAnswerMenu);
-
-        // 조회되었을 경우
-        if (aiRecipeDTO != null) return aiRecipeDTO;
-
-        // 5단계: AI가 추천한 요리의 재료를 물어보기
-        String ingredientsPrompt = "다음 요리를 만들 때 필요한 재료를 자세하게 설명해줘: " + trimmedAiAnswerMenu +
-                "를 만들기 위한 재료를 꼭 ','로 구분하여 양을 포함하고, '설탕 2스푼' 형식으로 작성해줘. " +
-                "단, 앞과 뒤에 특수문자와 다른 말은 빼고 오직 재료 내용만 제공해줘.";
-        String aiAnswerIngredients = openAIService.getRecommend(ingredientsPrompt).getChoices().get(0).getMessage().getContent();
-
-        // ':'가 있는 경우, ':' 이후의 문자열만 남기기
-        aiAnswerIngredients = parseString(aiAnswerIngredients);
-
-        // 앞뒤 특수문자 제거
-        String trimmedAiAnswerIngredients = trimSpecialCharacters(aiAnswerIngredients);
-
-        // 6단계: AI가 추천한 요리의 레시피를 물어보기
-        String recipePrompt = trimmedAiAnswerMenu + "를 만들기 위한 재료가 " + trimmedAiAnswerIngredients +
-                "일 때, " + trimmedAiAnswerMenu + "의 레시피를 단계별로 자세하게 설명해줘:\n" +
-                "레시피는 각 단계에 번호를 붙여서 '1. 파를 썹니다.'와 같은 형식으로 작성해줘. " +
-                "단, 한자 사용을 피하고, 앞과 뒤에 특수문자와 다른 말은 빼고 오직 레시피 내용만 제공해줘.";
-        String aiAnswerRecipe = openAIService.getRecommend(recipePrompt).getChoices().get(0).getMessage().getContent();
-
-        // ':'가 있는 경우, ':' 이후의 문자열만 남기기
-        aiAnswerRecipe = parseString(aiAnswerRecipe);
-
-        // 7단계: AI가 생성한 요리 등록
-
-        // AI 사진 생성
-        String gptImageUrl = registImages(trimmedDescription);
-        System.out.println(gptImageUrl);
-
-        // AI가 생성한 요리 정보 입력
-        RecipeDTO newRecipeDTO = RecipeDTO
-                .builder()
-                .menuName(trimmedAiAnswerMenu)
-                .menuIngredient(aiAnswerIngredients)
-                .menuImage(null)
-                .menuType(MenuType.AI)
-                .userId(1L)
-                .build();
-
-        // 엔티티 생성
-        newRecipeDTO = registRecipe(newRecipeDTO);
-
-        // S3에 사진 등록
-        String s3ImageUrl = uploadMenuImage(gptImageUrl, newRecipeDTO.getRecipeId());
-
-        // 대표 이미지 업데이트
-        RecipeDTO modifyRecipeDTO = RecipeDTO
-                .builder()
-                .recipeId(newRecipeDTO.getRecipeId())
-                .menuName(newRecipeDTO.getMenuName())
-                .menuIngredient(newRecipeDTO.getMenuIngredient())
-                .menuImage(s3ImageUrl)
-                .menuType(MenuType.AI)
-                .userId(1L)
-                .build();
-
-        modifyRecipeDTO = modifyRecipe(modifyRecipeDTO.getRecipeId(), modifyRecipeDTO);
-        log.info(modifyRecipeDTO.toString());
-
-        // 8단계: AI가 생성한 요리 레시피 매뉴얼 등록
-        List<Map<String,String>> manual = new ArrayList<>();
-
-        List<String> contents = Arrays.stream(aiAnswerRecipe.split("\n")).toList();
-        for(String content: contents) {
-            Map<String,String> map = new HashMap<>();
-            map.put("content", content);
-            manual.add(map);
-        }
-
-        RequestRecipeManualDTO requestRecipeManualDTO = RequestRecipeManualDTO
-                .builder()
-                .manual(manual)
-                .build();
-
-        recipeManualService.registRecipeManual(modifyRecipeDTO.getRecipeId(), requestRecipeManualDTO);
-
-        return modifyRecipeDTO;
     }
 
     // 요리 사진 생성하기

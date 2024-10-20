@@ -2,8 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import KakaoCallback from '@/components/user/sns/KakaoCallback.vue' // 콜백 처리용 컴포넌트
 import NaverCallback from '@/components/user/sns/NaverCallback.vue' // 콜백 처리용 컴포넌트
-import Signup from '@/views/user/SignupView.vue';
-import Login from '@/views/user/LoginView.vue';
+import SignupView from '@/views/user/SignupView.vue'
+import LoginView from '@/views/user/LoginView.vue'
+
+import WriteRecipeBoardComponent from '@/components/recipe-board/WriteRecipeBoardComponent.vue'
+import RecipeListView from '@/components/recipe-board/RecipeListView.vue'
+
 const routes = [
   {
     path: '/',
@@ -13,12 +17,12 @@ const routes = [
   {
     path: '/signup',
     name: 'Signup',
-    component: Signup
+    component: SignupView
   },
   {
     path: '/login',
     name: 'Login',
-    component: Login
+    component: LoginView
   },
   {
     path: '/question/:qid',
@@ -43,12 +47,55 @@ const routes = [
   {
     path: '/recipe-board',
     name: 'recipe-board',
-    component: () => import('../views/RecipeBoardView.vue')
+    component: () => import('../views/RecipeBoardView.vue'), // 메인 레이아웃
+      redirect: '/recipe-board/list', 
+      // recipe-board 페이지 들어오면 기본적으로 목록을 보여주도록 -> 이후 작성 버튼 누르면 recipe/board/wrtie 페이지로 이동함
+
+    // 하위 레이아웃 (1. 목록 보여주는 페이지, 2. 작성하는 페이지)
+    children: [
+      // {
+      //   // path: 'list',  // 레시피 목록 페이지
+      //   // component: RecipeListView
+      // },
+      {
+        path: 'write',  // 레시피 작성 페이지
+        component: WriteRecipeBoardComponent
+      }
+    ]
+  },
+  {
+    path: '/recipe-board/list',
+    name: 'recipe-board-list',
+    component: () => import('../views/RecipeBoardListView.vue')
+  },
+  {
+    path: '/recipe-board/:board_id',
+    name: 'recipe-board-detail',
+    component: () => import('../views/RecipeBoardDetailView.vue'),
+    props: true
   },
   {
     path: '/mypage',
     name: 'mypage',
-    component: () => import('../views/MyPageView.vue')
+    redirect: '/mypage/bookmarked', 
+    component: () => import('../views/MyPageView.vue'),
+    children: [
+      {
+        path: 'bookmarked',
+        name: 'BookmarkedRecipes',
+        component: () => import('@/components/mypage/BookmarkedRecipes.vue')
+      },
+      {
+        path: 'satisfied',
+        name: 'SatisfiedRecipes',
+        component: () => import('@/components/mypage/SatisfiedRecipes.vue')
+      },
+      {
+        path: 'my-recipes',
+        name: 'MyRecipes',
+        component: () => import('@/components/mypage/MyRecipes.vue')
+      }
+    ]
   },
   {
     path: '/qna',
@@ -59,6 +106,17 @@ const routes = [
     path: '/qna/:num',
     name: 'qna-detail',
     component: () => import('../views/QnaDetailView.vue'),
+    props: true
+  },
+  {
+    path: '/qna/new',
+    name: 'qna-new',
+    component: () => import('../views/QnaCreateView.vue')
+  },
+  {
+    path: '/qna/edit/:num',
+    name: 'qna-edit',
+    component: () => import('../views/QnaEditView.vue'),
     props: true
   },
   {

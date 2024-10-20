@@ -7,6 +7,7 @@ import com.avengers.yoribogo.security.JwtUtil;
 import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.domain.enums.SignupPath;
 import com.avengers.yoribogo.user.domain.vo.ResponseUserVO;
+import com.avengers.yoribogo.user.domain.vo.UserIdEmailVerificationVO;
 import com.avengers.yoribogo.user.domain.vo.email.EmailVerificationSignupVO;
 import com.avengers.yoribogo.user.domain.vo.email.EmailVerificationVO;
 import com.avengers.yoribogo.user.domain.vo.email.ResponseEmailMessageVO;
@@ -114,7 +115,7 @@ public class UserController {
     }
 
 
-    //설명. 2.1 이메일 인증번호 검증 API (회원가입,아이디,비밀번호 찾기 실행)
+    //설명. 2.1 이메일 인증번호 검증 API (회원가입,비밀번호 찾기 실행)
     @PostMapping("/verification-email/confirmation")
     public ResponseDTO<?> verifyEmail(@RequestBody @Validated EmailVerificationVO request) {
         boolean isVerified = emailVerificationService.verifyCode(request.getEmail(), request.getCode());
@@ -125,6 +126,19 @@ public class UserController {
             return ResponseDTO.ok(responseEmailMessageVO);
         } else {
             return ResponseDTO.fail(new CommonException(ErrorCode.INVALID_VERIFICATION_CODE));
+        }
+    }
+
+    //설명. 2.2 이메일 인증번호 검증 API (아이디 찾기 실행)
+    @PostMapping("/nickname/verification-email")
+    public ResponseDTO<?> verifyUserIdEmail(@RequestBody @Validated UserIdEmailVerificationVO request) {
+        try {
+            // 이메일과 인증 코드 검증
+            UserEntity userEntity = emailVerificationService.verifyUserNicknameCode(request.getNickname(), request.getEmail(), request.getCode());
+            return ResponseDTO.ok(userEntity);
+        } catch (CommonException e) {
+            // 검증 실패 시 예외 처리
+            return ResponseDTO.fail(e);
         }
     }
 
@@ -254,7 +268,7 @@ public class UserController {
     }
 
 
-    // 설명. 4.4 사용자 식별자(userId)로 조회->닉네임,프로필 사진,티어이름
+    // 설명. 4.4 사용자 식별자(userId)로 조회 -> 닉네임, 프로필 사진, 티어 이름, 티어 이미지
     @GetMapping("/{userId}/profile")
     public ResponseDTO<ResponseUserProfileDTO> getUserProfileByUserId(@PathVariable("userId") Long userId) {
         UserEntity userEntity = userService.findByUserId(userId);
@@ -262,15 +276,18 @@ public class UserController {
         // 새로운 DTO로 필요한 정보만 추출
         ResponseUserProfileDTO userProfileDTO = ResponseUserProfileDTO.builder()
                 .nickname(userEntity.getNickname())
-                .profileImage(userEntity.getProfileImage())
+                .profileImage(userEntity.getProfileImage() != null ? userEntity.getProfileImage()
+                        : "https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/default_profile.png") // 기본 이미지 처리
                 .email(userEntity.getEmail())
                 .userRole(userEntity.getUserRole().name())
                 .signupPath(userEntity.getSignupPath().name())
                 .tierName(userEntity.getTier() != null ? userEntity.getTier().getTierName() : "No Tier")
+                .tierImage(userEntity.getTier() != null ? userEntity.getTier().getTierImage() : "https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/default_tier.png") // 기본 티어 이미지 처리
                 .build();
 
         return ResponseDTO.ok(userProfileDTO);
     }
+
 
 
     // 설명. 5. 리프레시 토큰으로 액세스 토큰 재발급

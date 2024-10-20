@@ -2,13 +2,12 @@ package com.avengers.yoribogo.recipe.service;
 
 import com.avengers.yoribogo.recipe.dto.GoodMenuDTO;
 import com.avengers.yoribogo.recipe.dto.RecommendedMenuDTO;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface RecommendedMenuService {
 
     // 추천 요리 회원별 조회
-    List<GoodMenuDTO> findRecommendedMenuByUserId(Long userId);
+    Page<GoodMenuDTO> findRecommendedMenuByUserId(Long userId, Integer pageNo);
 
     // 추천 요리 등록
     RecommendedMenuDTO registRecommendedMenu(RecommendedMenuDTO registRecommendedMenuDTO);

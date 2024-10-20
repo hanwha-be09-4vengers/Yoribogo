@@ -70,7 +70,99 @@ VALUES
 
 
 -- 나만의 레시피 게시판
+INSERT INTO recipe_board (recipe_board_menu_name, recipe_board_ingredient, recipe_board_image, recipe_board_likes, recipe_board_comments, recipe_board_created_at, recipe_board_status, user_id)
+VALUES
+("가리비 초밥", "가리비, 초대리, 밥, 고추냉이, 간장, 식초", "https://www.google.com/imgres?q=%EA%B0%80%EB%A6%AC%EB%B9%84%EC%B4%88%EB%B0%A5&imgurl=https%3A%2F%2Fcontent.foodspring.co.kr%2Fvendor%2F1805%2Fimages%2F210_6301519509_r.png&imgrefurl=https%3A%2F%2Fwww.foodspring.co.kr%2Fgoods%2Fdetail%2F442474&docid=LVk3nminj2P8AM&tbnid=H8oR0Upb91CyEM&vet=12ahUKEwj90cTijpiJAxUFzjQHHSiJIRkQM3oECBcQAA..i&w=450&h=450&hcb=2&ved=2ahUKEwj90cTijpiJAxUFzjQHHSiJIRkQM3oECBcQAA", 0, 0, '2024-10-01 18:00:00', 'ACTIVE', 3),
+("고추꽁치", "꽁치, 고춧가루, 고추기름, 대파", "https://www.google.com/imgres?q=%ED%9D%91%EB%B0%B1%EC%9A%94%EB%A6%AC%EC%82%AC%20%EA%B3%A0%EC%B6%94%EA%BD%81%EC%B9%98&imgurl=https%3A%2F%2Fpostfiles.pstatic.net%2FMjAyNDEwMDJfMzkg%2FMDAxNzI3ODI1MTAzMjAw.acbfoXNoSvVjMzTVph33ucdnKhT3zGI0pbWgeWJwdMsg.D2Hcu6td7UqHP3GNBto9m2YbOgxQHaIgXobux90qjVAg.JPEG%2FSE-054f4a22-251b-44b1-a325-e9d64c7f8f92.jpg%3Ftype%3Dw773&imgrefurl=https%3A%2F%2Fm.post.naver.com%2Fviewer%2FpostView.naver%3FvolumeNo%3D39377610%26memberNo%3D2982420&docid=6c3UAG_HTbAeuM&tbnid=__hOPdXdLgdLHM&vet=12ahUKEwiWqNaRkJiJAxV28DQHHenwIhsQM3oECBoQAA..i&w=773&h=417&hcb=2&ved=2ahUKEwiWqNaRkJiJAxV28DQHHenwIhsQM3oECBoQAA", 0, 0, '2024-10-11 11:00:00', 'ACTIVE', 4),
+("아스파라거스 구이", "아스파라거스", NULL, 1, 0, '2024-10-11 14:00:00', 'ACTIVE', 6),
+("계란말이", "계란, 대파, 당근, 양파", NULL, 3, 4, '2024-10-14 18:00:00', 'ACTIVE', 5),
+("채식튀김덮밥", "가지, 버섯, 밥, 고추냉이, 간장, 밀가루", "https://www.google.com/imgres?q=%ED%8A%80%EA%B9%80%EB%8D%AE%EB%B0%A5&imgurl=https%3A%2F%2Fstatic.wtable.co.kr%2Fimage-resize%2Fproduction%2Fservice%2Frecipe%2F719%2F4x3%2F23757871-daf5-4a3d-b6e3-87b0a975f8d8.jpg&imgrefurl=https%3A%2F%2Fwtable.co.kr%2Frecipes%2FJDcKtRnopd3LKKkakvdZqRQP&docid=ks8DsgfOLYS6NM&tbnid=rkePvlqf7maUAM&vet=12ahUKEwib4Nv_l5iJAxV3qVYBHfO0DEEQM3oECBcQAA..i&w=1280&h=960&hcb=2&ved=2ahUKEwib4Nv_l5iJAxV3qVYBHfO0DEEQM3oECBcQAA", 12, 5, '2024-10-15 09:00:00', 'ACTIVE', 3),
+("김치찌개", "김치, 돼지고기, 맛소금, 고춧가루, 간장, 양파", NULL, 0, 0, '2024-10-15 11:00:00', 'ACTIVE', 5),
+("계란볶음밥", "계란, 대파, 밥, 식용유, 굴소스, 소금", "https://www.google.com/imgres?q=%EA%B3%84%EB%9E%80%EB%B3%B6%EC%9D%8C%EB%B0%A5&imgurl=https%3A%2F%2Fi.namu.wiki%2Fi%2Fl7754jRIcHRoQCa2rLupeWr1V5Vam4ApKuwOGokZSwsgXtQgRPAhO8i66LdNNyVkqdYd4FnYFsyph8_VO5oEEg.webp&imgrefurl=https%3A%2F%2Fnamu.wiki%2Fw%2F%25ED%2599%25A9%25EA%25B8%2588%2520%25EB%25B3%25B6%25EC%259D%258C%25EB%25B0%25A5&docid=PNfqkBNJbxqrFM&tbnid=c88yEaGNxicndM&vet=12ahUKEwjgsPeBrJiJAxU5zTQHHdDxA7kQM3oECBUQAA..i&w=800&h=533&hcb=2&ved=2ahUKEwjgsPeBrJiJAxU5zTQHHdDxA7kQM3oECBUQAA", 34, 13, '2024-10-15 12:00:00', 'ACTIVE', 5),
+("떡볶이", "떡, 고추장, 설탕, 고춧가루, 어묵, 대파", "https://www.google.com/imgres?q=%EB%96%A1%EB%B3%B6%EC%9D%B4&imgurl=https%3A%2F%2Frecipe1.ezmember.co.kr%2Fcache%2Freview%2F2020%2F04%2F30%2Fd7d4d6e76c514d8ad9927556ff2f64e8.jpg&imgrefurl=https%3A%2F%2Fwww.10000recipe.com%2Frecipe%2F6922689&docid=_D_8sl0l5TQMxM&tbnid=sJXFKXbpY8NE7M&vet=12ahUKEwjg_oTWmpiJAxVKxdQKHe5oAkEQM3oECBoQAA..i&w=720&h=540&hcb=2&ved=2ahUKEwjg_oTWmpiJAxVKxdQKHe5oAkEQM3oECBoQAA", 0, 0, '2024-10-16 12:00:00', 'ACTIVE', 4),
+("제육볶음", "돼지고기, 고추장, 고춧가루, 양파, 대파, 설탕", "https://www.google.com/imgres?q=%EC%A0%9C%EC%9C%A1%EB%B3%B6%EC%9D%8C&imgurl=https%3A%2F%2Fimg1.daumcdn.net%2Fthumb%2FR1280x0%2F%3Ffname%3Dhttp%3A%2F%2Ft1.daumcdn.net%2Fliveboard%2Ftheschool%2Fde25c64dcecb40c29a1af9d578983c53.JPG&imgrefurl=https%3A%2F%2Flive.ruliweb.com%2Fninic%2Ftdor&docid=2xX2zVRZ-YYubM&tbnid=fVytZcM80Am-mM&vet=12ahUKEwjqwcrlmpiJAxWDA8QHHWe5CekQM3oECBkQAA..i&w=720&h=540&hcb=2&ved=2ahUKEwjqwcrlmpiJAxWDA8QHHWe5CekQM3oECBkQAA", 5, 1, '2024-10-16 13:00:00', 'ACTIVE', 2),
+("김밥", "김, 밥, 당근, 시금치, 계란, 단무지", "https://www.google.com/imgres?q=%EA%B9%80%EB%B0%A5&imgurl=https%3A%2F%2Frecipe1.ezmember.co.kr%2Fcache%2Freview%2F2018%2F08%2F22%2F7cdaf5d432d441a4a84545ef9a780fe2.jpg&imgrefurl=https%3A%2F%2Fwww.10000recipe.com%2Frecipe%2F6874195&docid=b_lGhy_Om2xt6M&tbnid=8qIC_p67WxI8OM&vet=12ahUKEwjz7pjTnJiJAxXyLDQHHYszBfkQM3oECBcQAA..i&w=500&h=375&hcb=2&ved=2ahUKEwjz7pjTnJiJAxXyLDQHHYszBfkQM3oECBcQAA", 20, 5, '2024-10-17 11:00:00', 'ACTIVE', 3),
+("카레라이스", "카레 가루, 밥, 감자, 당근, 양파, 돼지고기", NULL, 10, 3, '2024-10-17 13:30:00', 'ACTIVE', 6),
+("고등어구이", "고등어, 소금, 후추", "https://www.google.com/imgres?q=%EA%B3%A0%EB%93%B1%EC%96%B4%EA%B5%AC%EC%9D%B4&imgurl=https%3A%2F%2Frecipe1.ezmember.co.kr%2Fcache%2Freview%2F2020%2F08%2F26%2F747ce1e837f14d7e80da702107f30a2f.jpg&imgrefurl=https%3A%2F%2Fwww.10000recipe.com%2Frecipe%2F6950694&docid=_bYffgR1JcMOWM&tbnid=fGhsyVpJfBBYpM&vet=12ahUKEwjLtJeOnZiJAxW95WwKHcg1B1IQM3oECBsQAA..i&w=1000&h=666&hcb=2&ved=2ahUKEwjLtJeOnZiJAxW95WwKHcg1B1IQM3oECBsQAA", 4, 2, '2024-10-18 12:00:00', 'ACTIVE', 4),
+("부대찌개", "햄, 소시지, 김치, 고춧가루, 라면사리", NULL, 0, 0, '2024-10-18 18:00:00', 'ACTIVE', 2),
+("된장찌개", "된장, 두부, 감자, 양파, 고춧가루", "https://www.google.com/imgres?q=%EB%90%9C%EC%9E%A5%EC%B0%8C%EA%B0%9C&imgurl=https%3A%2F%2Fcdn.joongang.co.kr%2Fdata%2Fphoto%2F2021%2F04%2F22%2Fimg_20210422001000.jpg&imgrefurl=https%3A%2F%2Fnews.joins.com%2Farticle%2F24040473&docid=OpvV_eyCCwmADM&tbnid=4tkz0zMheP4VwM&vet=12ahUKEwi7lt7_pZiJAxXsF8QHHbtDAKoQM3oECAwQAA..i&w=710&h=710&hcb=2&ved=2ahUKEwi7lt7_pZiJAxXsF8QHHbtDAKoQM3oECAwQAA", 2, 0, '2024-10-19 11:00:00', 'ACTIVE', 3),
+("계란국", "계란, 대파, 소금, 후추", "https://www.google.com/imgres?q=%EA%B3%84%EB%9E%80%EA%B5%AD&imgurl=https%3A%2F%2Frecipe1.ezmember.co.kr%2Fcache%2Freview%2F2019%2F08%2F22%2F5d5f94e7e0c9461f993b8e63cf15491f.jpg&imgrefurl=https%3A%2F%2Fwww.10000recipe.com%2Frecipe%2F6894226&docid=RjxDORaaCcg5uM&tbnid=sJKumcxgPBdd8M&vet=12ahUKEwiO2tDnpZiJAxXHBtQKHSHKCPQQM3oECBcQAA..i&w=720&h=540&hcb=2&ved=2ahUKEwiO2tDnpZiJAxXHBtQKHSHKCPQQM3oECBcQAA", 0, 0, '2024-10-19 13:00:00', 'ACTIVE', 5);
 
+-- 나만의 레시피 메뉴얼
+INSERT INTO recipe_board_manual (recipe_board_manual_step, recipe_board_manual_image, recipe_board_manual_content, recipe_board_id)
+VALUES
+-- 가리비 초밥 --
+(1, "https://www.example.com/scallop1.jpg", "가리비를 깨끗이 씻어 손질합니다.", 1),
+(2, "https://www.example.com/scallop2.jpg", "밥에 초대리를 섞고 가리비를 얹습니다.", 1),
+(3, "https://www.example.com/scallop3.jpg", "간장과 고추냉이를 곁들여 완성합니다.", 1),
+
+-- 고추꽁치 --
+(1, "https://www.example.com/mackerel1.jpg", "꽁치를 깨끗이 씻어 손질합니다.", 2),
+(2, "https://www.example.com/mackerel2.jpg", "고추기름과 고춧가루를 섞어 양념을 만듭니다.", 2),
+(3, "https://www.example.com/mackerel3.jpg", "대파를 넣고 함께 볶아 완성합니다.", 2),
+
+-- 아스파라거스 구이 --
+(1, "https://www.example.com/asparagus1.jpg", "아스파라거스를 씻어 물기를 제거합니다.", 3),
+(2, "https://www.example.com/asparagus2.jpg", "그릴에 구워 색이 날 때까지 익힙니다.", 3),
+
+-- 계란말이 --
+(1, "https://www.example.com/eggroll1.jpg", "계란을 풀고 대파, 당근, 양파를 잘게 썰어 섞습니다.", 4),
+(2, "https://www.example.com/eggroll2.jpg", "프라이팬에 붓고 말아줍니다.", 4),
+(3, "https://www.example.com/eggroll3.jpg", "노릇노릇하게 익으면 썰어 완성합니다.", 4),
+
+-- 채식튀김덮밥 --
+(1, "https://www.example.com/vegtop1.jpg", "가지와 버섯을 손질합니다.", 5),
+(2, "https://www.example.com/vegtop2.jpg", "튀김옷을 입혀 기름에 튀깁니다.", 5),
+(3, "https://www.example.com/vegtop3.jpg", "밥 위에 튀김을 올리고 간장을 곁들입니다.", 5),
+
+-- 김치찌개 --
+(1, "https://www.example.com/kimchi_stew1.jpg", "김치와 돼지고기를 적당한 크기로 썰어줍니다.", 6),
+(2, "https://www.example.com/kimchi_stew2.jpg", "냄비에 돼지고기와 김치를 볶습니다.", 6),
+(3, "https://www.example.com/kimchi_stew3.jpg", "물을 넣고 끓인 후 간을 맞춥니다.", 6),
+
+-- 계란볶음밥 --
+(1, "https://www.example.com/eggfried_rice1.jpg", "계란을 풀어 스크램블을 만듭니다.", 7),
+(2, "https://www.example.com/eggfried_rice2.jpg", "밥과 대파를 넣고 볶습니다.", 7),
+(3, "https://www.example.com/eggfried_rice3.jpg", "굴소스로 간을 맞추고 완성합니다.", 7),
+
+-- 떡볶이 --
+(1, "https://www.example.com/tteokbokki1.jpg", "떡을 물에 불려 준비합니다.", 8),
+(2, "https://www.example.com/tteokbokki2.jpg", "고추장과 설탕을 섞어 양념을 만듭니다.", 8),
+(3, "https://www.example.com/tteokbokki3.jpg", "어묵과 대파를 넣고 함께 끓입니다.", 8),
+
+-- 제육볶음 --
+(1, "https://www.example.com/jeyuk1.jpg", "돼지고기를 고추장 양념에 재워 둡니다.", 9),
+(2, "https://www.example.com/jeyuk2.jpg", "양파와 대파를 넣고 함께 볶습니다.", 9),
+(3, "https://www.example.com/jeyuk3.jpg", "고기가 익을 때까지 볶아줍니다.", 9),
+
+-- 김밥 --
+(1, "https://www.example.com/kimbap1.jpg", "김밥 재료를 준비해 썰어 둡니다.", 10),
+(2, "https://www.example.com/kimbap2.jpg", "김 위에 밥을 얇게 펴줍니다.", 10),
+(3, "https://www.example.com/kimbap3.jpg", "준비한 재료를 올리고 말아줍니다.", 10),
+
+-- 카레라이스 --
+(1, "https://www.example.com/curry1.jpg", "감자, 당근, 양파를 잘게 썰어줍니다.", 11),
+(2, "https://www.example.com/curry2.jpg", "고기와 채소를 함께 볶습니다.", 11),
+(3, "https://www.example.com/curry3.jpg", "카레 가루를 넣고 졸여 완성합니다.", 11),
+
+-- 고등어구이 --
+(1, "https://www.example.com/grilled_mackerel1.jpg", "고등어를 깨끗이 씻어 소금을 뿌립니다.", 12),
+(2, "https://www.example.com/grilled_mackerel2.jpg", "프라이팬에 구워 노릇하게 익힙니다.", 12),
+
+-- 부대찌개 --
+(1, "https://www.example.com/army_stew1.jpg", "햄과 소시지를 먹기 좋게 썰어 준비합니다.", 13),
+(2, "https://www.example.com/army_stew2.jpg", "김치와 고춧가루를 넣고 끓입니다.", 13),
+(3, "https://www.example.com/army_stew3.jpg", "라면 사리를 넣고 한소끔 끓입니다.", 13),
+
+-- 된장찌개 --
+(1, "https://www.example.com/doenjang_stew1.jpg", "된장과 물을 섞어 준비합니다.", 14),
+(2, "https://www.example.com/doenjang_stew2.jpg", "채소와 두부를 넣고 끓입니다.", 14),
+(3, "https://www.example.com/doenjang_stew3.jpg", "간을 맞추고 마무리합니다.", 14),
+
+-- 계란국 --
+(1, "https://www.example.com/egg_soup1.jpg", "계란을 풀어 준비합니다.", 15),
+(2, "https://www.example.com/egg_soup2.jpg", "국물에 계란을 풀고 대파를 넣어줍니다.", 15),
+(3, "https://www.example.com/egg_soup3.jpg", "소금과 후추로 간을 맞춥니다.", 15);
 
 
 -- 나만의 레시피 좋아요
@@ -78,7 +170,17 @@ VALUES
 
 
 -- 나만의 레시피 즐겨찾기
-
+INSERT INTO recipe_board_favorite(recipe_board_id, user_id)
+VALUES
+(1, 3),
+(2, 3),
+(3, 3),
+(1, 4),
+(3, 5),
+(4, 5),
+(5, 3),
+(2, 6),
+(12, 3);
 
 
 -- 나만의 레시피 댓글 
