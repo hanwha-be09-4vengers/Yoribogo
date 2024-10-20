@@ -1,0 +1,116 @@
+<template>
+  <div class="attribute-input-container">
+    <div class="attribute-name-wrapper">
+      <span>{{ props.name }}</span>
+    </div>
+    <div class="attribute-input-wrapper">
+      <input type="text" :placeholder="props.placeholder" v-model="inputValue"/>
+      
+    </div>
+  </div>
+</template>
+
+<script setup>
+
+import { watch } from 'vue'
+
+const props = defineProps({
+  name: {
+    type: String,
+    required: true
+  },
+  placeholder: {
+    type: String,
+    required: true
+  },
+  showButton: {
+    type: Boolean,
+    default: false
+  },
+  modelValue: { // modelValue prop 추가
+    type: String,
+    default: ''
+  }
+})
+import {ref} from 'vue'
+
+// `modelValue`를 `inputValue`로 설정
+const inputValue = ref(props.modelValue);
+
+// 이벤트 상위 컴포넌트로 전송
+const emit = defineEmits(['update:modelValue']);
+
+
+// const updateValue = () => {
+//   emit('update:modelValue', inputValue.value)
+//   console.log("새로 입력된 메뉴명", inputValue.value)
+
+// }
+
+
+
+// 새로운 값이 입력되면 상위 컴포넌트로 그 값을 전송하기 
+watch(inputValue, (newValue) => {
+  emit('update:modelValue', newValue); // 사용자가 입력한 값을 상위로 전송
+  console.log("변경된 메뉴", newValue)
+});
+
+
+</script>
+
+<style scoped>
+.attribute-input-container {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  height: fit-content;
+}
+
+.attribute-name-wrapper span{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 9rem;
+  height: 3rem;
+  align-items: center;
+  background-color: var(--navy-color);
+  color: var(--white-color);
+  border-radius: 0.8rem 0.8rem 0rem 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.attribute-name-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.attribute-input-wrapper {
+  display: flex;
+  width: 100%;
+  min-height: 9rem;
+  background-color: var(--light-gray-color);
+  border-radius: 0 0.8rem 0.8rem 0.8rem;
+  position: relative;
+}
+
+.attribute-input-wrapper input {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding-left: 3rem;
+  font-size: 1.5rem;
+}
+
+.attribute-name-wrapper button {
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--pink-color);
+  color: white;
+  border: none;
+  border-radius: 0.5rem 0.5rem 0 0;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+</style>

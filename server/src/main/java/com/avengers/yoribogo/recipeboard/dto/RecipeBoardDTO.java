@@ -11,6 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class RecipeBoardDTO {
 
+    @JsonProperty("board_id")
+    private Long recipeBoardId;
+
     @JsonProperty("menu_name")
     private String recipeBoardMenuName;
 

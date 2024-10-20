@@ -20,23 +20,24 @@
 
         <!-- 탭 버튼 섹션 -->
         <section class="tab-section">
-          <button
-            v-for="tab in tabs"
-            :key="tab"
-            @click="selectTab(tab)"
-            :class="{ active: currentTab === tab }"
-            class="tab-button"
-          >
-            {{ tab }}
-          </button>
+          <router-link to="/mypage/satisfied" class="tab-button" exact-active-class="active">
+            만족했던 레시피
+          </router-link>
+          <router-link to="/mypage/bookmarked" class="tab-button" exact-active-class="active">
+            북마크한 레시피
+          </router-link>
+          <router-link to="/mypage/my-recipes" class="tab-button" exact-active-class="active">
+            내가 작성한 레시피
+          </router-link>
         </section>
 
         <!-- 선택한 탭에 따른 컴포넌트 표시 -->
         <div class="tab-content">
-          <component :is="currentComponent" :menuList="menuList" :isEmpty="isEmpty"></component>
+          <router-view :menuList="menuList" :isEmpty="isEmpty"></router-view>
         </div>
       </div>
     </MainBoard>
+    <PaginationComponent :data="pageInfo" @changePage="handlePageChange"></PaginationComponent>
 
     <!-- 회원 관련 모달들 -->
     <ProfileEditModal v-if="isEditProfileModalOpen" @close="closeEditProfileModal" />
@@ -51,8 +52,8 @@
 </template>
 
 <script setup>
-import { ref, shallowRef, onMounted } from 'vue';
-import { useRouter } from 'vue-router'; // vue-router 임포트
+import { ref, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router'; // vue-router 임포트
 import { useTokenStore } from '@/stores/tokenStore'; // Pinia store 사용
 import axios from 'axios';
 
@@ -69,38 +70,9 @@ import AccountDeactivationModal from '@/components/user/profile/AccountDeactivat
 import AccountOptionsModal from '@/components/user/profile/AccountOptionsModal.vue';
 
 // 탭에 보여줄 컴포넌트들 import
-import BookmarkedRecipes from '@/components/mypage/BookmarkedRecipes.vue';
-import SatisfiedRecipes from '@/components/mypage/SatisfiedRecipes.vue';
-import MyRecipes from '@/components/mypage/MyRecipes.vue';
+import PaginationComponent from '@/components/common/PaginationComponent.vue';
 
-// 탭 목록 정의
-const tabs = ['만족했던 레시피', '북마크한 레시피', '내가 작성한 레시피'];
-const currentTab = ref(tabs[1]); // 기본값은 첫 번째 탭
-const currentComponent = shallowRef(BookmarkedRecipes); // 기본 컴포넌트 설정
-
-// 탭 선택 함수
-const selectTab = (tab) => {
-  currentTab.value = tab;
-  switch (tab) {
-    case '북마크한 레시피':
-      currentComponent.value = BookmarkedRecipes;
-      menuList.value = bookmarkedRecipeList.value
-      break;
-    case '만족했던 레시피':
-      currentComponent.value = SatisfiedRecipes;
-      menuList.value = satisfiedRecipeList.value
-      break;
-    case '내가 작성한 레시피':
-      currentComponent.value = MyRecipes;
-      menuList.value = myRecipeList.value
-      break;
-    default:
-      currentComponent.value = SatisfiedRecipes; // 기본값
-  }
-
-  if(menuList.value.length === 0) isEmpty.value = true
-  else isEmpty.value = false
-};
+const currentTab = ref("북마크한 레시피");
 
 /* 모달 상태관리 */
 const isEditProfileModalOpen = ref(false);
@@ -145,74 +117,70 @@ const closeAccountDeactivationModal = () => {
 };
 
 // 라우터 사용
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
-const satisfiedRecipeList = ref([])
-const bookmarkedRecipeList = ref([])
-const myRecipeList = ref([])
-const menuList = ref([])
-const isEmpty = ref(true)
+const userId = ref(null);
+const menuList = ref([]);
+const pageInfo = ref({});
+const isEmpty = ref(true);
 
-// 만족했던 레시피
-const fetchSatisfiedRecipes = async (userId, page) => {
+const fetchRecipes = async (userId, page) => {
   try {
-    const response = (await axios.get(`/api/recommended-menus?user=${userId}&page=${page}`)).data
+    let response;
+    if (currentTab.value === '만족했던 레시피') {
+      response = (await axios.get(`/api/recommended-menus?user=${userId}&page=${page}`)).data;
+    } else if (currentTab.value === '북마크한 레시피') {
+      response = (await axios.get(`/api/recipe-board/favorites/users/${userId}?pageNo=${page}`)).data;
+    } else if (currentTab.value === '내가 작성한 레시피') {
+      response = (await axios.get(`/api/recipe-board/users/${userId}/boards?pageNo=${page}`)).data;
+    }
+    
     if (response.success) {
-      satisfiedRecipeList.value = response.data.content
+      menuList.value = response.data.content;
+      pageInfo.value = response.data.page;
+      isEmpty.value = menuList.value.length === 0;
     } else {
-      satisfiedRecipeList.value = []
+      menuList.value = [];
+      isEmpty.value = true;
     }
   } catch (error) {
-    console.error('Failed to fetch data:', error)
+    console.error('Failed to fetch data:', error);
   }
-}
+};
 
-// 북마크한 레시피
-const fetchBookmarkedRecipes = async (userId,page) => {
-  try {
-    const response = (await axios.get(`/api/recipe-board/favorites/users/${userId}?pageNo=${page}`)).data
-    if (response.success) {
-      bookmarkedRecipeList.value = response.data.content
-      menuList.value = bookmarkedRecipeList.value
-      isEmpty.value = false
-    } else {
-      bookmarkedRecipeList.value = []
-      menuList.value = bookmarkedRecipeList.value
-      isEmpty.value = true
+// 페이지 변경 핸들러
+const handlePageChange = (newPage) => {
+  router.push({ query: { ...route.query, page: newPage } });
+};
+
+// 페이지 변경을 감지하고 fetch 요청
+watch(
+  () => [route.query.page, route.path],
+  async ([newPage, newPath]) => {
+    const page = parseInt(newPage || '1', 10);
+    
+    if (newPath.includes('satisfied')) {
+      currentTab.value = '만족했던 레시피';
+    } else if (newPath.includes('bookmarked')) {
+      currentTab.value = '북마크한 레시피';
+    } else if (newPath.includes('my-recipes')) {
+      currentTab.value = '내가 작성한 레시피';
     }
-  } catch (error) {
-    console.error('Failed to fetch data:', error)
+
+    await fetchRecipes(userId.value, page);
   }
-}
+);
 
-// 내가 작성한 레시피
-const fetchMyRecipes = async (userId, page) => {
-  try {
-    const response = (await axios.get(`/api/recipe-board/users/${userId}/boards?pageNo=${page}`)).data
-    if (response.success) {
-      myRecipeList.value = response.data.content
-    } else {
-      myRecipeList.value = []
-    }
-  } catch (error) {
-    console.error('Failed to fetch data:', error)
-  }
-}
-
-
-// 토큰 확인 및 리다이렉트 처리
-const tokenStore = useTokenStore();
-onMounted(async () => {
+onMounted(() => {
+  const tokenStore = useTokenStore();
   if (!tokenStore.token.accessToken) {
     alert('마이페이지를 보시려면 로그인이 필요합니다!');
-    router.push('/login'); // 로그인 페이지로 리다이렉트
-    return;
+    router.push('/login');
+  } else {
+    userId.value = JSON.parse(localStorage.getItem('token')).userId;
+    fetchRecipes(userId.value, 1);
   }
-
-  const userId = JSON.parse(localStorage.getItem('token')).userId;
-  await fetchBookmarkedRecipes(userId,1);
-  await fetchMyRecipes(userId,1);
-  await fetchSatisfiedRecipes(userId,1);
 });
 </script>
 
