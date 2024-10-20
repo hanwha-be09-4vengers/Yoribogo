@@ -59,8 +59,9 @@ const loadUserProfileImage = async () => {
         console.log('userProfile 프로필 버튼', userProfile);
 
         // 프로필 이미지가 있으면 설정, 없으면 기본 이미지 설정
-        if (userProfile.success && userProfile.data.profileImage) {
-          profileImage.value = userProfile.data.profileImage; // 프로필 이미지 설정
+        if (userProfile.success && userProfile.data.profile_image) {
+          console.log('홈 네비의 사용자 프로필 사진: ',userProfile.data.profile_image)
+          profileImage.value = userProfile.data.profile_image; // 프로필 이미지 설정
         } else {
           console.log('프로필 이미지가 없습니다. 기본 이미지를 사용합니다.');
           profileImage.value = defaultProfileImage; // 기본 이미지로 설정

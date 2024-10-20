@@ -17,7 +17,11 @@ export const sendAuthIdVerificationEmail = async (nickname, email) => {
     const response = await apiClient.post('/users/verification-email/auth-id', { nickname, email });
     return response.data;
   } catch (error) {
-    console.error('sendAuthIdVerificationEmail 에러:', error);
+    if (error.code === 'ECONNABORTED') {
+      console.error('요청 타임아웃:', error);
+    } else {
+      console.error('sendAuthIdVerificationEmail 에러:', error);
+    }
     throw error;
   }
 };
@@ -34,13 +38,28 @@ export const sendPasswordResetVerificationEmail = async (userAuthId, email) => {
 };
 
 // 설명. 2.1 이메일 인증번호 검증 API (회원가입, 아이디, 비밀번호 찾기 실행)
-export const confirmVerificationCode = async (email, code) => {
+export const confirmVerificationCodeAPI = async (email, code) => {
   try {
     const response = await apiClient.post('/users/verification-email/confirmation', { email, code });
     return response.data;
   } catch (error) {
     console.error('confirmVerificationCode 에러:', error);
     throw error;
+  }
+};
+
+// 설명. 2.2 닉네임과 이메일로 사용자 정보 조회 및 인증 API (아이디 찾기 실행)
+export const verifyUserNicknameCode = async (nickname, email, code) => {
+  try {
+    const response = await apiClient.post('/users/nickname/verification-email', {
+      nickname,
+      email,
+      code,
+    });
+    return response.data; // 성공 시 사용자 데이터 반환
+  } catch (error) {
+    console.error('verifyUserNicknameCode 에러:', error);
+    throw error; // 오류 발생 시 예외 던지기
   }
 };
 
@@ -107,6 +126,19 @@ export const fetchUserById = async (userId, accessToken) => {
   }
 };
 
+// 설명. userId로 프로필 정보 조회 - GET 요청 (액세스 토큰 필요)
+export const fetchUserDetailProfile = async (userId, accessToken) => {
+  try {
+    const response = await apiClient.get(`/users/${userId}/profile`, {
+      headers: { Authorization: `Bearer ${accessToken}` }, // 토큰 추가
+    });
+    return response.data;  // 반환된 사용자 프로필 정보
+  } catch (error) {
+    console.error('프로필 정보 조회 중 오류:', error);
+    throw error;
+  }
+};
+
 // 설명. 4.4 사용자 프로필 변경 (닉네임, 사진) - PATCH 요청 (액세스 토큰 필요)
 export const updateUserProfile = async (userId, nickname, profileImage, accessToken) => {
   try {
@@ -130,7 +162,7 @@ export const updateUserProfile = async (userId, nickname, profileImage, accessTo
 // 설명. 5. 리프레시 토큰으로 액세스 토큰 재발급 - POST 요청 (토큰 필요 없음)
 export const refreshAccessToken = async (refreshToken) => {
   try {
-    const response = await apiClient.post('/users/auth/refresh-token', { refreshToken });
+    const response = await apiClient.post('/users/auth/refresh-token', { refresh_token: refreshToken });
     return response.data;
   } catch (error) {
     console.error('refreshAccessToken 에러:', error);
@@ -174,7 +206,7 @@ export const validateNickname = async (nickname) => {
 // 설명. 9. 아이디 중복 검증 API - POST 요청 (토큰 필요 없음)
 export const validateUserAuthId = async (userAuthId) => {
   try {
-    const response = await apiClient.post('/users/user-id/validate', { userAuthId });
+    const response = await apiClient.post('/users/user-id/validate', { user_auth_id: userAuthId });
     return response.data;
   } catch (error) {
     console.error('validateUserAuthId 에러:', error);
@@ -198,7 +230,9 @@ export const deactivateUser = async (userId, accessToken) => {
 // 설명. 11. 사용자 재활성화 API - POST 요청 (토큰 필요 없음)
 export const reactivateUserByAuthId = async (userAuthId) => {
   try {
-    const response = await apiClient.post('/users/activate', { userAuthId });
+    const response = await apiClient.post('/users/activate', null, { // POST 요청의 body는 null로 설정
+      params: { userAuthId: userAuthId } // RequestParam으로 userAuthId 전달
+    });
     return response.data;
   } catch (error) {
     console.error('reactivateUserByAuthId 에러:', error);
@@ -207,9 +241,12 @@ export const reactivateUserByAuthId = async (userAuthId) => {
 };
 
 // 설명. 12. 로그인 전 비밀번호 재설정 API - POST 요청 (토큰 필요 없음)
-export const resetPassword = async (userAuthId, password) => {
+export const resetPasswordAPI = async (userAuthId, password) => {
   try {
-    const response = await apiClient.post('/users/re-password', { userAuthId, password });
+    const response = await apiClient.post('/users/re-password', {
+      user_auth_id: userAuthId, // 스네이크 케이스로 수정
+      password: password
+    });
     return response.data;
   } catch (error) {
     console.error('resetPassword 에러:', error);

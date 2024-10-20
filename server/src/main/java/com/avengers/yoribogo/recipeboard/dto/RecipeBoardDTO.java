@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,10 +17,10 @@ public class RecipeBoardDTO {
     @JsonProperty("ingredients")
     private String recipeBoardIngredient;
 
-    @JsonProperty("board_image")
-    private String recipeBoardImage;
-
     @JsonProperty("user_id")
     private Long userId;
+
+    @JsonProperty("board_image")
+    private MultipartFile boardImage;
 
 }
