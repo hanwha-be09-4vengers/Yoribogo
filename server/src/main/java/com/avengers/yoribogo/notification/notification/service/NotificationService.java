@@ -12,21 +12,32 @@ import java.util.List;
 @Service
 public class NotificationService {
 
-    // 연결된 클라이언트의 SSEEmitter 목록
+    // SSE 연결 로직
     private final List<SseEmitter> emitters = new ArrayList<>();
 
-    // 클라이언트가 연결할 수 있는 SSE 엔드포인트
     public SseEmitter subscribe() {
-        SseEmitter emitter = new SseEmitter(0L);  // 무한 타임아웃 설정
+        // 시큐리티 적용 시에 토큰에서 UserId 받아 HashMap 타입으로 Emitter 객체 관리하도록 수정 필요.
+        SseEmitter emitter = new SseEmitter(0L);
         emitters.add(emitter);
 
-        log.info("emitter1",emitter);
-        // 연결 완료, 타임아웃, 에러 발생 시 emitter 제거
         emitter.onCompletion(() -> emitters.remove(emitter));
         emitter.onTimeout(() -> emitters.remove(emitter));
         emitter.onError((ex) -> emitters.remove(emitter));
-        log.info("emitter2",emitter);
 
+        // 연결 시에 최초 메시지 전송
+        try {
+            emitter.send(SseEmitter.event().name("connect").data("Connected!"));
+            log.info("(Service)SSE 최초 연결 및 메세지 전송 완료!!");
+        } catch (IOException e) {
+            /*
+            Web 새로고침 시 SSE 연결된 객체는 죽고 다시 재연결 되기 때문에
+            연결된 객체에게 한 번 메세지를 보내려고 하여
+            "현재 연결은 사용자의 호스트 시스템의 소프트웨어의 의해 중단되었습니다"
+            문구가 콘솔에 뜹니다.
+            */
+            emitter.completeWithError(e);
+
+        }
         return emitter;
     }
 
