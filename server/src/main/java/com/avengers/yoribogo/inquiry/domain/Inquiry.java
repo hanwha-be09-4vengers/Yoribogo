@@ -45,11 +45,11 @@ public class Inquiry {
     @Column(name = "answer_status")
     private Status answerStatus;
 
-    @OneToMany(mappedBy = "inquiryId")
+    @OneToMany(mappedBy = "inquiryId", fetch = FetchType.LAZY)
     private List<Answer> answer;
 
     @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "user_id")
     private UserEntity user;
 
     public Inquiry(String inquiryTitle, String inquiryContent, UserEntity user) {
