@@ -1,7 +1,10 @@
 <template>
   <div class="qna-detail-view">
-    <ProfileButton></ProfileButton>
-    <HomeButton></HomeButton>
+    <header>
+      <NotificationButton></NotificationButton>
+      <ProfileButton></ProfileButton>
+      <HomeButton></HomeButton>
+    </header>
     <MainBoard :cur="'qna'">
       <div class="wrapper">
         <div class="L1">
@@ -82,9 +85,10 @@
 </template>
 
 <script setup>
-  import HomeButton from '@/components/common/HomeButton.vue'
-  import MainBoard from '@/components/common/MainBoard.vue'
-  import ProfileButton from '@/components/common/ProfileButton.vue'
+import HomeButton from '@/components/common/HomeButton.vue'
+import ProfileButton from '@/components/common/ProfileButton.vue'
+import NotificationButton from '@/components/common/NotificationButton.vue'
+import MainBoard from '@/components/common/MainBoard.vue'
 
   import {ref, onMounted, toRaw} from 'vue';
   import {useRoute, useRouter} from 'vue-router';
@@ -209,13 +213,17 @@
   right: 20rem;
 }
 
-@media screen and (max-width: 960px) {
-  .wiki-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 
+.notification-btn {
+  position: absolute;
+  top: 7rem;
+  left: 12rem
+}
 @media screen and (max-width: 480px) {
+  .notification-btn {
+    left: 10rem;
+  }
+
   .profile-btn {
     right: 10rem;
   }
@@ -226,6 +234,10 @@
 }
 
 @media screen and (max-width: 425px) {
+  .notification-btn {
+    left: 9rem;
+  }
+
   .profile-btn {
     right: 9rem;
   }
@@ -236,6 +248,10 @@
 }
 
 @media screen and (max-width: 375px) {
+  .notification-btn {
+    left: 8rem;
+  }
+
   .profile-btn {
     right: 8rem;
   }
