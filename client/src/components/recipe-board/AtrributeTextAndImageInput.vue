@@ -72,15 +72,18 @@
   console.log("파일 선택 이벤트 발생:", file); // 로그 추가
 
   if (file && file.type.startsWith('image/')) {
-    uploadedFileName.value = file.name // 파일 이름 저장
+    uploadedFileName.value = file// 파일 이름 저장
+    console.log("uploadedFileName.value",uploadedFileName.value);
+    
     uploadedImageUrl.value = URL.createObjectURL(file) // 이미지 미리보기 URL 생성
+    console.log("uploadedImageUrl.value",uploadedImageUrl.value)
 
     // localStorage에 이미지 URL 저장
     localStorage.setItem(`step_image_${props.index}`, uploadedImageUrl.value);
     console.log(`step_image_${props.index}`)
 
 
-    console.log("파일 변경이 감지됨 by click: 조리방법", file.name);
+    console.log("파일 변경이 감지됨 by click: 조리방법", file);
   }
 }
 
@@ -88,16 +91,17 @@
   const handleFileDrop = (event) => {
     const file = event.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
-      uploadedFileName.value = file.name // 파일 이름 저장
+      uploadedFileName.value = file// 파일 이름 저장
       uploadedImageUrl.value = URL.createObjectURL(file) // 이미지 미리보기 URL 생성
+
+      console.log("uploadedImageUrl.value",uploadedImageUrl.value)
+      console.log("uploadedFileName.value",uploadedFileName.value);
 
       // localStorage에 이미지 URL 저장
     localStorage.setItem(`step_image_${props.index}`, uploadedImageUrl.value);
 
 
-    console.log("파일 변경이 감지됨 by drop: 조리방법", file.name);
-
-    // emit('update:modelValue', file); 
+    console.log("파일 변경이 감지됨 by drop: 조리방법", file);
 
     }
   };
@@ -109,7 +113,7 @@ const handleAdd = () => {
   if (stepText.value) {
     const newStep = {
       step: stepText.value,
-      image: uploadedImageUrl.value // Blob URL 저장
+      image: uploadedFileName.value // 이미지 파일명 저장
     };
 
     // 로컬스토리지에 저장
