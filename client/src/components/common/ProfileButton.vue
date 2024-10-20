@@ -96,6 +96,7 @@ const goMyPage = () => {
 const logout = () => {
   tokenStore.logout(); // Pinia 스토어의 로그아웃 함수 호출
   router.push('/'); // 로그아웃 후 홈으로 이동
+  window.location.reload(); // 페이지 새로고침
 };
 
 // 회원가입 페이지로 이동
