@@ -127,23 +127,23 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.3rem;
   margin-bottom: 1rem;
 }
 
 .name-tier-container h2 {
   margin: 0;
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: bold;
   color: #333;
   line-height: 1;
 }
 
 .tier-image {
-  width: 2.8rem;
-  height: 2.8rem;
+  width: 2.4rem;
+  height: 2.4rem;
   object-fit: contain;
-  margin-left: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 button {

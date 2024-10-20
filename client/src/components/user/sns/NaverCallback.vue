@@ -12,14 +12,15 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { handleNaverLogin, fetchUserByAuthId } from '@/api/user'; // API 함수 임포트
-import { useTokenStore } from '@/stores/tokenStore';  // Pinia 스토어
+import { useTokenStore } from '@/stores/tokenStore';  // Pinia 스토어 사용
+import ProfileOAuthModal from '@/components/user/sns/ProfileOAuthModal.vue';
 
 const router = useRouter();
 const tokenStore = useTokenStore();
 
 const loading = ref(true);
 const error = ref('');
-const showProfileModal = ref(false); // 프로필 모달 표시 여부
+const showProfileModal = ref(false);  // 프로필 모달 표시 여부
 
 // 네이버 로그인 처리 함수
 const handleNaverCallback = async () => {
@@ -28,26 +29,30 @@ const handleNaverCallback = async () => {
 
   if (code && state) {
     try {
-      const response = await handleNaverLogin(code, state);
+      // 서버로 로그인 요청을 보내서 토큰을 받아옴
+      const response = await handleNaverLogin(code, state);  // handleNaverLogin 함수 사용
 
       if (response.success) {
         const tokenData = response.data;
         console.log('네이버 로그인 성공 후 받은 토큰:', tokenData);
 
         // user_auth_id로 사용자 정보 조회
-        const userProfileResponse = await fetchUserByAuthId(tokenData.user_auth_id); // user_auth_id로 조회
+        const userProfileResponse = await fetchUserByAuthId(tokenData.user_auth_id, tokenData.access_token);  // access_token 전달
         const userProfile = userProfileResponse?.data || {};
 
         console.log('userProfile 정보:', userProfile);
 
         // Pinia 스토어에 토큰 저장 (user_id 포함)
         await tokenStore.setTokenData({
-          ...tokenData,
-          user_id: userProfile.user_id, // 프로필에서 user_id 추가
+          ...tokenData,           // 기존의 토큰 데이터들 (access_token, refresh_token 등)
+          user_id: userProfile.user_id,  // 조회한 user_id 추가
         });
 
-        // 닉네임이 있으면 홈으로 리다이렉트
-        router.push('/');
+        if (!userProfile.nickname || userProfile.nickname === '') {
+          showProfileModal.value = true;  // 닉네임이 없는 경우 프로필 설정 모달 표시
+        } else {
+          router.push('/'); // 닉네임이 있으면 홈으로 리다이렉트
+        }
       } else {
         throw new Error(response.error || '네이버 로그인 실패');
       }
