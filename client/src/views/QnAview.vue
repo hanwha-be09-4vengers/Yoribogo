@@ -180,7 +180,7 @@
   /* 문의 상세페이지로 이동 */
   const toInquiry = (inquiry) => {
     if (inquiry.inquiryVisibility === 'PRIVATE' && 
-          inquiry.userId !== user.value.user_id &&
+          inquiry.user.userId !== user.value.user_id &&
           user.value.user_role !== 'ADMIN') {
         alert('비밀글은 작성자와 관리자만 볼 수 있습니다.');
     } else {
