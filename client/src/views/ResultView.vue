@@ -20,7 +20,8 @@
           >
           </ResultBoard>
         </div>
-        <div class="response-board-container" v-show="!isLoading">
+       <!-- 로그인된 사용자만 ResponseBoard가 보이도록 설정 -->
+       <div class="response-board-container" v-show="!isLoading && isLoggedIn">
           <ResponseBoard
             :class="{ flipped: isFlipped }"
             @good="postRecommendData('GOOD')"
@@ -46,11 +47,17 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import ResponseBoard from '@/components/recommend/ResponseBoard.vue'
+import { useTokenStore } from '@/stores/tokenStore'
 
 const router = useRouter()
 
 const isFlipped = ref(false)
 const isLoading = ref(true)
+
+// Pinia 스토어에서 토큰 정보를 가져와서 로그인 상태를 확인
+const tokenStore = useTokenStore()
+const isLoggedIn = ref(false)
+
 
 const menuName = ref('')
 const menuImage = ref(
@@ -59,39 +66,38 @@ const menuImage = ref(
 const recipeId = ref(1)
 
 const fetchRecommendedMenu = async () => {
-  let requestData
+  let requestData;
 
   try {
-    const questionResponse = JSON.parse(localStorage.getItem('question_responses'))
+    const questionResponse = JSON.parse(localStorage.getItem('question_responses'));
 
     if (questionResponse) {
       requestData = {
-        first: questionResponse.question_1, // 질문 1의 응답
-        second: questionResponse.question_2, // 질문 2의 응답
-        third: questionResponse.question_3, // 질문 3의 응답
-        fourth: questionResponse.question_4, // 질문 4의 응답
-        fifth: questionResponse.question_5 // 질문 5의 응답
-      }
+        first: questionResponse.question_1,
+        second: questionResponse.question_2,
+        third: questionResponse.question_3,
+        fourth: questionResponse.question_4,
+        fifth: questionResponse.question_5
+      };
     } else {
-      throw new Error('질문 응답이 존재하지 않습니다.')
+      throw new Error('세션이 만료되었습니다.');
     }
-  } catch (error) {
-    console.error('질문 응답을 가져오는 중 오류 발생:', error)
-    alert('세션이 만료되었습니다.')
-    router.push('/')
-  }
 
-  try {
-    const response = (await axios.post('/api/recipes/recommend', requestData)).data
+    const response = (await axios.post('/api/recipes/recommend', requestData)).data;
+    
     if (response.success) {
-      menuName.value = response.data.menu_name
-      if (response.data.menu_image) menuImage.value = response.data.menu_image
-      recipeId.value = response.data.recipe_id
-      isLoading.value = false
-      localStorage.removeItem('question_responses')
+      menuName.value = response.data.menu_name;
+      if (response.data.menu_image) menuImage.value = response.data.menu_image;
+      recipeId.value = response.data.recipe_id;
+      isLoading.value = false;
+      localStorage.removeItem('question_responses');
+    } else {
+      throw new Error('잘못된 요청 사항이거나 답변하지 않은 문항이 있습니다.');
     }
   } catch (error) {
-    console.error('요리를 추천받는데 실패했습니다.', error)
+    console.error('오류 발생:', error);
+    alert(error.message);
+    router.push('/question/1');
   }
 }
 
@@ -112,6 +118,8 @@ const postRecommendData = async (satisfaction) => {
 }
 
 onMounted(() => {
+   // 토큰이 있는지 확인하여 로그인 여부 설정
+   isLoggedIn.value = !!tokenStore.token.accessToken
   fetchRecommendedMenu()
 })
 </script>

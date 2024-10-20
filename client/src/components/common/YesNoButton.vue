@@ -38,7 +38,7 @@
     height: 5rem;
     margin: 1rem;
     border: none;
-    border-radius: 10px; /* 둥근 모서리 적용 */
+    border-radius: 5px; /* 둥근 모서리 적용 */
     font-size: 2rem; /* 글자 크기 */
     cursor: pointer;
     font-weight: bold; /* 글자 두께 */
@@ -55,7 +55,7 @@
   }
   
   .next-btn {
-    background-color: #a1b872; /* 녹색 */
+    background-color: #2c3e60; /* 남색 */
     color: #fff;
   }
   </style>

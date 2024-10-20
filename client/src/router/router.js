@@ -67,6 +67,17 @@ const routes = [
     props: true
   },
   {
+    path: '/qna/new',
+    name: 'qna-new',
+    component: () => import('../views/QnaCreateView.vue')
+  },
+  {
+    path: '/qna/edit/:num',
+    name: 'qna-edit',
+    component: () => import('../views/QnaEditView.vue'),
+    props: true
+  },
+  {
     path: '/kakaologin',
     name: 'KakaoCallback',
     component: KakaoCallback
