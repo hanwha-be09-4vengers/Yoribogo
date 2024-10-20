@@ -1,5 +1,6 @@
 <template>
   <div class="mypage-view">
+
     <header>
       <NotificationButton class="notification-btn"></NotificationButton>
       <ProfileButton class="profile-btn"></ProfileButton>
@@ -9,7 +10,8 @@
     <!-- 사용자 프로필 -->
     <MainBoard :cur="'mypage'">
       <div class="user-profile-section">
-        <UserProfile :userProfile="userProfile" />
+         <!-- 다른 컴포넌트들 -->
+        <UserProfile @openEditProfileModal="openEditProfileModal" @openAccountOptionsModal="openAccountOptionsModal" />
       </div>
 
       <!-- 탭 이름 및 탭 컴포넌트 추가 -->
@@ -36,6 +38,16 @@
         </div>
       </div>
     </MainBoard>
+    
+    <!-- 회원 관련 모달들 -->
+    <ProfileEditModal v-if="isEditProfileModalOpen" @close="closeEditProfileModal" />
+    <AccountOptionsModal v-if="isAccountOptionsModalOpen" 
+      @close="closeAccountOptionsModal"
+      @openChangePasswordModal="openChangePasswordModal"
+      @openAccountDeactivationModal="openAccountDeactivationModal"
+    />
+    <ChangePasswordModal v-if="isChangePasswordModalOpen" @close="closeChangePasswordModal" />
+    <AccountDeactivationModal v-if="isAccountDeactivationModalOpen" @close="closeAccountDeactivationModal" />
   </div>
 </template>
 
@@ -45,17 +57,21 @@ import HomeButton from '@/components/common/HomeButton.vue';
 import MainBoard from '@/components/common/MainBoard.vue';
 import ProfileButton from '@/components/common/ProfileButton.vue';
 import NotificationButton from '@/components/common/NotificationButton.vue';
+
+// 회원 프로필 관련 모달창 
 import UserProfile from '@/components/user/profile/UserProfile.vue';
+import ProfileEditModal from '@/components/user/profile/ProfileEditModal.vue';
+import ChangePasswordModal from '@/components/user/profile/ChangePasswordModal.vue';
+import AccountDeactivationModal from '@/components/user/profile/AccountDeactivationModal.vue';
+import AccountOptionsModal from '@/components/user/profile/AccountOptionsModal.vue';
 
 // 탭에 보여줄 컴포넌트들 import
-import BookmarkedRecipes from '@/components/mypage/BookmarkedRecipes.vue';
-import SatisfiedRecipes from '@/components/mypage/SatisfiedRecipes.vue';
-import MyRecipes from '@/components/mypage/MyRecipes.vue';
+import BookmarkedRecipes from '@/components/mypage/BookmarkedRecipes.vue'; // 채연,해관님
+import SatisfiedRecipes from '@/components/mypage/SatisfiedRecipes.vue'; //기버님 파트
+import MyRecipes from '@/components/mypage/MyRecipes.vue';                // 채연,해관님
 
 // 탭 목록 정의
-const tabs = ['북마크한 레시피', '만족했던 레시피', '내가 작성한 레시피'];
-
-// 선택된 탭과 현재 컴포넌트 관리
+const tabs = [ '만족했던 레시피', '북마크한 레시피', '내가 작성한 레시피'];
 const currentTab = ref(tabs[0]); // 기본값은 첫 번째 탭
 const currentComponent = ref(BookmarkedRecipes); // 기본 컴포넌트 설정
 
@@ -73,10 +89,54 @@ const selectTab = (tab) => {
       currentComponent.value = MyRecipes;
       break;
     default:
-      currentComponent.value = BookmarkedRecipes; // 기본값
+      currentComponent.value = SatisfiedRecipes; // 기본값
   }
 };
+
+/* 모달 상태관리 */
+const isEditProfileModalOpen = ref(false);
+const isAccountOptionsModalOpen = ref(false);
+const isChangePasswordModalOpen = ref(false);
+const isAccountDeactivationModalOpen = ref(false);
+
+const openEditProfileModal = () => {
+  console.log('openEditProfileModal called'); // 디버깅용 로그
+  isEditProfileModalOpen.value = true;
+};
+
+const closeEditProfileModal = () => {
+  isEditProfileModalOpen.value = false;
+};
+
+const openAccountOptionsModal = () => {
+  console.log('openAccountOptionsModal called'); // 디버깅용 로그
+  isAccountOptionsModalOpen.value = true;
+};
+
+const closeAccountOptionsModal = () => {
+  isAccountOptionsModalOpen.value = false;
+};
+
+const openChangePasswordModal = () => {
+  isChangePasswordModalOpen.value = true;
+  closeAccountOptionsModal();
+};
+
+const closeChangePasswordModal = () => {
+  isChangePasswordModalOpen.value = false;
+};
+
+const openAccountDeactivationModal = () => {
+  isAccountDeactivationModalOpen.value = true;
+  closeAccountOptionsModal();
+};
+
+const closeAccountDeactivationModal = () => {
+  isAccountDeactivationModalOpen.value = false;
+};
 </script>
+
+
 
 <style scoped>
 .mypage-view {
