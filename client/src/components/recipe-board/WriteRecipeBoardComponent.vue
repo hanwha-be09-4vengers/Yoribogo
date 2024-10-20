@@ -151,11 +151,16 @@ const removeIngredient = (index) => {
 };
 
 // 배열에 조리 방법 추가 함수
-const addStep = (index) => {
-  manual_step.value.splice(index, 0, { step: '', image: '' }); 
-  saveToLocalStorage();
-  console.log("추가됨")
-  // 특정 인덱스에 빈 객체 추가
+const addStep = (newStep) => {
+  // manual_step.value.splice(index, 0, { step: '', image: '' }); 
+  // saveToLocalStorage();
+  // console.log("추가됨")
+  // console.log("로컬스토리지 저장 정보:", manual_step.value);
+  // // 특정 인덱스에 빈 객체 추가
+  manual_step.value.push(newStep);  // Emit된 newStep을 배열에 추가
+  saveToLocalStorage();  // 로컬 스토리지에 저장
+  console.log("추가됨:", newStep);
+  console.log("로컬스토리지 저장 정보:", manual_step.value);
 };
 
 
