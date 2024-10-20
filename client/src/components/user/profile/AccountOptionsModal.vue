@@ -60,7 +60,7 @@ const openAccountDeactivationModal = () => {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  font-size: 2rem;
+  font-size: 4rem;
   background: none;
   border: none;
   cursor: pointer;
@@ -69,9 +69,9 @@ const openAccountDeactivationModal = () => {
 /* 모달 제목 스타일 */
 .modal-header h2 {
   margin: 0;
-  font-size: 3.6rem;
+  font-size: 4rem;
   color: #333;
-  margin-bottom: 4rem;
+  margin-bottom: 6rem;
 }
 
 /* 모달 본문 버튼 스타일 */
@@ -84,7 +84,7 @@ const openAccountDeactivationModal = () => {
 
 .modal-btn {
   flex: 1; /* 버튼들이 같은 크기를 차지하도록 설정 */
-  padding: 3rem 2.8rem;
+  padding: 2.4rem 2rem;
   background-color: #ff7d7d;
   color: white;
   border: none;

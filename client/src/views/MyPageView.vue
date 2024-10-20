@@ -1,6 +1,5 @@
 <template>
   <div class="mypage-view">
-
     <header>
       <NotificationButton class="notification-btn"></NotificationButton>
       <ProfileButton class="profile-btn"></ProfileButton>
@@ -10,7 +9,7 @@
     <!-- 사용자 프로필 -->
     <MainBoard :cur="'mypage'">
       <div class="user-profile-section">
-         <!-- 다른 컴포넌트들 -->
+        <!-- 다른 컴포넌트들 -->
         <UserProfile @openEditProfileModal="openEditProfileModal" @openAccountOptionsModal="openAccountOptionsModal" />
       </div>
 
@@ -21,10 +20,10 @@
 
         <!-- 탭 버튼 섹션 -->
         <div class="tab-section">
-          <button 
-            v-for="tab in tabs" 
-            :key="tab" 
-            @click="selectTab(tab)" 
+          <button
+            v-for="tab in tabs"
+            :key="tab"
+            @click="selectTab(tab)"
             :class="{ active: currentTab === tab }"
             class="tab-button"
           >
@@ -38,10 +37,10 @@
         </div>
       </div>
     </MainBoard>
-    
+
     <!-- 회원 관련 모달들 -->
     <ProfileEditModal v-if="isEditProfileModalOpen" @close="closeEditProfileModal" />
-    <AccountOptionsModal v-if="isAccountOptionsModalOpen" 
+    <AccountOptionsModal v-if="isAccountOptionsModalOpen"
       @close="closeAccountOptionsModal"
       @openChangePasswordModal="openChangePasswordModal"
       @openAccountDeactivationModal="openAccountDeactivationModal"
@@ -52,7 +51,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router'; // vue-router 임포트
+import { useTokenStore } from '@/stores/tokenStore'; // Pinia store 사용
+
 import HomeButton from '@/components/common/HomeButton.vue';
 import MainBoard from '@/components/common/MainBoard.vue';
 import ProfileButton from '@/components/common/ProfileButton.vue';
@@ -66,12 +68,12 @@ import AccountDeactivationModal from '@/components/user/profile/AccountDeactivat
 import AccountOptionsModal from '@/components/user/profile/AccountOptionsModal.vue';
 
 // 탭에 보여줄 컴포넌트들 import
-import BookmarkedRecipes from '@/components/mypage/BookmarkedRecipes.vue'; // 채연,해관님
-import SatisfiedRecipes from '@/components/mypage/SatisfiedRecipes.vue'; //기버님 파트
-import MyRecipes from '@/components/mypage/MyRecipes.vue';                // 채연,해관님
+import BookmarkedRecipes from '@/components/mypage/BookmarkedRecipes.vue';
+import SatisfiedRecipes from '@/components/mypage/SatisfiedRecipes.vue';
+import MyRecipes from '@/components/mypage/MyRecipes.vue';
 
 // 탭 목록 정의
-const tabs = [ '만족했던 레시피', '북마크한 레시피', '내가 작성한 레시피'];
+const tabs = ['만족했던 레시피', '북마크한 레시피', '내가 작성한 레시피'];
 const currentTab = ref(tabs[0]); // 기본값은 첫 번째 탭
 const currentComponent = ref(BookmarkedRecipes); // 기본 컴포넌트 설정
 
@@ -100,7 +102,7 @@ const isChangePasswordModalOpen = ref(false);
 const isAccountDeactivationModalOpen = ref(false);
 
 const openEditProfileModal = () => {
-  console.log('openEditProfileModal called'); // 디버깅용 로그
+  console.log('openEditProfileModal called');
   isEditProfileModalOpen.value = true;
 };
 
@@ -109,7 +111,7 @@ const closeEditProfileModal = () => {
 };
 
 const openAccountOptionsModal = () => {
-  console.log('openAccountOptionsModal called'); // 디버깅용 로그
+  console.log('openAccountOptionsModal called');
   isAccountOptionsModalOpen.value = true;
 };
 
@@ -134,9 +136,19 @@ const openAccountDeactivationModal = () => {
 const closeAccountDeactivationModal = () => {
   isAccountDeactivationModalOpen.value = false;
 };
+
+// 라우터 사용
+const router = useRouter();
+
+// 토큰 확인 및 리다이렉트 처리
+const tokenStore = useTokenStore();
+onMounted(() => {
+  if (!tokenStore.token.accessToken) {
+    alert('마이페이지를 보시려면 로그인이 필요합니다!');
+    router.push('/login'); // 로그인 페이지로 리다이렉트
+  }
+});
 </script>
-
-
 
 <style scoped>
 .mypage-view {
