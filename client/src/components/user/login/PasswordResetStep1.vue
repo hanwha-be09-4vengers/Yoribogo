@@ -103,8 +103,8 @@ const isEmailValid = computed(() => emailPattern.test(props.passwordResetData.em
 
 // canProceed 계산된 속성: 인증이 완료되었을 때만 "다음" 버튼 활성화
 const canProceed = computed(() => {
-  // return isVerified.value; // 인증이 완료되었을 때만 true 반환
-  return true;  // isVerified가 완료되면 true 반환
+  return isVerified.value; // 인증이 완료되었을 때만 true 반환
+  // return true;  // isVerified가 완료되면 true 반환
 });
 
 // 인증번호 발송 API 호출 함수 (비밀번호 찾기)
