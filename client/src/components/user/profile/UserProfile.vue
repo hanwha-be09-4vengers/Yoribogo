@@ -77,14 +77,45 @@ onMounted(() => {
   margin: auto;
 }
 
+.avatar {
+  position: relative; /* 부모 요소를 기준으로 자식 요소 위치 지정 */
+  cursor: pointer;
+}
+
 .avatar img {
   width: 120px;
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
   border: 5px solid white;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* 부드러운 전환 효과 */
 }
 
+.avatar:hover img {
+  transform: scale(1.05); /* 이미지 확대 */
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2); /* 그림자 효과 추가 */
+}
+
+.avatar::after {
+  content: '프로필 수정하기'; /* hover 상태에서 표시할 텍스트 */
+  position: absolute;
+  bottom: -10px; /* 텍스트 위치를 이미지 아래로 */
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  background-color: #2c3e50;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  width: max-content;
+  opacity: 0; /* 기본 상태에서 숨김 */
+  transition: opacity 0.3s ease; /* 부드러운 전환 */
+  pointer-events: none;
+}
+
+.avatar:hover::after {
+  opacity: 1; /* hover 시 텍스트가 보이도록 */
+}
 .user-info {
   display: flex;
   flex-direction: column;

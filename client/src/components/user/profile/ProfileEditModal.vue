@@ -1,89 +1,90 @@
-  <template>
-      <div class="modal-overlay" @click.self="closeModal">
-        <div class="modal-content">
-          <button class="close-btn" @click="closeModal">×</button>
-    
-          <div class="modal-header">
-            <h2>프로필 수정</h2>
-          </div>
-    
-          <div class="modal-body">
-            <div class="message-container">
-              <p class="first-text">안녕하세요!</p>
-              <p class="second-text">프로필 사진과 닉네임을 설정해주세요.</p>
+<template>
+  <div class="modal-overlay" @click.self="closeModal">
+    <div class="modal-content">
+      <button class="close-btn" @click="closeModal">×</button>
+
+      <div class="modal-header">
+        <h2>프로필 수정</h2>
+      </div>
+
+      <div class="modal-body">
+        <div class="message-container">
+          <p class="first-text">안녕하세요!</p>
+          <p class="second-text">프로필 사진과 닉네임을 설정해주세요.</p>
+        </div>
+
+        <div class="profile-picture-container">
+          <label class="profile-picture-label">
+            <div class="profile-picture">
+              <input type="file" @change="handleFileChange" accept="image/*" hidden />
+              <span v-if="!profilePicture">+</span>
+              <img v-if="profilePicture" :src="profilePicture" alt="Profile Picture" />
             </div>
-    
-            <div class="profile-picture-container">
-              <label class="profile-picture-label">
-                <div class="profile-picture">
-                  <input type="file" @change="handleFileChange" accept="image/*" hidden />
-                  <span v-if="!profilePicture">+</span>
-                  <img v-if="profilePicture" :src="profilePicture" alt="Profile Picture" />
-                </div>
-              </label>
-    
-              <!-- 닉네임 입력 및 중복 확인 버튼 -->
-              <div class="nickname-container">
-                <input type="text" placeholder="닉네임 입력" v-model="nickname" maxlength="30" />
-                <button class="check-btn" @click="checkNicknameDuplication">중복 확인</button>
-              </div>
-              <span v-if="nicknameError" class="error-text">{{ nicknameError }}</span>
-              <span v-if="nicknameDuplicationStatus" :class="{'success-text': !nicknameError, 'error-text': nicknameError}">
-                {{ nicknameDuplicationStatus }}
-              </span>
-            </div>
+          </label>
+
+          <!-- 닉네임 입력 및 중복 확인 버튼 -->
+          <div class="nickname-container">
+            <input type="text" placeholder="닉네임 입력" v-model="nickname" maxlength="30" />
+            <button class="check-btn" @click="checkNicknameDuplication">중복 확인</button>
           </div>
-    
-          <div class="modal-footer">
-            <YesNoButton type="cancel" label="취소" @click="closeModal" />
-            <YesNoButton type="complete" label="완료" @click="completeUpdateProfile" :disabled="!canComplete" />
-          </div>
+          <span v-if="nicknameError" class="error-text">{{ nicknameError }}</span>
+          <span v-if="nicknameDuplicationStatus" :class="{'success-text': !nicknameError, 'error-text': nicknameError}">
+            {{ nicknameDuplicationStatus }}
+          </span>
         </div>
       </div>
-    </template>
-    
-    <script setup>
-    import { ref, computed, inject } from 'vue';
-    import YesNoButton from '@/components/common/YesNoButton.vue'; // YesNoButton 컴포넌트 임포트
-    import { updateUserProfile, validateNickname } from '@/api/user'; // 필요한 API 함수들 임포트
-    import { useRouter } from 'vue-router'; // vue-router 임포트
-    import { useTokenStore } from '@/stores/tokenStore'; // Pinia 토큰 스토어 임포트
-    import { resetPasswordAPI } from '@/api/user';  // user.js에서 함수 임포트
 
-    // 이벤트 방출 함수
-    const emit = defineEmits(['close']);
-    
-    // 라우터 사용 설정
-    const router = useRouter();
-    
-    // 토큰 정보 주입
-    const tokenStore = useTokenStore();
-    
-    // 닉네임과 프로필 사진을 위한 데이터
-    const nickname = ref('');
-    const profilePicture = ref('');
-    const nicknameError = ref('');
-    const isNicknameAvailable = ref(false); // 닉네임 사용 가능 여부
-    const nicknameDuplicationStatus = ref(''); // 닉네임 중복 검증 결과 메시지
-    
-    // 닉네임만 입력되어야만 완료 버튼이 활성화됨
-    const canComplete = computed(() => {
-      return nickname.value !== '' && isNicknameAvailable.value;
-    });
-    
-    // 파일 선택 시 호출되는 함수
-    const handleFileChange = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          profilePicture.value = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
+      <div class="modal-footer">
+        <YesNoButton type="cancel" label="취소" @click="closeModal" />
+        <YesNoButton type="complete" label="완료" @click="completeUpdateProfile" :disabled="!canComplete" />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue';
+import YesNoButton from '@/components/common/YesNoButton.vue'; // YesNoButton 컴포넌트 임포트
+import { updateUserProfile, validateNickname } from '@/api/user'; // 필요한 API 함수들 임포트
+import { useRouter } from 'vue-router'; // vue-router 임포트
+import { useTokenStore } from '@/stores/tokenStore'; // Pinia 토큰 스토어 임포트
+
+// 이벤트 방출 함수
+const emit = defineEmits(['close']);
+
+// 라우터 사용 설정
+const router = useRouter();
+
+// 토큰 정보 주입
+const tokenStore = useTokenStore();
+
+// 닉네임과 프로필 사진을 위한 데이터
+const nickname = ref('');
+const profilePicture = ref(''); // 미리보기용 Base64 URL
+const profilePictureFile = ref(null); // 파일 그 자체를 저장
+const nicknameError = ref('');
+const isNicknameAvailable = ref(false); // 닉네임 사용 가능 여부
+const nicknameDuplicationStatus = ref(''); // 닉네임 중복 검증 결과 메시지
+
+// 닉네임만 입력되어야만 완료 버튼이 활성화됨
+const canComplete = computed(() => {
+  return nickname.value !== '' && isNicknameAvailable.value;
+});
+
+// 파일 선택 시 호출되는 함수
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    profilePictureFile.value = file; // 실제 파일을 저장
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      profilePicture.value = e.target.result; // 미리보기를 위한 Base64 URL
     };
-    
-    // 닉네임 중복 확인 함수
+    reader.readAsDataURL(file);
+  }
+};
+
+// 닉네임 중복 확인 함수
 const checkNicknameDuplication = async () => {
   nicknameError.value = '';
   nicknameDuplicationStatus.value = '';
@@ -117,8 +118,7 @@ const completeUpdateProfile = async () => {
   if (!canComplete.value) return;
 
   try {
-    // FormData 객체 생성 (이미 user.js에 정의된 updateUserProfile 함수는 이미 formData를 사용하므로 따로 만들 필요 없음)
-    const profileImage = profilePicture.value || null; // 이미지가 없을 경우 null 처리
+    const profileImage = profilePictureFile.value || null; // 파일 객체 사용
 
     console.log("userId:", tokenStore.token.userId);
     console.log("accessToken:", tokenStore.token.accessToken); // accessToken 값을 출력하여 확인
@@ -128,8 +128,9 @@ const completeUpdateProfile = async () => {
 
     if (response.success) {
       alert('프로필이 성공적으로 업데이트되었습니다!');
-      closeModal();
-      router.push('/mypage'); // 마이페이지로 이동
+      
+      // 페이지를 새로고침하는 대신, 특정 페이지로 이동
+      window.location.href = '/mypage';  // 확인 버튼 누르면 마이페이지로 이동
     } else {
       alert(`프로필 수정 중 오류가 발생했습니다: ${response.message}`);
     }
@@ -142,12 +143,14 @@ const completeUpdateProfile = async () => {
     console.error('completeUpdateProfile 에러:', error);
   }
 };
-    
-    // 모달 닫기 함수
-    const closeModal = () => {
-      emit('close');
-    };
-    </script>
+
+
+
+// 모달 닫기 함수
+const closeModal = () => {
+  emit('close');
+};
+</script>
     
     <style scoped>
     /* 모달 오버레이 */
@@ -274,19 +277,19 @@ const completeUpdateProfile = async () => {
       display: flex;
       justify-content: center;
       align-items: center;
-      border: 2px dashed #a1b872;
+      border: 2px dashed #53acff;
       position: relative;
       overflow: hidden;
       transition: border 0.3s ease-in-out;
     }
     
     .profile-picture:hover {
-      border: 2px solid #a1b872;
+      border: 2px solid #2c3e50;
     }
     
     .profile-picture span {
       font-size: 4rem;
-      color: #a1b872;
+      color: #2c3e50;
     }
     
     .profile-picture img {
@@ -317,7 +320,7 @@ const completeUpdateProfile = async () => {
     }
     
     input[type="text"]:focus {
-      border-color: #a1b872;
+      border-color: #2c3e50;
       outline: none;
     }
     
@@ -327,13 +330,13 @@ const completeUpdateProfile = async () => {
       font-size: 1.6rem;
       border: none;
       border-radius: 5px;
-      background-color: #a1b872;
+      background-color: #53acff;
       color: white;
       cursor: pointer;
     }
     
     .check-btn:hover {
-      background-color: #8aa15e;
+      background-color: #2c3e50;
     }
     
     /* 모달 푸터 */
