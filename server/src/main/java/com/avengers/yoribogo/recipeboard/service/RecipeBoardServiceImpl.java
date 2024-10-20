@@ -295,7 +295,7 @@ public class RecipeBoardServiceImpl implements RecipeBoardService {
 
         Pageable pageable = PageRequest.of(
                 pageNo - 1,
-                3,
+                ELEMENTS_PER_PAGE,
                 Sort.by(Sort.Direction.DESC, "recipeBoardId")
         );
 

@@ -24,7 +24,7 @@ import java.util.Optional;
 @Transactional
 public class RecipeBoardFavoriteServiceImpl implements RecipeBoardFavoriteService {
 
-    private final Integer ELEMENTS_PER_PAGE = 3;
+    private final Integer ELEMENTS_PER_PAGE = 12;
 
     private final ModelMapper modelMapper;
     private final RecipeBoardFavoriteRepository recipeBoardFavoriteRepository;

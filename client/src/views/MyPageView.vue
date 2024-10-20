@@ -154,11 +154,11 @@ const menuList = ref([])
 const isEmpty = ref(true)
 
 // 만족했던 레시피
-const fetchSatisfiedRecipes = async (userId) => {
+const fetchSatisfiedRecipes = async (userId, page) => {
   try {
-    const response = (await axios.get(`/api/recommended-menus?user=${userId}`)).data
+    const response = (await axios.get(`/api/recommended-menus?user=${userId}&page=${page}`)).data
     if (response.success) {
-      satisfiedRecipeList.value = response.data
+      satisfiedRecipeList.value = response.data.content
     } else {
       satisfiedRecipeList.value = []
     }
@@ -212,7 +212,7 @@ onMounted(async () => {
   const userId = JSON.parse(localStorage.getItem('token')).userId;
   await fetchBookmarkedRecipes(userId,1);
   await fetchMyRecipes(userId,1);
-  await fetchSatisfiedRecipes(userId);
+  await fetchSatisfiedRecipes(userId,1);
 });
 </script>
 
