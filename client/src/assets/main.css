@@ -82,6 +82,10 @@ input {
   font-family: 'Noto Sans KR', 'Noto Sans';
 }
 
+button {
+  font-family: 'Noto Sans KR', 'Noto Sans'; 
+}
+
 .hide-text {
   text-indent: 100%;
   white-space: nowrap;
