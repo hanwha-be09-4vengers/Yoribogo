@@ -59,7 +59,25 @@ const routes = [
   {
     path: '/mypage',
     name: 'mypage',
-    component: () => import('../views/MyPageView.vue')
+    redirect: '/mypage/bookmarked', 
+    component: () => import('../views/MyPageView.vue'),
+    children: [
+      {
+        path: 'bookmarked',
+        name: 'BookmarkedRecipes',
+        component: () => import('@/components/mypage/BookmarkedRecipes.vue')
+      },
+      {
+        path: 'satisfied',
+        name: 'SatisfiedRecipes',
+        component: () => import('@/components/mypage/SatisfiedRecipes.vue')
+      },
+      {
+        path: 'my-recipes',
+        name: 'MyRecipes',
+        component: () => import('@/components/mypage/MyRecipes.vue')
+      }
+    ]
   },
   {
     path: '/qna',
