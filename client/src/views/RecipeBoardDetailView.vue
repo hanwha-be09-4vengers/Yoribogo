@@ -35,12 +35,12 @@
         </div>
       </div>
 
-      <!-- 즐겨찾기 버튼 -->
+      <!-- 즐겨찾기 버튼
       <div class="favorite-button-container">
         <button @click="toggleFavorite" class="favorite-button">
           {{ isFavorited ? '즐겨찾기 취소' : '즐겨찾기' }}
         </button>
-      </div>
+      </div> -->
 
       <div class="menu-ingredient-container">
         <div class="info">재료</div>
