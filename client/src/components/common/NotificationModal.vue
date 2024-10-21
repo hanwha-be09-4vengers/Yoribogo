@@ -44,7 +44,7 @@ const markAsRead = async (notification) => {
   if (notification.notificationStatus === 'READ') return;  // 이미 읽은 알림이면 무시
 
   try {
-    const response = await fetch(`/api/notification/updateStatus/${notification.notificationId}`, {
+    const response = await fetch(`/api/notifications/updateStatus/${notification.notificationId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
