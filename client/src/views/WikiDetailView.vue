@@ -1,6 +1,7 @@
 <template>
   <div class="wiki-detail-view">
     <header>
+      <NotificationButton></NotificationButton>
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
     </header>
@@ -42,6 +43,7 @@
 <script setup>
 import HomeButton from '@/components/common/HomeButton.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
+import NotificationButton from '@/components/common/NotificationButton.vue'
 import MainBoard from '@/components/common/MainBoard.vue'
 import BackButton from '@/components/common/BackButton.vue'
 import RecipeManual from '@/components/recipe/RecipeManual.vue'
@@ -112,6 +114,12 @@ onMounted(() => {
   position: absolute;
   top: 7rem;
   right: 12rem;
+}
+
+.notification-btn {
+  position: absolute;
+  top: 7rem;
+  left: 12rem;
 }
 
 .home-btn {
@@ -250,16 +258,16 @@ onMounted(() => {
 }
 
 @media screen and (max-width: 480px) {
+  .notification-btn {
+    left: 10rem;
+  }
+
   .profile-btn {
     right: 10rem;
   }
 
   .home-btn {
     right: 18rem;
-  }
-
-  .go-top-btn {
-    right: 3rem;
   }
 }
 
@@ -269,6 +277,10 @@ onMounted(() => {
     height: 27rem;
   }
 
+  .notification-btn {
+    left: 9rem;
+  }
+
   .profile-btn {
     right: 9rem;
   }
@@ -276,23 +288,19 @@ onMounted(() => {
   .home-btn {
     right: 17rem;
   }
-
-  .go-top-btn {
-    right: 2rem;
-  }
 }
 
 @media screen and (max-width: 375px) {
+  .notification-btn {
+    left: 8rem;
+  }
+
   .profile-btn {
     right: 8rem;
   }
 
   .home-btn {
     right: 16rem;
-  }
-
-  .go-top-btn {
-    right: 1.5rem;
   }
 }
 </style>
