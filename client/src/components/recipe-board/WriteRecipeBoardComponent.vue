@@ -209,7 +209,7 @@ const submitRecipe = async () => {
 
     // 레시피 등록 성공 메시지 및 페이지 이동
     alert('레시피가 성공적으로 등록되었습니다.');
-    router.push('/recipe-board/list'); // 페이지 이동
+    router.push('/recipe-board'); // 페이지 이동
 
   } catch (error) {
     console.error('레시피 등록 실패:', error);

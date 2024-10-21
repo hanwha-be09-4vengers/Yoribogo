@@ -53,6 +53,13 @@ const routes = [
     props: true
   },
   {
+    path: '/recipe-board/write',
+    name: 'recipe-board-view',
+    component: () => import('../views/RecipeBoardWriteView.vue'),
+    props: true
+  },
+
+  {
     path: '/mypage',
     name: 'mypage',
     redirect: '/mypage/bookmarked',
