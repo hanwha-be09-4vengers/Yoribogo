@@ -26,7 +26,7 @@
           <div class="comment-info" style="display: flex">
             <div class="profile-img">
               <!-- Check if userInfo exists and is valid -->
-              <img :src="getProfileImage(index)" alt="profile" width="50" height="50" />
+              <img :src="getProfileImage(index)" alt="profile" />
             </div>
             <div class="user-info">
               <div class="nickname-and-badge" style="display: flex; align-items: center">
@@ -124,6 +124,22 @@ function isAdmin(index) {
   width: 3rem;
   height: 3rem;
   margin-top: 0.5rem;
+}
+
+.profile-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .comment-info {
