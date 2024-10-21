@@ -16,17 +16,13 @@ import HomeButton from '@/components/common/HomeButton.vue'
 import MainBoard from '@/components/common/MainBoard.vue'
 import NotificationButton from '@/components/common/NotificationButton.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
-import WriteRecipeBoardComponent from '@/components/recipe-board/WriteRecipeBoardComponent.vue'
 </script>
 
 <style scoped>
-.recipe-board-container{
+.recipe-board-container {
   display: flex;
   align-items: center;
-
 }
-
-
 
 .recipe-board-view {
   position: relative;
@@ -56,17 +52,14 @@ import WriteRecipeBoardComponent from '@/components/recipe-board/WriteRecipeBoar
   right: 20rem;
 }
 
-.write-recipe-container{
+.write-recipe-container {
   position: absolute;
   bottom: 7rem;
   right: 8rem;
 }
 
-
-
-
 @media screen and (max-width: 480px) {
-  .search-bar{
+  .search-bar {
     width: 80%;
   }
 

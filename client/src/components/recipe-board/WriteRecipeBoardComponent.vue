@@ -62,6 +62,9 @@ import AttributeIngredientInput from './AttributeIngredientInput.vue';
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue';
 import axios from 'axios';
 import { useTokenStore } from '@/stores/tokenStore';
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const isSmallScreen = ref(window.innerWidth <= 1280);
 const handleResize = () => {
@@ -147,7 +150,6 @@ const saveToLocalStorage = () => {
   }
 };
 
-// 레시피 등록 요청
 const submitRecipe = async () => {
   try {
     loading.value = true;
@@ -199,7 +201,16 @@ const submitRecipe = async () => {
       await axios.post(`/api/recipe-board/create/manual/${boardResponse.data.data.board_id}`, manualFormData);
     }
 
+    // 로컬 스토리지에서 token을 제외한 모든 항목 삭제
+    localStorage.removeItem('menu_name');
+    localStorage.removeItem('board_image');
+    localStorage.removeItem('ingredients');
+    localStorage.removeItem('manual_step');
+
+    // 레시피 등록 성공 메시지 및 페이지 이동
     alert('레시피가 성공적으로 등록되었습니다.');
+    router.push('/recipe-board/list'); // 페이지 이동
+
   } catch (error) {
     console.error('레시피 등록 실패:', error);
     alert('레시피 등록에 실패했습니다.');
