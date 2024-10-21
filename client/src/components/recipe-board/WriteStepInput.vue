@@ -112,11 +112,10 @@ const updateLocalStorage = () => {
         emit('remove-step', props.index); // 올바르게 index를 전달
         };
 
-    // 조리 순서 추가 버튼이 클릭되면 활성화될 메소드
-    const addStepToNextIndex = () => {
-        // 빈 단계 객체 추가
-        emit('add-step', { step: '', image: '' });
-    }
+// 단계 추가
+const addStepToNextIndex = () => {
+  emit('add-step', { step: '', image: '' });
+};
 
 
 </script>

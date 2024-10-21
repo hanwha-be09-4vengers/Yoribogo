@@ -31,11 +31,12 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue';
 
-const uploadedFile = ref(null); // 파일 그 자체를 저장할 변수
-const uploadedImageUrl = ref(''); // 이미지 미리보기 URL 저장
+const uploadedFileName = ref('') // 파일 이름을 저장할 변수
+const uploadedImageUrl = ref('') // 이미지 URL 저장
 const stepText = ref(''); // 단계 텍스트 저장
 
 const props = defineProps({
@@ -47,7 +48,7 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  index: {
+  index: { // index 추가
     type: Number,
     required: true,
   }
@@ -55,21 +56,20 @@ const props = defineProps({
 
 const emit = defineEmits(['add']);
 
-// 파일 선택 시 호출
 const handleFileChange = (event) => {
   const file = event.target.files[0];
   if (file && file.type.startsWith('image/')) {
-    uploadedFile.value = file; // 파일 객체 저장
-    uploadedImageUrl.value = URL.createObjectURL(file); // 이미지 미리보기 URL 생성
+    uploadedFileName.value = file.name;
+    uploadedImageUrl.value = URL.createObjectURL(file);
   }
 };
 
-// "추가" 버튼 클릭 시 호출
+// "추가" 버튼 클릭 시 호출할 함수
 const handleAdd = () => {
-  // 단계 텍스트와 파일을 담은 객체 생성
+  // 단계 텍스트와 이미지를 담은 객체 생성
   const newStep = {
     content: stepText.value,
-    image: uploadedFile.value || null // 파일 그 자체를 넘김
+    image: uploadedImageUrl.value || null
   };
 
   if (newStep.content.trim() === "") {
@@ -77,16 +77,15 @@ const handleAdd = () => {
     return;
   }
 
-  // 상위 컴포넌트에 emit으로 텍스트와 파일 객체 전달
+  // 상위 컴포넌트에 emit
   emit('add', newStep);
   
   // 입력 필드 초기화
   stepText.value = ''; 
-  uploadedFile.value = null;
+  uploadedFileName.value = ''; 
   uploadedImageUrl.value = '';
 };
 </script>
-
 
 
 

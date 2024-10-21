@@ -106,7 +106,7 @@ const addIngredient = (ingredient) => {
     ingredients.value = [...ingredients.value, ingredient]; 
     saveToLocalStorage(); // 추가 후 로컬 스토리지 업데이트
   } else {
-    alert("재료를 다시 확인하세요.");
+    alert("재료를 반드시 입력하거나 같은 재료는 안돼요!");
   }
 };
 // 재료 삭제 함수
@@ -121,12 +121,12 @@ const addStep = (newStep) => {
       ...manual_step.value, 
       { 
         step: newStep.content, 
-        image: newStep.image
+        image: newStep.image || '' // 이미지가 없으면 빈 문자열로 설정
       }
     ];
     saveToLocalStorage(); 
   } else {
-    alert("단계 내용을 확인하세요.");
+    alert("내용을 모두 입력해주세요!");
   }
 };
 // 조리 순서 삭제 함수
@@ -165,11 +165,26 @@ const submitRecipe = async () => {
 
     const boardResponse = await axios.post('/api/recipe-board/create', formData);
 
-    const manualData = manual_step.value.map((step, index) => ({
-      manual_step: index + 1,
-      manual_content: step.step,
-      manual_image: step.image instanceof File ? step.image : null,
-    }));
+    // manual_step을 처리하는 비동기 함수
+    const manualDataPromises = manual_step.value.map(async (step, index) => {
+      let manualImage = step.image;
+
+      // blob URL인 경우 File 객체로 변환
+      if (manualImage && manualImage.startsWith('blob')) {
+        manualImage = await fetch(manualImage)
+          .then(res => res.blob())
+          .then(blob => new File([blob], `manual_step_${index}.jpg`, { type: 'image/jpeg' }));
+      }
+
+      return {
+        manual_step: index + 1,
+        manual_content: step.step,
+        manual_image: manualImage instanceof File ? manualImage : null,
+      };
+    });
+
+    // 모든 비동기 처리가 완료될 때까지 기다림
+    const manualData = await Promise.all(manualDataPromises);
 
     if (manualData.length > 0) {
       const manualFormData = new FormData();
@@ -192,6 +207,8 @@ const submitRecipe = async () => {
     loading.value = false;
   }
 };
+
+
 onMounted(() => {
   window.addEventListener('resize', handleResize);
   loadFromLocalStorage(); 

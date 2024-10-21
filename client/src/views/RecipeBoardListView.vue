@@ -21,6 +21,7 @@
             </div>
             
             <WriteRecipeButton @click="goWrite()"></WriteRecipeButton>
+
         </div>
     </MainBoard>
     <PaginationComponent :data="pageInfo" @changePage="handlePageChange"></PaginationComponent>
