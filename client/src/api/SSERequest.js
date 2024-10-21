@@ -1,9 +1,22 @@
 let eventSource = null;
+// import { useTokenStore } from '@/stores/tokenStore'; // Pinia 스토어 임포트
+// const tokenStore = useTokenStore(); // Pinia 스토어 사용
+
 
 export function connectSSE() {
+  // console.log('로그인 토큰1: ', tokenStore.token.accessToken);
+  console.log('로그인 토큰2: ', JSON.parse(localStorage.getItem('token')).accessToken);
   if (!eventSource) {
-    eventSource = new EventSource('/api/notifications/sseconnect');
-
+    // eventSource = new EventSource('/api/notifications/sseconnect');
+    eventSource = new EventSource(
+                    `/api/notifications/sseconnect`,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${JSON.parse(localStorage.getItem('token')).accessToken}`,
+                      },
+                      withCredentials: true,
+                    }
+                  );
     // SSE 연결 열림
     eventSource.onopen = () => {
       console.log('SSE 연결이 열렸습니다.');

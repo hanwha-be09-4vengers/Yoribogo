@@ -55,6 +55,7 @@ public class WebSecurity {
         http.authorizeHttpRequests(authz -> authz
                         .requestMatchers("/login", "POST").permitAll()
                         .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationManager(authenticationManager)
