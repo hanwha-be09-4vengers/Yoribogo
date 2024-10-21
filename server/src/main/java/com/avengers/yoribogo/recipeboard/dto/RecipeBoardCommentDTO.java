@@ -10,22 +10,22 @@ import java.time.LocalDateTime;
 @Data
 public class RecipeBoardCommentDTO {
 
-    @JsonProperty("comment-id")
+    @JsonProperty("comment_id")
     private Long recipeBoardCommentId;
 
-    @JsonProperty("comment-content")
+    @JsonProperty("comment_content")
     private String recipeBoardCommentContent;
 
-    @JsonProperty("comment-created-at")
+    @JsonProperty("comment_created-at")
     private LocalDateTime recipeBoardCommentCreatedAt;
 
-    @JsonProperty("recipe-board-id")
+    @JsonProperty("recipe_board_id")
     private Long recipeBoardId;
 
-    @JsonProperty("user-id")
+    @JsonProperty("user_id")
     private Long userId;
 
-    @JsonProperty("comment-status")
+    @JsonProperty("comment_status")
     private RecipeBoardCommentStatus recipeBoardCommentStatus;
 
 
