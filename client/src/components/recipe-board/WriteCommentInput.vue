@@ -38,8 +38,8 @@
                   <img :src="getTierImage(index)" alt="뱃지 이미지" width="30" height="30" />
                 </div>
               </div>
-              <div>
-                {{ comment['comment_created-at'] }}
+              <div class="comment_created_at">
+                {{ formatDate(comment['comment_created-at']) }}
               </div>
             </div>
           </div>
@@ -99,6 +99,15 @@ function getTierImage(index) {
 function isAdmin(index) {
   return props.userInfo && props.userInfo[index] && props.userInfo[index].userRole === 'ADMIN'
 }
+
+function formatDate(dateStr) {
+  const date = new Date(dateStr)
+
+  // 형식: YYYY.MM.DD HH:mm
+  const formattedDate = `${date.getFullYear()}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+
+  return formattedDate
+}
 </script>
 
 <style scoped>
@@ -112,7 +121,6 @@ function isAdmin(index) {
 .user-info {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
 .nickname {
@@ -151,6 +159,12 @@ function isAdmin(index) {
 
 .comment-content {
   padding-left: 7.5rem;
+}
+
+.comment_created_at {
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: #898989;
 }
 
 .recomment-btn-wrapper {
