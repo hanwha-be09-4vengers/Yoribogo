@@ -6,6 +6,8 @@ import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.notification.notification.dto.NotificationDTO;
 import com.avengers.yoribogo.notification.notification.domain.NotificationEntity;
 import com.avengers.yoribogo.notification.notification.service.NotificationService;
+import com.avengers.yoribogo.security.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,18 +25,21 @@ import java.util.List;
 public class NotificationController {
 
     private final NotificationService notificationService;
+    private final JwtUtil jwtUtil;
 
-    public NotificationController(NotificationService notificationService) {
+    public NotificationController(NotificationService notificationService, JwtUtil jwtUtil) {
         this.notificationService = notificationService;
+        this.jwtUtil = jwtUtil;
     }
 
-    // SSE 연결 엔드포인트
+        // SSE 연결 엔드포인트
     @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping(value = "/sseconnect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribeToNotifications() {
         log.info("(controller)SSE 연결 지나갑니당 ~~!");
         return notificationService.subscribe();  // SSE 연결을 서비스로 위임
     }
+
 
     // 알림 저장 테스트 API
     @PostMapping("/insertTest")

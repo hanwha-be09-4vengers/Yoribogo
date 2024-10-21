@@ -48,7 +48,6 @@ public class NotificationService {
     private final List<SseEmitter> emitters = new ArrayList<>();
 
     public SseEmitter subscribe() {
-        // 시큐리티 적용 시에 토큰에서 UserId 받아 HashMap 타입으로 Emitter 객체 관리하도록 수정 필요.
         SseEmitter emitter = new SseEmitter(0L);
         emitters.add(emitter);
 
