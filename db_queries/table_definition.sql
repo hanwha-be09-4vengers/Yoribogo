@@ -97,14 +97,13 @@ CREATE TABLE answer (
 
 CREATE TABLE notification (
     notification_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    notification_read_status VARCHAR(255) NOT NULL DEFAULT 'WAIT' CHECK(notification_read_status IN ('READ', 'WAIT')),
+    notification_read_status VARCHAR(255) NOT NULL DEFAULT 'WAIT' CHECK(notification_read_status IN ('READ', 'UNREAD', 'DELETED')),
     notification_created_at TIMESTAMP NOT NULL,
     notification_read_at TIMESTAMP,
     notification_content TEXT NOT NULL,
     user_id BIGINT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES USER(user_id)
 ) ENGINE=INNODB AUTO_INCREMENT=1 COMMENT='알림' DEFAULT CHARSET=UTF8;
-
 
 CREATE TABLE recipe (
     recipe_id BIGINT PRIMARY KEY AUTO_INCREMENT,
