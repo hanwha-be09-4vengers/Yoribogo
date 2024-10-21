@@ -22,7 +22,7 @@
           <div class="profile-image">
             <img
               :src="profileImageSrc"
-              alt=""
+              alt="Profile"
               style="width: 100px; height: 100px; border-radius: 50px"
             />
           </div>
