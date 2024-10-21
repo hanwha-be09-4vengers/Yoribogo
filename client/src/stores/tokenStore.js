@@ -109,6 +109,8 @@ export const useTokenStore = defineStore('token', () => {
 
     // 로컬 스토리지에서도 제거
     localStorage.removeItem('token');
+    // 로컬 스토리지 전체 제거
+    localStorage.clear();
     console.log('로그아웃되었습니다. 토큰이 초기화되었습니다.');
   };
 

@@ -1,19 +1,18 @@
 <template>
   <div class="attribute-input-container">
     <div class="attribute-name-wrapper">
-      <span>{{ props.name }}</span>
+      <span>{{ name }}</span>
     </div>
     <div class="attribute-input-wrapper">
-      <input type="text" :placeholder="props.placeholder" v-model="inputValue"/>
-      
+      <input type="text" :placeholder="placeholder" v-model="inputValue"/>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref, watch } from 'vue';
 
-import { watch } from 'vue'
-
+// props 정의
 const props = defineProps({
   name: {
     type: String,
@@ -27,35 +26,23 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  modelValue: { // modelValue prop 추가
+  modelValue: {
     type: String,
     default: ''
   }
-})
-import {ref} from 'vue'
+});
+
+// 상위 컴포넌트로 이벤트 전송
+const emit = defineEmits(['update:modelValue']);
 
 // `modelValue`를 `inputValue`로 설정
 const inputValue = ref(props.modelValue);
 
-// 이벤트 상위 컴포넌트로 전송
-const emit = defineEmits(['update:modelValue']);
-
-
-// const updateValue = () => {
-//   emit('update:modelValue', inputValue.value)
-//   console.log("새로 입력된 메뉴명", inputValue.value)
-
-// }
-
-
-
-// 새로운 값이 입력되면 상위 컴포넌트로 그 값을 전송하기 
+// 새로운 값이 입력되면 상위 컴포넌트로 값 전송
 watch(inputValue, (newValue) => {
   emit('update:modelValue', newValue); // 사용자가 입력한 값을 상위로 전송
-  console.log("변경된 메뉴", newValue)
+  console.log("변경된 값:", newValue);
 });
-
-
 </script>
 
 <style scoped>

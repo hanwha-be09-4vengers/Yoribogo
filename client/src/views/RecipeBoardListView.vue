@@ -7,18 +7,8 @@
       <MainBoard :cur="'recipe-board'">
         <div class="recipe-board-container">
           <SearchBar @search="handleSearch"></SearchBar>
-  
-          <!-- RecipeViewSwitchButton에서 이벤트를 받아서 처리 -->
-          <RecipeViewSwitchButton @toggle="handleToggle"></RecipeViewSwitchButton>
-  
           
-          <div class="not-found" v-if="isWeekly && weeklyList.length === 0">
-              <span>주간 인기 레시피가 존재하지 않습니다.</span>
-            </div>
-            <div class="not-found" v-else-if="!isWeekly && menuList.length === 0">
-                <span>게시글이 존재하지 않습니다.</span>
-            </div>
-            
+       
             <!-- 전체 레시피 목록 -->
             <div v-if="!isWeekly && menuList.length > 0" class="recipe-board-list">
                 <MenuItem
@@ -30,16 +20,6 @@
                 ></MenuItem>
             </div>
             
-            <!-- 주간 인기 레시피 -->
-            <div v-if="isWeekly && weeklyList.length > 0" class="recipe-board-list">
-                <MenuItem
-                v-for="item in weeklyList"
-                :key="item.board_id"
-                :menuName="item.menu_name"
-                :menuImage="item.board_image"
-                @click="goDetail(item.board_id)"
-                ></MenuItem>
-            </div>
             <WriteRecipeButton @click="goWrite()"></WriteRecipeButton>
         </div>
     </MainBoard>
@@ -54,7 +34,6 @@
   import SearchBar from '@/components/common/SearchBar.vue'
   import MenuItem from '@/components/recipe/MenuItem.vue'
   import PaginationComponent from '@/components/common/PaginationComponent.vue'
-  import RecipeViewSwitchButton from '@/components/recipe-board/RecipeViewSwitchButton.vue'
   import WriteRecipeButton from '@/components/recipe-board/WriteRecipeButton.vue'
   import { ref, watch } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
@@ -64,9 +43,7 @@
   const router = useRouter()
   
   const menuList = ref([]) // 전체 게시글
-  const weeklyList = ref([]) // 주간 인기 게시글 (임시 더미 데이터)
   const pageInfo = ref({})
-  const isWeekly = ref(false) // 주간 인기 레시피인지 여부
   
   // 게시글 목록 또는 검색 결과 가져오기
   const fetchData = async (page, searchQuery = '') => {
@@ -75,18 +52,13 @@
       if (searchQuery) {
         // 검색어가 있는 경우 검색 API 호출
         response = await axios.get(`/api/recipe-board/search?recipeBoardMenuName=${searchQuery}&pageNo=${page}`)
-      } else if (!isWeekly.value) {
-        // 전체 게시글 조회
+       
+       }
+        else{
+          // 전체 게시글 조회
         response = await axios.get(`/api/recipe-board/boards?pageNo=${page}`)
-      } else {
-        // 주간 인기 레시피는 아직 연결하지 않음, 더미 데이터 사용
-        weeklyList.value = [
-          { board_id: 1, menu_name: '주간 인기 레시피 1', board_image: '/path/to/image1.jpg' },
-          { board_id: 2, menu_name: '주간 인기 레시피 2', board_image: '/path/to/image2.jpg' },
-        ]
-        return
-      }
-  
+        }
+
       if (response.data.success) {
         menuList.value = response.data.data.content
         pageInfo.value = response.data.data.page
@@ -98,13 +70,7 @@
       console.error('Failed to fetch data:', error)
     }
   }
-  
-  // 주간 인기 레시피/전체 레시피 토글 핸들러
-  const handleToggle = (isWeeklyMode) => {
-    isWeekly.value = isWeeklyMode
-    fetchData(1) // 토글 변경 시 데이터 다시 가져오기
-  }
-  
+
   // 검색 핸들러
   const handleSearch = (searchQuery) => {
     router.push({ path: '/recipe-board-list', query: { q: searchQuery, page: 1 } })

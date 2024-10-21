@@ -20,19 +20,22 @@
           :ingredients="ingredients"
           @add-item="addIngredient"
         ></AttributeIngredientInput>
-        <AtrributeTextAndImageInput
-          :name="'조리 순서'"
-          :placeholder="'단계별 요리법을 작성해주세요'"
-          @add="addStep"
-          v-model="manual_step"
-        ></AtrributeTextAndImageInput>
+          <!-- 조리 순서 -->
+          <AtrributeTextAndImageInput
+              :name="'조리 순서'"
+              :placeholder="'단계별 요리법을 작성해주세요'"
+              @add="addStep"
+              v-model="manual_step"
+          ></AtrributeTextAndImageInput>
       </div>
 
-      <div class="attribute-board second" v-if="!isSmallScreen">
+   <!-- 재료 및 조리 순서 요약 -->
+        <div class="attribute-board second" v-if="!isSmallScreen">
         <AttributeIngredientStep
           :ingredients="ingredients"
           :manual_step="manual_step"
           @add-step="addStep"
+          @remove-step="removeStep"
           @remove-item="removeIngredient"
         ></AttributeIngredientStep>
       </div>
@@ -56,7 +59,7 @@ import AtrributeTextAndImageInput from '@/components/recipe-board/AtrributeTextA
 import AttributeIngredientStep from './AttributeIngredientStep.vue';
 import AttributeMenuNameInput from '@/components/recipe-board/AttributeMenuNameInput.vue';
 import AttributeIngredientInput from './AttributeIngredientInput.vue';
-import LoadingSpinner from '@/components/common/LoadingSpinner.vue'; // 스피너 컴포넌트 추가
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue';
 import axios from 'axios';
 import { useTokenStore } from '@/stores/tokenStore';
 
@@ -65,12 +68,13 @@ const handleResize = () => {
   isSmallScreen.value = window.innerWidth <= 1280;
 };
 
-// 메뉴명, 대표사진, 재료, 조리순서 값 초기화
 const menu_name = ref('');
 const board_image = ref('');
 const ingredients = ref([]);
-const manual_step = ref([]);
+const manual_step = ref([]); // 조리 순서 배열
 const loading = ref(false); // 로딩 상태 관리
+
+const tokenStore = useTokenStore();
 
 // 로컬스토리지에서 데이터를 불러오는 함수
 const loadFromLocalStorage = () => {
@@ -79,28 +83,12 @@ const loadFromLocalStorage = () => {
   const storedIngredients = localStorage.getItem('ingredients');
   const storedSteps = localStorage.getItem('manual_step');
 
-  if (storedMenuName) {
-    menu_name.value = storedMenuName;
-  }
-  if (storedFileName) {
-    board_image.value = storedFileName;
-  }
-  if (storedIngredients) {
-    ingredients.value = JSON.parse(storedIngredients) || [];
-  }
-  if (storedSteps) {
-    manual_step.value = JSON.parse(storedSteps) || [];
-  }
+  if (storedMenuName) menu_name.value = storedMenuName;
+  if (storedFileName) board_image.value = storedFileName;
+  if (storedIngredients) ingredients.value = JSON.parse(storedIngredients) || [];
+  if (storedSteps) manual_step.value = JSON.parse(storedSteps) || [];
 };
 
-onMounted(() => {
-  window.addEventListener('resize', handleResize);
-  loadFromLocalStorage(); // 페이지 로드 시 로컬 스토리지에서 데이터 불러오기
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', handleResize);
-});
 
 // 메뉴가 변경되는 경우 로컬스토리지 변경사항 저장
 watch(menu_name, (newValue) => {
@@ -115,29 +103,36 @@ watch(board_image, (newValue) => {
 // 배열에 재료 추가 함수
 const addIngredient = (ingredient) => {
   if (ingredient && !ingredients.value.includes(ingredient)) {
-    ingredients.value = [...ingredients.value, ingredient]; // 새 배열로 재할당하여 반응성 유지
+    ingredients.value = [...ingredients.value, ingredient]; 
     saveToLocalStorage(); // 추가 후 로컬 스토리지 업데이트
   } else {
     alert("재료를 다시 확인하세요.");
   }
 };
-
-//배열에 재료 삭제 함수
+// 재료 삭제 함수
 const removeIngredient = (index) => {
-  ingredients.value = ingredients.value.filter((_, i) => i !== index); // 새로운 배열 할당
+  ingredients.value = ingredients.value.filter((_, i) => i !== index); 
   saveToLocalStorage();
 };
-
-// 배열에 조리 방법 추가 함수
+// 하위 컴포넌트로부터 새로운 조리 순서 단계 추가
 const addStep = (newStep) => {
-  console.log("새로운 단계 데이터:", newStep); // newStep 객체 확인
-  if (newStep && newStep.step) {
-    manual_step.value = [...manual_step.value, { step: newStep.step, image: newStep.image }];
-    console.log("업데이트된 manual_step 배열:", manual_step.value);
-    saveToLocalStorage(); // 추가 후 로컬 스토리지 업데이트
+  if (newStep && newStep.content) {
+    manual_step.value = [
+      ...manual_step.value, 
+      { 
+        step: newStep.content, 
+        image: newStep.image
+      }
+    ];
+    saveToLocalStorage(); 
   } else {
     alert("단계 내용을 확인하세요.");
   }
+};
+// 조리 순서 삭제 함수
+const removeStep = (index) => {
+  manual_step.value = manual_step.value.filter((_, i) => i !== index);
+  saveToLocalStorage();
 };
 
 // 로컬 스토리지에 저장하는 함수
@@ -152,45 +147,37 @@ const saveToLocalStorage = () => {
   }
 };
 
-const tokenStore = useTokenStore();
-
 // 레시피 등록 요청
 const submitRecipe = async () => {
   try {
-    loading.value = true; // 로딩 시작
+    loading.value = true;
 
     const formData = new FormData();
     formData.append('menu_name', menu_name.value);
     formData.append('ingredients', ingredients.value.join(', '));
     formData.append('user_id', tokenStore.token.userId);
 
-    // 이미지 파일이 제대로 들어가도록 수정
     if (board_image.value && board_image.value instanceof File) {
-      formData.append('boardImage', board_image.value); // 이미지 파일 추가
+      formData.append('boardImage', board_image.value); 
     } else {
       console.error('board_image is not a File instance');
     }
 
-    // 게시글 등록
     const boardResponse = await axios.post('/api/recipe-board/create', formData);
 
-    // 매뉴얼 데이터 확인 로그 추가
     const manualData = manual_step.value.map((step, index) => ({
       manual_step: index + 1,
       manual_content: step.step,
-      manual_image: step.image instanceof File ? step.image : null, // 이미지가 파일일 경우에만 추가
+      manual_image: step.image instanceof File ? step.image : null,
     }));
 
-    console.log("전송할 매뉴얼 데이터:", manualData);
-
-    // 매뉴얼 등록
     if (manualData.length > 0) {
       const manualFormData = new FormData();
-      manualData.forEach((manual, index) => {
+      manualData.forEach((manual) => {
         manualFormData.append('manual_steps', manual.manual_step);
         manualFormData.append('manual_contents', manual.manual_content);
         if (manual.manual_image) {
-          manualFormData.append('manual_images', manual.manual_image); // 이미지 파일 추가
+          manualFormData.append('manual_images', manual.manual_image);
         }
       });
 
@@ -202,10 +189,19 @@ const submitRecipe = async () => {
     console.error('레시피 등록 실패:', error);
     alert('레시피 등록에 실패했습니다.');
   } finally {
-    loading.value = false; // 로딩 종료
+    loading.value = false;
   }
 };
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+  loadFromLocalStorage(); 
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
+
 
 <style scoped>
 .write-recipe-board {

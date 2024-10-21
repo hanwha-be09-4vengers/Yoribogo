@@ -4,7 +4,7 @@
       <NotificationButton></NotificationButton>
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
-    </header>
+    </header>   
     <MainBoard :cur="'recipe-board'">
       <router-view></router-view>
     </MainBoard>

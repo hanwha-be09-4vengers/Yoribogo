@@ -59,29 +59,29 @@
 const onImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-        stepImage.value = URL.createObjectURL(file); // 이미지 URL 생성
-        console.log('생성된 Blob URL:', stepImage.value); // Blob URL 확인
+        const reader = new FileReader();
 
-        // manual_step의 image에 Blob URL을 저장
-        const manualStep = JSON.parse(localStorage.getItem('manual_step')) || {}; // 기존의 manual_step 가져오기
-        manualStep.image = stepImage.value; // 이미지 URL 저장
-        localStorage.setItem('manual_step', JSON.stringify(manualStep)); // 로컬 스토리지에 업데이트
-        
-        // 저장 후 로컬 스토리지의 모든 키와 값을 출력
-        console.log('로컬 스토리지 상태:', localStorage);
-        console.log( "로컬스토리지 저장 확인",`step_image_${props.index}`, stepImage.value);
-        console.log('stepImage.value:', stepImage.value); // Blob URL
-        console.log('stepImage:', stepImage); // ref 객체
-        
-        emit('update-step', { step: stepText.value, image: stepImage.value }); // Emit으로 업데이트
+        // 파일을 Base64로 인코딩
+        reader.readAsDataURL(file);
 
-                // Blob URL이 생성된 후 확인
-                if (!stepImage.value) {
-            console.error("Blob URL 생성 실패");
-            return;
-        }
+        reader.onload = () => {
+            const base64Image = reader.result; // Base64 인코딩된 파일 데이터
+            stepImage.value = base64Image; // 이미지 미리보기용으로 Base64 사용
+
+            // 로컬 스토리지에 Base64로 저장
+            const manualStep = JSON.parse(localStorage.getItem('manual_step')) || [];
+            manualStep[props.index] = { step: stepText.value, image: base64Image };
+            localStorage.setItem('manual_step', JSON.stringify(manualStep));
+            
+            emit('update-step', { step: stepText.value, image: base64Image }); // 상위 컴포넌트에 변경 내용 전달
+        };
+
+        reader.onerror = (error) => {
+            console.error('파일을 읽는 중 오류 발생:', error);
+        };
     }
 };
+
 
 // 컴포넌트 언마운트 시 Blob URL 정리
 onBeforeUnmount(() => {
@@ -107,24 +107,16 @@ const updateLocalStorage = () => {
     updateLocalStorage(); // 값이 변경될 때마다 로컬 스토리지에 업데이트
     });
 
-
-
-
-    // 단계 삭제
-    const removeStep = (index) => {
-    steps.value.splice(index, 1); // 해당 인덱스의 단계 삭제
-    localStorage.setItem('manual_step', JSON.stringify(steps.value)); // 업데이트된 배열을 로컬 스토리지에 저장
-    };
+        // 단계 삭제
+        const removeStep = () => {
+        emit('remove-step', props.index); // 올바르게 index를 전달
+        };
 
     // 조리 순서 추가 버튼이 클릭되면 활성화될 메소드
     const addStepToNextIndex = () => {
         // 빈 단계 객체 추가
         emit('add-step', { step: '', image: '' });
     }
-
-
-
-
 
 
 </script>
