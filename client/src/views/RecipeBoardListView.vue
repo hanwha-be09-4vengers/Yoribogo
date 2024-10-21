@@ -108,15 +108,15 @@ const handleToggle = (isWeeklyMode) => {
 
 // 검색 핸들러
 const handleSearch = (searchQuery) => {
-  router.push({ path: '/recipe-board-list', query: { q: searchQuery, page: 1 } })
+  router.push({ path: '/recipe-board', query: { q: searchQuery, page: 1 } })
 }
 
 // 페이지 변경 핸들러
 const handlePageChange = (newPage) => {
   const searchQuery = route.query.q || ''
   searchQuery === ''
-    ? router.push({ path: '/recipe-board-list', query: { page: newPage } })
-    : router.push({ path: '/recipe-board-list', query: { q: searchQuery, page: newPage } })
+    ? router.push({ path: '/recipe-board', query: { page: newPage } })
+    : router.push({ path: '/recipe-board', query: { q: searchQuery, page: newPage } })
 }
 
 // 게시글 클릭 시 디테일 페이지로 이동
