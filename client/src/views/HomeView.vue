@@ -34,6 +34,8 @@ import HomeNav from '@/components/user/HomeNav.vue'
 import NotificationButton from '@/components/common/NotificationButton.vue'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
+import { connectSSE, closeSSE } from '@/api/SSERequest'  // SSE 연결 함수
 
 // 로그인 상태 확인을 위한 변수
 const isLoggedIn = ref(false)
@@ -61,6 +63,8 @@ const closeLoginModal = () => {
 const goQuestion = () => {
   router.push('/question/1')
 }
+
+
 </script>
 
 

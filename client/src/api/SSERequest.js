@@ -1,41 +1,56 @@
-import { useTokenStore } from '@/stores/tokenStore';  // Pinia 스토어에서 토큰 가져오기
-import { EventSourcePolyfill } from 'event-source-polyfill';    // header에 토큰을 추가하기 위해 사용
+let eventSource = null;
+// import { useTokenStore } from '@/stores/tokenStore'; // Pinia 스토어 임포트
+// const tokenStore = useTokenStore(); // Pinia 스토어 사용
+
 
 export function connectSSE() {
-  const tokenStore = useTokenStore();
-  const accessToken = tokenStore.token.accessToken;
-  // console.log('전송 중인 JWT 토큰:', accessToken);
+  // console.log('로그인 토큰1: ', tokenStore.token.accessToken);
+  console.log('로그인 토큰2: ', JSON.parse(localStorage.getItem('token')).accessToken);
+  if (!eventSource) {
+    // eventSource = new EventSource('/api/notifications/sseconnect');
+    eventSource = new EventSource(
+                    `/api/notifications/sseconnect`,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${JSON.parse(localStorage.getItem('token')).accessToken}`,
+                      },
+                      withCredentials: true,
+                    }
+                  );
+    // SSE 연결 열림
+    eventSource.onopen = () => {
+      console.log('SSE 연결이 열렸습니다.');
+    };
 
-  if (!accessToken) {
-    console.error('토큰이 없습니다. SSE 연결을 할 수 없습니다.');
-    return;
+    // 서버에서 보내는 connect 이벤트
+    eventSource.addEventListener('connect', (event) => {
+      console.log('서버로부터 연결 메시지:', event.data);
+    });
+
+    // 알림 이벤트 수신
+    eventSource.addEventListener('notification', (event) => {
+      console.log('새로운 알림:', event.data);
+      // 추가적인 알림 처리 로직
+    });
+
+    // 기본 메시지 수신
+    eventSource.onmessage = (event) => {
+      console.log('새로운 메시지:', event.data);
+    };
+
+    // 에러 처리
+    eventSource.onerror = (error) => {
+      console.error('SSE 연결 오류:', error);
+    };
   }
 
-  // EventSourcePolyfill을 통해 JWT를 Authorization 헤더에 담아 SSE 연결
-  const eventSource = new EventSourcePolyfill('/api/notifications', {
-    headers: { Authorization: `Bearer ${accessToken}` }
-  });
-
-  // 연결 완료 로그
-  eventSource.onopen = () => {
-    console.log('SSE 연결이 완료되었습니다.');
-  };
-
-  // 서버에서 스케쥴러를 통해 이벤트 객체 생성 시 자동으로 호출
-  eventSource.onmessage = (event) => {
-    console.log('알림 수신(추후 삭제):', event.data);
-    // 여기서 수신한 메시지(event.data)를 UI를 고려하여 처리
-  };
-
-
-  // 오류 처리
-  eventSource.onerror = (error) => {
-    console.error('SSE 연결 오류 발생:', error);
-
-    if (eventSource.readyState === EventSource.CONNECTING) {
-      console.log('SSE 연결이 끊어졌습니다. 재연결 시도 중...');
-    } 
-  };
-
   return eventSource;
+}
+
+export function closeSSE() {
+  if (eventSource) {
+    eventSource.close();
+    eventSource = null;
+    console.log('SSE 연결이 닫혔습니다.');
+  }
 }
