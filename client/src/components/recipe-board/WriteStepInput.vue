@@ -7,7 +7,7 @@
             </div>
             <div class="step-image">
                 <!-- 이미지가 있는 경우 보여줌 -->
-                <img v-if="stepImage" :src="uploadedImageUrl" alt="조리 이미지" />
+                <img v-if="stepImage" :src="stepImage" alt="조리 이미지" />
                 <input v-else type="file" @change="onImageChange" />
             </div>
             <div class="step-description">
@@ -24,8 +24,6 @@
 <script setup>
 
     import { ref , onMounted, watch, onBeforeUnmount} from 'vue';
-
-
 
     // Props: 현재 단계 인덱스와 초기 데이터
     const props = defineProps({
@@ -46,8 +44,6 @@
     const stepText = ref(props.initialStep.step);
     const stepImage = ref(props.initialStep.image);
 
-    const uploadedImageUrl = ref('') 
-
     onMounted(() => {
     console.log(`현재 인덱스: ${props.index}`); // 현재 인덱스 확인
     const storedImage = localStorage.getItem(`step_image_${props.index}`);
@@ -63,25 +59,36 @@
 const onImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-        const fileName = file.name; // 파일 이름 가져오기
-        console.log('선택된 파일 이름:', fileName);
+        const reader = new FileReader();
 
-        // 미리보기 이미지 넣기 위한 URL
-        uploadedImageUrl.value = URL.createObjectURL(file); // Blob URL 생성
+        // 파일을 Base64로 인코딩
+        reader.readAsDataURL(file);
 
-        // manual_step의 image에 파일 이름을 저장
-        const manualSteps = JSON.parse(localStorage.getItem('manual_step')) || [];
-        manualSteps[props.index] = { step: stepText.value, image: fileName }; // 파일 이름 저장
-        localStorage.setItem('manual_step', JSON.stringify(manualSteps)); // 로컬 스토리지 업데이트
-        
-        // 로컬 스토리지 상태 출력
-        console.log('로컬 스토리지 업데이트:', manualSteps);
-        
-        // 추가로 stepImage.value를 업데이트하려면 다음을 추가
-        stepImage.value = fileName; // fileName을 stepImage에 저장
+        reader.onload = () => {
+            const base64Image = reader.result; // Base64 인코딩된 파일 데이터
+            stepImage.value = base64Image; // 이미지 미리보기용으로 Base64 사용
+
+            // 로컬 스토리지에 Base64로 저장
+            const manualStep = JSON.parse(localStorage.getItem('manual_step')) || [];
+            manualStep[props.index] = { step: stepText.value, image: base64Image };
+            localStorage.setItem('manual_step', JSON.stringify(manualStep));
+            
+            emit('update-step', { step: stepText.value, image: base64Image }); // 상위 컴포넌트에 변경 내용 전달
+        };
+
+        reader.onerror = (error) => {
+            console.error('파일을 읽는 중 오류 발생:', error);
+        };
     }
 };
 
+
+// 컴포넌트 언마운트 시 Blob URL 정리
+onBeforeUnmount(() => {
+    if (stepImage.value) {
+        URL.revokeObjectURL(stepImage.value);
+    }
+});
 
 
 
@@ -97,24 +104,18 @@ const updateLocalStorage = () => {
     // 텍스트와 이미지의 변화를 감시
     watch([stepText, stepImage], () => {
         console.log("변화 감지");
-        updateLocalStorage(); // 값이 변경될 때마다 로컬 스토리지에 업데이트
+    updateLocalStorage(); // 값이 변경될 때마다 로컬 스토리지에 업데이트
     });
 
+        // 단계 삭제
+        const removeStep = () => {
+        emit('remove-step', props.index); // 올바르게 index를 전달
+        };
 
-
-
-    // 단계 삭제
-    const removeStep = (index) => {
-    steps.value.splice(index, 1); // 해당 인덱스의 단계 삭제
-    localStorage.setItem('manual_step', JSON.stringify(steps.value)); // 업데이트된 배열을 로컬 스토리지에 저장
-    };
-
-    // 조리 순서 추가 버튼이 클릭되면 활성화될 메소드
-    const addStepToNextIndex = () => {
-        // 빈 단계 객체 추가
-        emit('add-step', { step: '', image: '' });
-    }
-
+// 단계 추가
+const addStepToNextIndex = () => {
+  emit('add-step', { step: '', image: '' });
+};
 
 
 </script>

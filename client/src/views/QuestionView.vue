@@ -1,9 +1,8 @@
 <template>
   <div class="question-view">
     <header>
-      <NotificationButton class="notification-btn"></NotificationButton>
-      <ProfileButton class="profile-btn"></ProfileButton>
-      <HomeButton class="home-btn"></HomeButton>
+      <ProfileButton></ProfileButton>
+      <HomeButton></HomeButton>
       <QuestionNav :questions="questions"></QuestionNav>
     </header>
     <main>
@@ -25,11 +24,7 @@
           >
           </ChoiceBoard>
         </div>
-        <form 
-          class="input-container" 
-          v-if="qid === 5"
-           @submit.prevent="goNext(null, qid + 1)"
-        >
+        <form class="input-container" v-if="qid === 5" @submit.prevent="goNext(null, qid + 1)">
           <input id="extra-input" type="text" placeholder="답변:" v-model="inputText" />
           <button class="submit-btn">추천 결과 보기</button>
         </form>
@@ -39,11 +34,8 @@
 </template>
 
 <script setup>
-
-import HomeButton from '@/components/common/HomeButton.vue';
-import ProfileButton from '@/components/common/ProfileButton.vue';
-import NotificationButton from '@/components/common/NotificationButton.vue';
-
+import HomeButton from '@/components/common/HomeButton.vue'
+import ProfileButton from '@/components/common/ProfileButton.vue'
 
 import QuestionNav from '../components/recommend/QuestionNav.vue'
 import ChoiceBoard from '../components/recommend/ChoiceBoard.vue'
@@ -241,11 +233,10 @@ main {
   box-shadow: 0.5rem 0.3rem 0.3rem 0.1rem rgba(60, 60, 60, 0.5);
 }
 
-
 .notification-btn {
   position: absolute;
   top: 7rem;
-  left: 12rem
+  left: 12rem;
 }
 @media screen and (max-width: 480px) {
   .notification-btn {

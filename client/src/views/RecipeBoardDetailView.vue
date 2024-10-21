@@ -115,7 +115,7 @@ const writerProfiles = ref({})
 const profileImageSrc = ref('')
 const badgeImageSrc = ref('')
 const newComment = ref('')
-const isFavorited = ref(false)
+// const isFavorited = ref(false)
 
 const defaultImage = ref(
   'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728804967802_a4720492-2dd2-4e59-8f31-79b55e6a169e_%E1%84%80%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.svg'
@@ -142,7 +142,8 @@ const fetchData = async () => {
     const commentsResponse = (
       await axios.get(`/api/recipe-board/${route.params.board_id}/comments`)
     ).data
-
+    
+    console.log('commentsResponse: 댓글 작성ㅎㅎ',commentsResponse)
     if (commentsResponse.success) {
       commentInfo.value = commentsResponse.data // 댓글 데이터를 저장
     } else {

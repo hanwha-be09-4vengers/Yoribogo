@@ -8,31 +8,14 @@
       <div class="recipe-board-container">
         <SearchBar @search="handleSearch"></SearchBar>
 
-        <!-- RecipeViewSwitchButton에서 이벤트를 받아서 처리 -->
-        <RecipeViewSwitchButton @toggle="handleToggle"></RecipeViewSwitchButton>
-
-        <div class="not-found" v-if="isWeekly && weeklyList.length === 0">
-          <span>주간 인기 레시피가 존재하지 않습니다.</span>
-        </div>
-        <div class="not-found" v-else-if="!isWeekly && menuList.length === 0">
+        <div class="not-found" v-if="menuList.length === 0">
           <span>게시글이 존재하지 않습니다.</span>
         </div>
 
         <!-- 전체 레시피 목록 -->
-        <div v-if="!isWeekly && menuList.length > 0" class="recipe-board-list">
+        <div v-if="menuList.length > 0" class="recipe-board-list">
           <MenuItem
             v-for="item in menuList"
-            :key="item.board_id"
-            :menuName="item.menu_name"
-            :menuImage="item.board_image"
-            @click="goDetail(item.board_id)"
-          ></MenuItem>
-        </div>
-
-        <!-- 주간 인기 레시피 -->
-        <div v-if="isWeekly && weeklyList.length > 0" class="recipe-board-list">
-          <MenuItem
-            v-for="item in weeklyList"
             :key="item.board_id"
             :menuName="item.menu_name"
             :menuImage="item.board_image"
@@ -53,7 +36,6 @@ import MainBoard from '@/components/common/MainBoard.vue'
 import SearchBar from '@/components/common/SearchBar.vue'
 import MenuItem from '@/components/recipe/MenuItem.vue'
 import PaginationComponent from '@/components/common/PaginationComponent.vue'
-import RecipeViewSwitchButton from '@/components/recipe-board/RecipeViewSwitchButton.vue'
 import WriteRecipeButton from '@/components/recipe-board/WriteRecipeButton.vue'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -63,9 +45,7 @@ const route = useRoute()
 const router = useRouter()
 
 const menuList = ref([]) // 전체 게시글
-const weeklyList = ref([]) // 주간 인기 게시글 (임시 더미 데이터)
 const pageInfo = ref({})
-const isWeekly = ref(true) // 주간 인기 레시피인지 여부
 
 // 게시글 목록 또는 검색 결과 가져오기
 const fetchData = async (page, searchQuery = '') => {
@@ -76,16 +56,10 @@ const fetchData = async (page, searchQuery = '') => {
       response = await axios.get(
         `/api/recipe-board/search?recipeBoardMenuName=${searchQuery}&pageNo=${page}`
       )
-    } else if (!isWeekly.value) {
+    } else {
       // 전체 게시글 조회
       response = await axios.get(`/api/recipe-board/boards?pageNo=${page}`)
-    } else {
-      // 주간 인기 레시피는 아직 연결하지 않음, 더미 데이터 사용
-      weeklyList.value = [
-        { board_id: 1, menu_name: '주간 인기 레시피 1', board_image: '/path/to/image1.jpg' },
-        { board_id: 2, menu_name: '주간 인기 레시피 2', board_image: '/path/to/image2.jpg' }
-      ]
-      return
+      console.log(response.data)
     }
 
     if (response.data.success) {
@@ -100,23 +74,17 @@ const fetchData = async (page, searchQuery = '') => {
   }
 }
 
-// 주간 인기 레시피/전체 레시피 토글 핸들러
-const handleToggle = (isWeeklyMode) => {
-  isWeekly.value = isWeeklyMode
-  fetchData(1) // 토글 변경 시 데이터 다시 가져오기
-}
-
 // 검색 핸들러
 const handleSearch = (searchQuery) => {
-  router.push({ path: '/recipe-board-list', query: { q: searchQuery, page: 1 } })
+  router.push({ path: '/recipe-board', query: { q: searchQuery, page: 1 } })
 }
 
 // 페이지 변경 핸들러
 const handlePageChange = (newPage) => {
   const searchQuery = route.query.q || ''
   searchQuery === ''
-    ? router.push({ path: '/recipe-board-list', query: { page: newPage } })
-    : router.push({ path: '/recipe-board-list', query: { q: searchQuery, page: newPage } })
+    ? router.push({ path: '/recipe-board', query: { page: newPage } })
+    : router.push({ path: '/recipe-board', query: { q: searchQuery, page: newPage } })
 }
 
 // 게시글 클릭 시 디테일 페이지로 이동
@@ -151,6 +119,15 @@ watch(
   background-color: var(--yellow-color);
 }
 
+.write-recipe-container {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+  margin-right: 8rem;
+}
+
 .profile-btn {
   position: absolute;
   top: 7rem;
@@ -172,13 +149,6 @@ watch(
 
 .search-bar {
   margin-top: 8rem;
-}
-
-.write-recipe-btn {
-  position: fixed;
-  bottom: 2rem; /* 하단에서 2rem 떨어지게 설정 */
-  right: 2rem; /* 오른쪽에서 2rem 떨어지게 설정 */
-  z-index: 9999; /* 가장 위에 표시되도록 설정 */
 }
 
 .not-found {
