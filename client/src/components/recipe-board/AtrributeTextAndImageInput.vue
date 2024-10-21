@@ -59,22 +59,66 @@ const emit = defineEmits(['add']);
 const handleFileChange = (event) => {
   const file = event.target.files[0];
   if (file && file.type.startsWith('image/')) {
-    uploadedFileName.value = file.name;
-    uploadedImageUrl.value = URL.createObjectURL(file);
+    uploadedFileName.value = file// 파일 이름 저장
+    console.log("uploadedFileName.value",uploadedFileName.value);
+    
+    uploadedImageUrl.value = URL.createObjectURL(file) // 이미지 미리보기 URL 생성
+    console.log("uploadedImageUrl.value",uploadedImageUrl.value)
+
+    // localStorage에 이미지 URL 저장
+    localStorage.setItem(`step_image_${props.index}`, uploadedImageUrl.value);
+    console.log(`step_image_${props.index}`)
+
+
+    console.log("파일 변경이 감지됨 by click: 조리방법", file);
   }
-};
+}
+
+
+  const handleFileDrop = (event) => {
+    const file = event.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      uploadedFileName.value = file// 파일 이름 저장
+      uploadedImageUrl.value = URL.createObjectURL(file) // 이미지 미리보기 URL 생성
+
+      console.log("uploadedImageUrl.value",uploadedImageUrl.value)
+      console.log("uploadedFileName.value",uploadedFileName.value);
+
+      // localStorage에 이미지 URL 저장
+    localStorage.setItem(`step_image_${props.index}`, uploadedImageUrl.value);
+
+
+    console.log("파일 변경이 감지됨 by drop: 조리방법", file);
+
+    }
+  };
+
+
 
 // "추가" 버튼 클릭 시 호출할 함수
 const handleAdd = () => {
-  // 단계 텍스트와 이미지를 담은 객체 생성
-  const newStep = {
-    content: stepText.value,
-    image: uploadedImageUrl.value || null
-  };
+  if (stepText.value) {
+    const newStep = {
+      step: stepText.value,
+      image: uploadedFileName.value // 이미지 파일명 저장
+    };
 
-  if (newStep.content.trim() === "") {
-    alert("조리 방법을 입력하세요.");
-    return;
+    // 로컬스토리지에 저장
+    const manualSteps = JSON.parse(localStorage.getItem('manual_step')) || [];
+    manualSteps.push(newStep);
+    localStorage.setItem('manual_step', JSON.stringify(manualSteps)); // 업데이트
+
+    // 상위 컴포넌트에 emit
+    emit('add', newStep);
+    
+    console.log("Added step:", newStep);
+
+    // 입력 필드 초기화
+    stepText.value = ''; 
+    uploadedFileName.value = ''; 
+    uploadedImageUrl.value = '';
+  } else {
+    console.log("조리 방법을 입력해야 합니다.");
   }
 
   // 상위 컴포넌트에 emit
