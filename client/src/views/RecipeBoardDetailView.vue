@@ -60,7 +60,7 @@
       <!-- 댓글 컴포넌트 -->
       <WriteCommentInput
         :comments="commentInfo"
-        :userProfiles="userProfiles"
+        :userInfo="userProfiles"
         @add-comment="handleAddComment"
       >
       </WriteCommentInput>
@@ -71,25 +71,15 @@
       </WriteRecommentInput>
 
       <!-- 댓글 입력 -->
-      <div class="comment-input" style="width: 80%; margin-top: 3rem; padding: 0 0 3rem 0">
+      <form class="comment-input" @submit.prevent="submitComment">
         <input
           v-model="newComment"
           placeholder="댓글을 입력하세요"
           style="width: 92%; border: 1px solid gray; height: 5rem; padding: 2rem"
+          required
         />
-        <button
-          @click="submitComment"
-          style="
-            height: 5rem;
-            background-color: #3e3e3e;
-            color: white;
-            border-style: none;
-            padding: 0 2rem;
-          "
-        >
-          등록
-        </button>
-      </div>
+        <button class="submit-btn" type="submit">등록</button>
+      </form>
     </MainBoard>
     <aside>
       <GoTopButton></GoTopButton>
@@ -107,22 +97,24 @@ import GoTopButton from '@/components/common/GoTopButton.vue'
 import WriteCommentInput from '@/components/recipe-board/WriteCommentInput.vue'
 import WriteRecommentInput from '@/components/recipe-board/WriteRecommentInput.vue'
 import axios from 'axios'
-import { ref, onMounted, watchEffect } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useTokenStore } from '@/stores/tokenStore'
 
 const isImageLoading = ref(true)
 const isImageError = ref(false)
 
 const route = useRoute()
+const router = useRouter()
 
 const menuInfo = ref({})
 const menuImageSrc = ref('')
-const commentInfo = ref({})
-const userProfiles = ref({}) // 유저 프로필
+const commentInfo = ref([])
+const userProfiles = ref([]) // 유저 프로필
 const writerProfiles = ref({})
 const profileImageSrc = ref('')
 const badgeImageSrc = ref('')
-
+const newComment = ref('')
 const isFavorited = ref(false)
 
 const defaultImage = ref(
@@ -131,6 +123,8 @@ const defaultImage = ref(
 
 const fetchData = async () => {
   try {
+    commentInfo.value = []
+    userProfiles.value = []
     const recipeResponse = (await axios.get(`/api/recipe-board/detail/${route.params.board_id}`))
       .data
     if (recipeResponse.success) {
@@ -142,36 +136,32 @@ const fetchData = async () => {
         profileImageSrc.value = writerProfiles.value.profileImage || defaultImage.value
         badgeImageSrc.value = writerProfiles.value.tierImage || defaultImage.value
       }
-      checkIfFavorited() // 즐겨찾기 상태 확인
     }
 
     // 댓글 정보 가져오기 (배열 형태로 바로 반환됨)
     const commentsResponse = (
       await axios.get(`/api/recipe-board/${route.params.board_id}/comments`)
     ).data
-    console.log('전체 댓글 응답 데이터 구조:', commentsResponse) // 전체 구조 출력
 
     if (commentsResponse.success) {
-      commentInfo.value = commentsResponse // 댓글 데이터를 저장
-      console.log('저장된 댓글 데이터:', commentInfo.value.data) // 댓글 데이터 출력
+      commentInfo.value = commentsResponse.data // 댓글 데이터를 저장
+    } else {
+      console.error('Failed to fetch comments:', commentsResponse.message)
     }
 
-    commentInfo.value.data.forEach(async (comment) => {
+    commentInfo.value.forEach(async (comment) => {
       try {
-        const profileResponse = await axios.get(`/api/users/${comment['user-id']}/profile`)
-        if (profileResponse.data.success) {
-          // Vue의 reactivity를 강제로 작동시키는 방식
-          userProfiles.value = {
-            ...userProfiles.value,
-            [comment['user-id']]: {
-              nickname: profileResponse.data.data.nickname,
-              profileImage: profileResponse.data.data.profileImage,
-              tierImage: profileResponse.data.data.tierImage
-            }
-          }
-          console.log('유저 정보 저장 성공', userProfiles.value)
+        const profileResponse = (await axios.get(`/api/users/${comment['user_id']}/profile`)).data
+        if (profileResponse.success) {
+          // userProfiles 배열에 하나씩 추가
+          userProfiles.value.push({
+            nickname: profileResponse.data.nickname,
+            profileImage: profileResponse.data.profileImage,
+            tierImage: profileResponse.data.tierImage,
+            userRole: profileResponse.data.userRole
+          })
         } else {
-          console.log('유저 정보 불러오기 실패')
+          console.error('유저 정보 불러오기 실패')
         }
       } catch (error) {
         console.error('유저 정보 불러오는 중 에러 발생', error)
@@ -182,24 +172,25 @@ const fetchData = async () => {
   }
 }
 
-watchEffect(() => {
-  console.log('Updated userProfiles:', userProfiles.value)
-})
-
 // 새 댓글 추가 처리 함수
-const handleAddComment = async (newCommentContent) => {
+const handleAddComment = async (newComment) => {
   try {
-    const newComment = {
-      recipeBoardCommentContent: newCommentContent,
-      recipeBoardId: route.params.board_id,
-      userId: 1 // 실제 사용자 ID를 사용해야 함 (예: tokenStore에서 가져옴)
+    const userId = JSON.parse(localStorage.getItem('token')).userId
+    const commentData = {
+      comment_content: newComment,
+      recipe_board_id: route.params.board_id,
+      user_id: userId
     }
 
     // 서버로 새 댓글 전송
-    await axios.post(`/api/recipe-board/${route.params.board_id}/comments`, newComment)
+    const response = (
+      await axios.post(`/api/recipe-board/${route.params.board_id}/comments`, commentData)
+    ).data
 
     // 새로운 댓글을 로컬에 추가
-    commentInfo.value.push(newComment)
+    if (response.success) {
+      fetchData()
+    }
   } catch (error) {
     console.error('Failed to add comment:', error)
   }
@@ -208,46 +199,12 @@ const handleAddComment = async (newCommentContent) => {
 // 댓글 작성 함수
 const submitComment = () => {
   if (newComment.value.trim() !== '') {
-    // 새 댓글을 상위 컴포넌트로 전달
-    emit('add-comment', newComment.value)
+    handleAddComment(newComment.value)
     newComment.value = '' // 입력창 초기화
   }
 }
 
 // 새 대댓글 추가 함수
-
-// 즐겨찾기 여부 확인 로직 호출
-const checkIfFavorited = async () => {
-  try {
-    const response = await axios.get(
-      `/api/recipe-board/favorites/users/${tokenStore.token.userId}/boards/${route.params.recipeBoardId}`
-    )
-    isFavorited.value = response.data.isFavorited
-  } catch (error) {
-    console.error('Failed to check favorite status: ', error)
-  }
-}
-
-// 즐겨찾기 토글
-const toggleFavorite = async () => {
-  try {
-    if (isFavorited.value) {
-      // 즐겨찾기 취소 API 호출
-      await axios.delete(
-        `/api/recipe-board/favorites/users/${tokenStore.token.userId}/boards/${route.params.recipeBoardId}`
-      )
-    } else {
-      // 즐겨찾기 등록 API 호출
-      await axios.post(`/api/recipe-board/favorites`, {
-        userId: tokenStore.token.userId,
-        recipeBoardId: route.params.recipeBoardId
-      })
-    }
-    isFavorited.value = !isFavorited.value
-  } catch (error) {
-    console.error('Failed to toggle favorite:', error)
-  }
-}
 
 // 이미지 로딩 오류 처리 함수
 const handleImageError = () => {
@@ -263,6 +220,11 @@ const handleImageLoad = () => {
 }
 
 onMounted(() => {
+  const tokenStore = useTokenStore()
+  if (!tokenStore.token.accessToken) {
+    alert('마이페이지를 보시려면 로그인이 필요합니다!')
+    router.push('/login')
+  }
   fetchData()
 })
 </script>
@@ -440,6 +402,20 @@ onMounted(() => {
 .comment-container {
   background-color: #fff5f5;
   width: 500px;
+}
+
+.comment-input {
+  width: 80%;
+  margin-top: 3rem;
+  padding: 0 0 3rem 0;
+}
+
+.submit-btn {
+  height: 5rem;
+  background-color: #3e3e3e;
+  color: white;
+  border-style: none;
+  padding: 0 2rem;
 }
 
 @media screen and (max-width: 1440px) {
