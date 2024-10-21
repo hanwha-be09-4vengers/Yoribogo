@@ -151,6 +151,15 @@ watch(
   background-color: var(--yellow-color);
 }
 
+.write-recipe-container {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+  margin-right: 8rem;
+}
+
 .profile-btn {
   position: absolute;
   top: 7rem;
@@ -172,13 +181,6 @@ watch(
 
 .search-bar {
   margin-top: 8rem;
-}
-
-.write-recipe-btn {
-  position: fixed;
-  bottom: 2rem; /* 하단에서 2rem 떨어지게 설정 */
-  right: 2rem; /* 오른쪽에서 2rem 떨어지게 설정 */
-  z-index: 9999; /* 가장 위에 표시되도록 설정 */
 }
 
 .not-found {
