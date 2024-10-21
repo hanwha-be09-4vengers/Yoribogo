@@ -1,6 +1,7 @@
 <template>
   <div class="recipe-board-list-view">
     <header>
+      <NotificationButton></NotificationButton>
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
     </header>
@@ -32,6 +33,7 @@
 <script setup>
 import HomeButton from '@/components/common/HomeButton.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
+import NotificationButton from '@/components/common/NotificationButton.vue'
 import MainBoard from '@/components/common/MainBoard.vue'
 import SearchBar from '@/components/common/SearchBar.vue'
 import MenuItem from '@/components/recipe/MenuItem.vue'
@@ -128,6 +130,12 @@ watch(
   margin-right: 8rem;
 }
 
+.notification-btn {
+  position: absolute;
+  top: 7rem;
+  left: 12rem;
+}
+
 .profile-btn {
   position: absolute;
   top: 7rem;
@@ -179,12 +187,6 @@ watch(
   .recipe-board-list {
     grid-template-columns: 1fr;
   }
-}
-
-.notification-btn {
-  position: absolute;
-  top: 7rem;
-  left: 12rem;
 }
 
 @media screen and (max-width: 480px) {
