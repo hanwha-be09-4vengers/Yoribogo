@@ -7,24 +7,25 @@
     <MainBoard :cur="'recipe-board'">
       <div class="recipe-board-container">
         <SearchBar @search="handleSearch"></SearchBar>
-        
-     
-          <!-- 전체 레시피 목록 -->
-          <div v-if="!isWeekly && menuList.length > 0" class="recipe-board-list">
-              <MenuItem
-              v-for="item in menuList"
-              :key="item.board_id"
-              :menuName="item.menu_name"
-              :menuImage="item.board_image"
-              @click="goDetail(item.board_id)"
-              ></MenuItem>
-          </div>
-          
-          <WriteRecipeButton @click="goWrite()"></WriteRecipeButton>
 
+        <div class="not-found" v-if="menuList.length === 0">
+          <span>게시글이 존재하지 않습니다.</span>
+        </div>
+
+        <!-- 전체 레시피 목록 -->
+        <div v-if="menuList.length > 0" class="recipe-board-list">
+          <MenuItem
+            v-for="item in menuList"
+            :key="item.board_id"
+            :menuName="item.menu_name"
+            :menuImage="item.board_image"
+            @click="goDetail(item.board_id)"
+          ></MenuItem>
+        </div>
+        <WriteRecipeButton @click="goWrite()"></WriteRecipeButton>
       </div>
-  </MainBoard>
-  <PaginationComponent :data="pageInfo" @changePage="handlePageChange"></PaginationComponent>
+    </MainBoard>
+    <PaginationComponent :data="pageInfo" @changePage="handlePageChange"></PaginationComponent>
   </div>
 </template>
 
@@ -52,13 +53,13 @@ const fetchData = async (page, searchQuery = '') => {
     let response
     if (searchQuery) {
       // 검색어가 있는 경우 검색 API 호출
-      response = await axios.get(`/api/recipe-board/search?recipeBoardMenuName=${searchQuery}&pageNo=${page}`)
-     
-     }
-      else{
-        // 전체 게시글 조회
+      response = await axios.get(
+        `/api/recipe-board/search?recipeBoardMenuName=${searchQuery}&pageNo=${page}`
+      )
+    } else {
+      // 전체 게시글 조회
       response = await axios.get(`/api/recipe-board/boards?pageNo=${page}`)
-      }
+    }
 
     if (response.data.success) {
       menuList.value = response.data.data.content
@@ -74,15 +75,15 @@ const fetchData = async (page, searchQuery = '') => {
 
 // 검색 핸들러
 const handleSearch = (searchQuery) => {
-  router.push({ path: '/recipe-board-list', query: { q: searchQuery, page: 1 } })
+  router.push({ path: '/recipe-board', query: { q: searchQuery, page: 1 } })
 }
 
 // 페이지 변경 핸들러
 const handlePageChange = (newPage) => {
   const searchQuery = route.query.q || ''
   searchQuery === ''
-    ? router.push({ path: '/recipe-board-list', query: { page: newPage } })
-    : router.push({ path: '/recipe-board-list', query: { q: searchQuery, page: newPage } })
+    ? router.push({ path: '/recipe-board', query: { page: newPage } })
+    : router.push({ path: '/recipe-board', query: { q: searchQuery, page: newPage } })
 }
 
 // 게시글 클릭 시 디테일 페이지로 이동
@@ -117,6 +118,15 @@ watch(
   background-color: var(--yellow-color);
 }
 
+.write-recipe-container {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+  margin-right: 8rem;
+}
+
 .profile-btn {
   position: absolute;
   top: 7rem;
@@ -139,14 +149,6 @@ watch(
 .search-bar {
   margin-top: 8rem;
 }
-
-.write-recipe-btn {
-position: fixed;
-bottom: 2rem;   /* 하단에서 2rem 떨어지게 설정 */
-right: 2rem;    /* 오른쪽에서 2rem 떨어지게 설정 */
-z-index: 9999;  /* 가장 위에 표시되도록 설정 */
-}
-
 
 .not-found {
   display: flex;
