@@ -65,16 +65,6 @@ const goQuestion = () => {
 }
 
 
-// SSE 연결 함수 
-onMounted(() => {
-  connectSSE();  // 컴포넌트가 마운트될 때 SSE 연결
-});
-
-onUnmounted(() => {
-  closeSSE();  // 컴포넌트가 언마운트될 때 SSE 연결 해제
-});
-
-
 </script>
 
 

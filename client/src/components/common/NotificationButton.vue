@@ -14,17 +14,17 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed,onMounted } from 'vue'
 import NotificationModal from './NotificationModal.vue'
 import { fetchNotifications } from '@/api/userNotification'
-import { connectSSE } from '@/api/sserequest';  // SSE 연결을 위한 모듈 가져오기
+import { connectSSE } from '@/api/SSERequest';  // SSE 연결을 위한 모듈 가져오기
 
 const isMenuVisible = ref(false);
 const notifications = ref([]);  // 알림 데이터를 저장할 상태
 
 // 읽지 않은 알림의 개수를 계산하는 computed
 const unreadCount = computed(() => {
-  return notifications.value.filter(notification => notification.notificationStatus === 'UNREAD').length;
+  return (notifications.value || []).filter(notification => notification.notificationStatus === 'UNREAD').length;
 });
 
 // SSE 연결 설정 (실시간 알림 처리)
@@ -32,23 +32,42 @@ const eventSource = connectSSE();
 
 eventSource.addEventListener('notification', (event) => {
   const notification = JSON.parse(event.data);
-  notifications.value.unshift({
-    notificationId: notification.notificationId,
-    notificationContent: notification.notificationContent,
-    notificationStatus: notification.notificationStatus,
-    notificationCreatedAt: notification.notificationCreatedAt,
-    notificationReadAt: notification.notificationReadAt
-  });
+  
+  // 방어 코드 추가: notifications.value가 배열인지 확인
+  if (Array.isArray(notifications.value)) {
+    notifications.value.unshift({
+      notificationId: notification.notificationId,
+      notificationContent: notification.notificationContent,
+      notificationStatus: notification.notificationStatus,
+      notificationCreatedAt: notification.notificationCreatedAt,
+      notificationReadAt: notification.notificationReadAt
+    });
+  } else {
+    // 배열이 아닐 경우 새 배열로 초기화
+    notifications.value = [{
+      notificationId: notification.notificationId,
+      notificationContent: notification.notificationContent,
+      notificationStatus: notification.notificationStatus,
+      notificationCreatedAt: notification.notificationCreatedAt,
+      notificationReadAt: notification.notificationReadAt
+    }];
+  }
 });
 
 // 모달 열림/닫힘 토글
 const toggleMenu = async () => {
   isMenuVisible.value = !isMenuVisible.value;
 
-  if (isMenuVisible.value) {
-    await loadNotifications();  // 모달이 열릴 때만 API 호출
+  // 새로고침 후 알림이 초기화되었을 때도 알림을 불러오기
+  if (isMenuVisible.value && (!Array.isArray(notifications.value) || notifications.value.length === 0)) {
+    await loadNotifications();  // 모달이 열리고 알림이 없을 때만 API 호출
   }
 };
+
+// 페이지 로드 시 알림 상태 초기화
+onMounted(() => {
+  loadNotifications();
+});
 
 // 서버로부터 알림 데이터를 받아오는 함수
 const loadNotifications = async () => {

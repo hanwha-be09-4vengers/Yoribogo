@@ -14,7 +14,7 @@ const tokenStore = useTokenStore();
 const accessToken = computed(() => tokenStore.token.accessToken);
 
 // SSE 연결 시도 함수
-const tryConnectSSE = () => {
+const ConnectSSE = () => {
   if (accessToken.value) {
     console.log('토큰이 존재합니다. SSE 연결을 시도합니다.');
     connectSSE();  // 토큰이 존재할 경우 SSE 연결 시도
@@ -29,7 +29,7 @@ watch(
   (newToken) => {
     if (newToken) {
       console.log('토큰 변경 감지:', newToken);
-      tryConnectSSE();  // 토큰이 존재할 경우 SSE 연결 시도
+      ConnectSSE();  // 토큰이 존재할 경우 SSE 연결 시도
     }
   },
   { immediate: true }  // 컴포넌트가 마운트될 때 즉시 실행
@@ -39,5 +39,6 @@ watch(
 onMounted(() => {
   console.log('컴포넌트 마운트됨: 상태 초기화 시도');
   tokenStore.initializeState();  // 로컬 스토리지에서 상태 복원 시도
+  ConnectSSE();  // 페이지가 로드될 때 SSE 연결 시도
 });
 </script>

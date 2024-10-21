@@ -83,7 +83,7 @@ const markAsRead = async (notification) => {
   border-radius: 10px;
 
   /* 크기 조정 */
-  width: 50rem; /* 기존보다 넓게 설정 */
+  width: 53rem; /* 기존보다 넓게 설정 */
   max-height: 60rem; /* 기존보다 높게 설정 */
   
   max-width: 90%;

@@ -25,7 +25,7 @@ public class NotificationScheduler {
 
     // 11시에 실행되는 스케줄러 ( 알림 저장 )
 //    @Scheduled(cron = "0 0 11 * * ?")
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 100000)
     public void saveLunchRecipeNotification() {
         notificationService.saveRecipeNotification("lunch");
 
