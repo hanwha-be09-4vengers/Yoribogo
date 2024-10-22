@@ -155,7 +155,15 @@ const handleImageLoad = () => {
 }
 
 onMounted(() => {
+  // SSE 연결 생성
+  const eventSource = new EventSource('/api/notifications/sseconnect')
+
   fetchData()
+
+  eventSource.addEventListener('image-update', (event) => {
+    menuImageSrc.value = event.data
+    console.log('사진 업데이트됨: ', event.data)
+  })
 })
 </script>
 
