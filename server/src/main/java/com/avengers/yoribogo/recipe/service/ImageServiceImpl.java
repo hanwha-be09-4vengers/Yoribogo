@@ -45,6 +45,7 @@ public class ImageServiceImpl implements ImageService {
         this.s3Client = s3Client;
     }
 
+    // AI 이미지 생성
     @Async
     @Override
     public void generateImageAsync(String trimmedDescription, Long recipeId) {

@@ -225,7 +225,7 @@ public class RecipeServiceImpl implements RecipeService {
                     "영어 설명에는 영어 요리 이름을 포함하고, 설명은 20단어 이내로 간결하게 해줘.";
 
             String aiAnswerMenu = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
-            System.out.println(aiAnswerMenu);
+            log.info(aiAnswerMenu);
 
             // 한국어 이름과 영어 이름 분리
             String koreanName = aiAnswerMenu.split("\\(")[0].trim();
@@ -235,8 +235,8 @@ public class RecipeServiceImpl implements RecipeService {
             String trimmedAiAnswerMenu = trimSpecialCharacters(koreanName);
             String trimmedDescription = trimSpecialCharacters(description);
 
-            System.out.println(trimmedAiAnswerMenu);
-            System.out.println(trimmedDescription);
+            log.info(trimmedAiAnswerMenu);
+            log.info(trimmedDescription);
 
             // 2단계: 요리 레시피 테이블 조회하기
 
@@ -287,17 +287,7 @@ public class RecipeServiceImpl implements RecipeService {
             // 앞뒤 특수문자 제거
             String trimmedAiAnswerIngredients = trimSpecialCharacters(aiAnswerIngredients);
 
-            // 6단계: AI가 추천한 요리의 레시피를 물어보기
-            String recipePrompt = trimmedAiAnswerMenu + "에 필요한 재료가 " + trimmedAiAnswerIngredients + "일 때, " +
-                    trimmedAiAnswerMenu + "의 레시피를 최대 6단계로 요약해줘. " +
-                    "각 단계에 번호만 붙여 '1. 쌀을 씻습니다.'와 같은 형식으로 간결하게 작성해줘.";
-            String aiAnswerRecipe = openAIService.getRecommend(recipePrompt).getChoices().get(0).getMessage().getContent();
-            System.out.println(aiAnswerRecipe);
-
-            // ':'가 있는 경우, ':' 이후의 문자열만 남기기
-            aiAnswerRecipe = parseString(aiAnswerRecipe);
-
-            // 7단계: AI가 생성한 요리 등록
+            // 6단계: AI가 생성한 요리 등록
 
             // AI가 생성한 요리 정보 입력
             RecipeDTO newRecipeDTO = RecipeDTO
@@ -312,23 +302,16 @@ public class RecipeServiceImpl implements RecipeService {
             // 엔티티 생성
             newRecipeDTO = registRecipe(newRecipeDTO);
 
-            // 8단계: AI가 생성한 요리 레시피 매뉴얼 등록
-            List<Map<String, String>> manual = new ArrayList<>();
+            // 7단계: AI가 추천한 요리의 레시피를 물어보기
+            String recipePrompt = trimmedAiAnswerMenu + "에 필요한 재료가 " +
+                    trimmedAiAnswerIngredients + "일 때, " +
+                    trimmedAiAnswerMenu + "의 레시피를 최대 6단계로 요약해줘. " +
+                    "각 단계에 번호만 붙여 '1. 쌀을 씻습니다.'와 같은 형식으로 간결하게 작성해줘.";
 
-            List<String> contents = Arrays.stream(aiAnswerRecipe.split("\n")).toList();
-            for (String content : contents) {
-                Map<String, String> map = new HashMap<>();
-                map.put("content", content);
-                manual.add(map);
-            }
+            // 레시피 매뉴얼 생성 비동기 처리
+            recipeManualService.registAIRecipeManual(newRecipeDTO.getRecipeId(), recipePrompt);
 
-            RequestRecipeManualDTO requestRecipeManualDTO = RequestRecipeManualDTO
-                    .builder()
-                    .manual(manual)
-                    .build();
-
-            recipeManualService.registRecipeManual(newRecipeDTO.getRecipeId(), requestRecipeManualDTO);
-
+            // 요리 이미지 생성 비동기 처리
             imageService.generateImageAsync(trimmedDescription, newRecipeDTO.getRecipeId());
 
             return newRecipeDTO;
