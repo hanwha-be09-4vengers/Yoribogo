@@ -1,7 +1,7 @@
 package com.avengers.yoribogo.openai.provider;
 
 import com.avengers.yoribogo.openai.dto.ResponseChatFluxDTO;
-import com.avengers.yoribogo.openai.dto.RequestChatDTO;
+import com.avengers.yoribogo.openai.dto.RequestChatFluxDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,7 +44,7 @@ public class OpenAIProvider {
                 .build();
     }
 
-    public Flux<String> ask(RequestChatDTO request) throws JsonProcessingException {
+    public Flux<String> ask(RequestChatFluxDTO request) throws JsonProcessingException {
         String requestValue = objectMapper.writeValueAsString(request);
         return webClient.post()
                 .bodyValue(requestValue)

@@ -225,7 +225,6 @@ public class RecipeServiceImpl implements RecipeService {
                     "영어 설명에는 영어 요리 이름을 포함하고, 설명은 20단어 이내로 간결하게 해줘.";
 
             String aiAnswerMenu = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
-            aiAnswerMenu = parseString(aiAnswerMenu);
             log.info(aiAnswerMenu);
 
             // 한국어 이름과 영어 이름 분리
@@ -235,9 +234,6 @@ public class RecipeServiceImpl implements RecipeService {
             // 앞뒤 특수문자 제거
             String trimmedAiAnswerMenu = trimSpecialCharacters(koreanName);
             String trimmedDescription = trimSpecialCharacters(description);
-
-            log.info(trimmedAiAnswerMenu);
-            log.info(trimmedDescription);
 
             // 2단계: 요리 레시피 테이블 조회하기
 
@@ -280,13 +276,13 @@ public class RecipeServiceImpl implements RecipeService {
             String ingredientsPrompt =
                     trimmedAiAnswerMenu + "에 필요한 재료를 ','로 구분해 양과 함께 알려줘. 예: '설탕 2스푼'. 특수문자나 불필요한 말은 제외.";
             String aiAnswerIngredients = openAIService.getRecommend(ingredientsPrompt).getChoices().get(0).getMessage().getContent();
-            System.out.println(aiAnswerIngredients);
 
             // ':'가 있는 경우, ':' 이후의 문자열만 남기기
             aiAnswerIngredients = parseString(aiAnswerIngredients);
 
             // 앞뒤 특수문자 제거
             String trimmedAiAnswerIngredients = trimSpecialCharacters(aiAnswerIngredients);
+            log.info(trimmedAiAnswerIngredients);
 
             // 6단계: AI가 생성한 요리 등록
 
