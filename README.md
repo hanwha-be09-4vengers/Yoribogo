@@ -366,79 +366,111 @@ pipeline {
    <img src="https://github.com/user-attachments/assets/5a2f5215-a177-4b86-ae16-d10c01d9ae62" alt="">
 </details>
 
-<h2>5. 마이페이지</h2> 
+<h2>5. 나만의 레시피</h2> 
 
 <details>
-  <summary>5.1 프로필 수정</summary>
+  <summary>5.1 나만의 레시피</summary>
+  <img src="https://github.com/user-attachments/assets/bf6c2091-8d1d-4cb2-b1d9-7fb61f6f9f49" alt="">
+</details>
+
+<details>
+   <summary>5.2 나만의 레시피 검색</summary>
+   <img src="https://github.com/user-attachments/assets/73194181-2668-422f-a67d-b4e7566c63b0" alt="">
+</details>
+
+<details>
+  <summary>5.3 나만의 레시피 페이지네이션</summary>
+  <img src="https://github.com/user-attachments/assets/1a9aa467-fc74-4ab6-8a68-6089d3e24b6a" alt="">
+</details>
+
+<details>
+  <summary>5.4 나만의 레시피 상세정보</summary>
+  <img src="https://github.com/user-attachments/assets/3dcfad10-0b0c-46ad-ae83-2b3a1fd94245" alt="">
+</details>
+
+<details>
+  <summary>5.5 나만의 레시피 작성</summary>
+  <img src="https://github.com/user-attachments/assets/baf33d5e-5ee2-4966-b2f8-4954c9b24786" alt="">
+</details>
+
+<details>
+  <summary>5.6 나만의 레시피 댓글 작성</summary>
+  <img src="https://github.com/user-attachments/assets/86a4c910-c755-48b4-a602-3717d154d407" alt="">
+</details>
+
+<h2>6. 마이페이지</h2> 
+
+<details>
+  <summary>6.1 프로필 수정</summary>
   <img src="https://github.com/user-attachments/assets/6076b590-f3eb-4584-a7b2-cf14edd673b2" alt="">
 </details>
 
 <details>
-   <summary>5.2 비밀번호 변경</summary>
+   <summary>6.2 비밀번호 변경</summary>
    <img src="https://github.com/user-attachments/assets/a10ab92e-2b0c-4642-86a3-6427c32189fa" alt="">
 </details>
 
 <details>
-  <summary>5.3 회원탈퇴</summary>
+  <summary>6.3 회원탈퇴</summary>
   <img src="https://github.com/user-attachments/assets/ac3110c6-23ac-4115-acb5-64dfe070ea92" alt="">
 </details>
 
-<h2>6. Q&A</h2> 
+<h2>7. Q&A</h2> 
 
 <details>
-  <summary>6.1 Q&A</summary>
+  <summary>7.1 Q&A</summary>
   <img src="https://github.com/user-attachments/assets/6bdb4bb1-69d5-479a-bb2f-acacdab2d55f" alt="">
 </details>
 
 <details>
-   <summary>6.2 문의 작성</summary>
+   <summary>7.2 문의 작성</summary>
    <img src="https://github.com/user-attachments/assets/33afefeb-344f-44fb-a285-5857be218a23" alt="">
 </details>
 
 <details>
-  <summary>6.3 문의 수정</summary>
+  <summary>7.3 문의 수정</summary>
   <img src="https://github.com/user-attachments/assets/329bb93f-98c6-4db4-bc33-ec079557b08e" alt="">
 </details>
 
 <details>
-  <summary>6.4 문의 삭제</summary>
+  <summary>7.4 문의 삭제</summary>
   <img src="https://github.com/user-attachments/assets/4a082156-8c8b-44f1-b0bf-582cd3f98c4a" alt="">
 </details>
 
 <details>
-  <summary>6.5 문의 검색</summary>
+  <summary>7.5 문의 검색</summary>
   <img src="https://github.com/user-attachments/assets/8df65b7a-12c3-48ff-9eef-1239ae636171" alt="">
 </details>
 
 <details>
-  <summary>6.6 문의 조회</summary>
+  <summary>7.6 문의 조회</summary>
   <br>
-  6.6.1 비밀글일 때 작성자이거나 관리자일 경우 or 비밀글이 아닐 경우
+  7.6.1 비밀글일 때 작성자이거나 관리자일 경우 or 비밀글이 아닐 경우
   <img src="https://github.com/user-attachments/assets/b03e68cc-8eeb-4b1f-bb28-a5161f17bf01" alt="">
   <br><br>
-  6.6.2 비밀글일 때 작성자나 관리자가 아닐 경우
+  7.6.2 비밀글일 때 작성자나 관리자가 아닐 경우
   <img src="https://github.com/user-attachments/assets/0b944dca-f6bf-40ce-830d-e04b2d7a33a7" alt="">
 </details>
 
 <details>
-  <summary>6.7 관리자 답변</summary>
+  <summary>7.7 관리자 답변</summary>
   <br>
-  6.7.1 관리자 답변
+  7.7.1 관리자 답변
   <img src="https://github.com/user-attachments/assets/c219de34-526a-47da-9afd-c3846f9168b9" alt="">
   <br><br>
-  6.7.2 답변완료 처리
+  7.7.2 답변완료 처리
   <img src="https://github.com/user-attachments/assets/d0d8a4e2-7b8a-4a4d-8824-e49f3745d777" alt="">
 </details>
 
-<h2>7. 알림</h2> 
+<h2>8. 알림</h2> 
 
 <details>
-  <summary>7.1 SSE 연결</summary>
+  <summary>8.1 SSE 연결</summary>
   <img src="https://github.com/user-attachments/assets/68e251b7-9c57-4ce6-9cd4-84a3a1b65bc6" alt="">
 </details>
 
 <details>
-  <summary>7.2 알림 확인</summary>
+  <summary>8.2 알림 확인</summary>
   <img src="https://github.com/user-attachments/assets/7b78add8-3fd7-4eca-84be-4757c3c27620" alt="">
 </details>
 
