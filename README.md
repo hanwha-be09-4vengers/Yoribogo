@@ -1,4 +1,32 @@
-## Team-4vengers
+# 목차
+
+1. [팀 소개](#팀-소개)
+2. [기술 스택](#기술-스택)
+   - [Backend](#1-backend)
+   - [Security](#2-security)
+   - [Database](#3-database)
+   - [Frontend](#4-frontend)
+   - [DevOps](#5-devops)
+   - [Tool](#6-tool)
+3. [프로젝트 개요](#프로젝트-개요)
+   - [프로젝트 소개](#프로젝트-소개)
+   - [프로젝트 배경](#프로젝트-배경)
+   - [유사 서비스와의 차별성](#유사-서비스와의-차별성)
+4. [DDD](#ddd)
+   - [Bounded Context](#bounded-context)
+   - [연관 관계 매핑](#연관-관계-매핑)
+5. [WBS](#wbs)
+6. [시스템 아키텍쳐](#시스템-아키텍쳐)
+7. [UI 설계](#ui-설계)
+8. [데이터베이스 모델링](#데이터베이스-모델링)
+   - [개념 모델링](#개념-모델링)
+   - [논리 모델링](#논리-모델링)
+   - [물리 모델링](#물리-모델링)
+9. [JenkinsScript](#jenkins-script)
+10. [결과 화면](#결과-화면)
+11. [동료 평가](#동료-평가)
+
+## Team _4vengers_<a id="팀-소개">
 
 [<img src="https://img.shields.io/badge/Notion-Link-333333?logo=Notion">](https://www.notion.so/4vengers-1133c20995cb8086b316f83013f75823)
 | <img src="https://github.com/user-attachments/assets/5a0d8aa8-0a1f-41f3-a93f-b2985c1765d6" height="100"/> | <img src="https://github.com/user-attachments/assets/79d48cf7-bdd4-4ec1-831c-bb57d5d9f57d" height="100"/> | <img src="https://github.com/user-attachments/assets/74133185-5305-4361-a9e0-52e76f67de3d" height="100"/> | <img src="https://github.com/user-attachments/assets/a17e5ef4-f7be-48fb-ae41-5cd3b27f5918" height="100"/> | <img src="https://github.com/user-attachments/assets/00ef7243-5ac8-4f3a-8b43-2271ee79665c" height="100"/> | <img src="https://github.com/user-attachments/assets/8381e8af-6a25-4f00-8a5e-454323d1f340" height="100"/> |
@@ -9,7 +37,7 @@
 
 ---
 
-# 기술 스택 <a id="기술-스택"></a>
+# 기술 스택 <a id="기술-스택">
 
 ### 1. Backend <a id="1-backend"></a>
 
@@ -47,15 +75,12 @@
 | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | <img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=GitHub&logoColor=white"> &nbsp; | <img src="https://img.shields.io/badge/DA%23-0B6121.svg?style=flat&logo=draw.io&logoColor=white"> &nbsp; | ![IntelliJ IDEA](https://img.shields.io/badge/IntelliJIDEA-000000.svg?style=flat&logo=intellij-idea&logoColor=white) | ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=flat&logo=visual-studio-code&logoColor=white) |
 
-
-
-## 🍀1. 프로젝트 개요
-무엇을 먹을지 고민하는 우리에게 꼭 필요한 AI기반 레시피 추천 서비스입니다.
-
 ---
 
+## 🍀 프로젝트 개요<a id="프로젝트-개요">
+무엇을 먹을지 고민하는 우리에게 꼭 필요한 AI기반 레시피 추천 서비스입니다.
 
-### 1.1 프로젝트 소개
+### 1. 프로젝트 소개<a id="프로젝트-소개">
 
 **당신만을 위한 요리 레시피 보물창고**
 
@@ -65,35 +90,31 @@
 
 ✔️ 공공데이터를 활용한 신뢰할 수 있는 레시피 정보를 제공합니다 !!
 
----
-
-
-### 1.2 프로젝트 배경
+### 2. 프로젝트 배경<a id="프로젝트-배경">
 
 안녕하세요, 여러분! 🍽️ '오늘 뭐 먹지?' 하면서 고민해본 적 있으시죠? 바로 이 고민에서 우리 프로젝트가 시작됐어요.
 
-## 우리의 목표
+### 우리의 목표
 
 - **일상 속 고민 해결** : 매일 반복되는 메뉴 고민, 지겹지 않으세요? 우리가 그 고민을 덜어드리고 싶었어요.
 - **맞춤형 추천** : 같은 음식이라도 사람마다 좋아하는 맛이 다르잖아요. 여러분의 취향을 제대로 반영한 맞춤 추천을 해드리고 싶었답니다.
 - **신뢰할 수 있는 정보** : 인터넷에는 레시피가 정말 많죠. 하지만 어떤 게 좋은 건지 헷갈리실 거예요. 우리는 여러분께 확실히 믿을 수 있는 정보를 드리고 싶었어요.
 
-## 우리의 해결책
+### 우리의 해결책
 
 1. **공공데이터 활용** : 정부에서 제공하는 믿을 만한 공공데이터를 활용하기로 했어요.
 2. **AI 기술 적용** : 최신 AI 기술로 여러분의 취향을 정확히 분석해 딱 맞는 레시피를 추천해드려요.
 
 > AI와 공공데이터의 힘을 합쳐 여러분 한 분 한 분에게 꼭 맞는 레시피를 추천해주는 서비스를 만들었어요!
 
-## 우리의 비전
+### 우리의 비전
 
 - 여러분의 소소한 일상 고민을 해결하고, 더 즐거운 식사 시간을 만드는 데 도움을 드리고 싶어요.
 - 매일의 식사가 새로운 즐거움이 되길 바라면서, 여러분의 주방에 작은 변화를 가져다 드리고 싶어요.
 
 **우리의 서비스와 함께 새로운 요리에 도전해보는 건 어떨까요?** 🍳👨‍🍳👩‍🍳
-------
 
-### 1.3 유사 서비스와 차별성
+### 3. 유사 서비스와의 차별성<a id="유사-서비스와의-차별성">
 
 |         | AI 서비스 | 메뉴추천 | 커뮤니티 | 레시피제공 |
 | ------- | -------- | -------- | --------- | -------- |
@@ -102,43 +123,36 @@
 | 만개의레시피  | X       | O       | O        | O       |
 | 버터얌    | X       | O       | O        | O       |
 
+---
+   
+# ✔️ DDD(Domain-Driven Design) <a id="ddd">
 
-------
-<br>
-
-# ✔️ DDD - Bounded Context
-
-> Domain-Driven Design<br>
+### 1. Bounded Context<a id="bounded-context">
 
 ![devops project - Step 5  Bounded Context](https://github.com/user-attachments/assets/8bc565a9-7a87-47f6-9759-1ce08e364dd3)
 
----
-<br>
-
-# ✔️ DDD - 연관 관계
+### 2. 연관 관계 매핑 <a id="연관-관계-매핑">
 ![image](https://github.com/user-attachments/assets/ca16faff-789f-4fa6-8a46-921636d6f3e3)
 
 ---
-<br>
 
-# ✔️ WBS
+# ✔️ WBS <a id="wbs">
 ![wbs_devops](https://github.com/user-attachments/assets/57e8bd29-a323-4c89-986b-5d76fc694f07)
 
-# ✔️ 시스템 아키텍쳐
-![image](https://github.com/user-attachments/assets/0fae1883-04a2-4243-bdba-f129682f936d)
+---
+
+# ✔️ 시스템 아키텍쳐 <a id="시스템-아키텍쳐"> 
+![image](https://github.com/user-attachments/assets/bc7fbd6e-7594-4462-bce7-afea4a7da647)
 
 
-# ✔️ UI설계
+---
+
+# ✔️ UI설계 <a id="ui-설계">
 
 <details>
-  <summary>질문 1</summary>
+  <summary>홈페이지 & 요리 추천</summary>
 
   ![질문 1](https://github.com/user-attachments/assets/ff026a5e-c7de-48d4-8697-e06c1567fc26)
-
-</details>
-
-<details>
-  <summary>질문 2</summary>
 
   ![질문 2](https://github.com/user-attachments/assets/c1ae70a9-ec9b-4c10-a450-9df17ec21d89)
 
@@ -173,24 +187,24 @@
 </details>
 
 ---
-<br>
 
-# ✔️ 개념 모델링
+# ✔️ 데이터베이스 모델링<a id="데이터베이스-모델링">
+### 1. 개념 모델링<a id="개념-모델링">
 ![image](https://github.com/user-attachments/assets/7d9fa206-fdac-4a4b-b707-ba8545c19475)
 
----
 <br>
 
-# ✔️ 논리 모델링
+### 2. 논리 모델링<a id="논리-모델링">
 ![논리모델링](https://github.com/user-attachments/assets/6adb2f33-b29b-469a-855f-433e92d39fb8)
 
----
 <br>
 
-# ✔️ 물리 모델링
+### 3. 물리 모델링<a id="물리-모델링">
 ![물리모델링](https://github.com/user-attachments/assets/c04e7d8c-dc5f-4593-aab6-30b65c17e564)
 
-# ✔️ JenkinsScript
+---
+
+# ✔️ JenkinsScript<a id="jenkins-script">
 
 [Jenkins 백엔드 CI/CD 깃허브](https://github.com/hanwha-be09-4vengers/Yoribogo-Server)
 ```groovy
@@ -273,9 +287,10 @@ pipeline {
     }
 }
 ```
-<br>
 
-# ✔️ 결과 화면
+---
+
+# ✔️ 결과 화면<a id="결과-화면">
 
 <h2>1. Jenkins CI/CD </h2>
   <details>
@@ -348,105 +363,145 @@ pipeline {
 
 <details>
   <summary>4.1 요리 추천</summary>
-  <img src="https://github.com/user-attachments/assets/387f03ec-1404-465d-af07-12b90073b25b" alt="">
+  <img src="https://github.com/user-attachments/assets/0d058a6f-0854-4bda-abbb-c01b40eeda02" alt="">
 </details>
 
 <details>
    <summary>4.2 요리 이미지 생성 비동기 처리</summary>
-   <img src="https://github.com/user-attachments/assets/dd9bccdd-0a14-4220-9e1e-856476d6edb7" alt="">
+   <img src="https://github.com/user-attachments/assets/223c8e93-df85-4d9e-ac72-ebf54aed35e5" alt="">
 </details>
 
 <details>
-  <summary>4.3 요리 추천에 만족한 경우</summary>
+   <summary>4.3 요리 레시피 생성 비동기 처리</summary>
+   <img src="https://github.com/user-attachments/assets/346b8687-0a67-41c9-a7a1-ca28b38945fe" alt="">
+</details>
+
+<details>
+  <summary>4.4 요리 추천에 만족한 경우</summary>
    <img src="https://github.com/user-attachments/assets/7d8af233-fbd8-4652-bb7a-9c425f0a429b" alt="">
 </details>
 
 <details>
-  <summary>4.4 요리 추천에 불만족한 경우</summary>
+  <summary>4.5 요리 추천에 불만족한 경우</summary>
    <img src="https://github.com/user-attachments/assets/5a2f5215-a177-4b86-ae16-d10c01d9ae62" alt="">
 </details>
 
-<h2>5. 마이페이지</h2> 
+<h2>5. 나만의 레시피</h2> 
 
 <details>
-  <summary>5.1 프로필 수정</summary>
+  <summary>5.1 나만의 레시피</summary>
+  <img src="https://github.com/user-attachments/assets/bf6c2091-8d1d-4cb2-b1d9-7fb61f6f9f49" alt="">
+</details>
+
+<details>
+   <summary>5.2 나만의 레시피 검색</summary>
+   <img src="https://github.com/user-attachments/assets/73194181-2668-422f-a67d-b4e7566c63b0" alt="">
+</details>
+
+<details>
+  <summary>5.3 나만의 레시피 페이지네이션</summary>
+  <img src="https://github.com/user-attachments/assets/1a9aa467-fc74-4ab6-8a68-6089d3e24b6a" alt="">
+</details>
+
+<details>
+  <summary>5.4 나만의 레시피 상세정보</summary>
+  <img src="https://github.com/user-attachments/assets/3dcfad10-0b0c-46ad-ae83-2b3a1fd94245" alt="">
+</details>
+
+<details>
+  <summary>5.5 나만의 레시피 작성</summary>
+  <img src="https://github.com/user-attachments/assets/baf33d5e-5ee2-4966-b2f8-4954c9b24786" alt="">
+</details>
+
+<details>
+  <summary>5.6 나만의 레시피 댓글 작성</summary>
+  <img src="https://github.com/user-attachments/assets/86a4c910-c755-48b4-a602-3717d154d407" alt="">
+</details>
+
+<h2>6. 마이페이지</h2> 
+
+<details>
+  <summary>6.1 프로필 수정</summary>
   <img src="https://github.com/user-attachments/assets/6076b590-f3eb-4584-a7b2-cf14edd673b2" alt="">
 </details>
 
 <details>
-   <summary>5.2 비밀번호 변경</summary>
+   <summary>6.2 비밀번호 변경</summary>
+   <br>
+   6.2.1 비밀번호 변경
    <img src="https://github.com/user-attachments/assets/a10ab92e-2b0c-4642-86a3-6427c32189fa" alt="">
+   <br><br>
+   6.2.2 변경된 비밀번호로 로그인
+   <img src="https://github.com/user-attachments/assets/c364b89c-0948-462a-b724-b3f0b191e689" alt="">
 </details>
 
 <details>
-  <summary>5.3 회원탈퇴</summary>
+  <summary>6.3 회원탈퇴</summary>
   <img src="https://github.com/user-attachments/assets/ac3110c6-23ac-4115-acb5-64dfe070ea92" alt="">
 </details>
 
-<h2>6. Q&A</h2> 
+<h2>7. Q&A</h2> 
 
 <details>
-  <summary>6.1 Q&A</summary>
+  <summary>7.1 Q&A</summary>
   <img src="https://github.com/user-attachments/assets/6bdb4bb1-69d5-479a-bb2f-acacdab2d55f" alt="">
 </details>
 
 <details>
-   <summary>6.2 문의 작성</summary>
+   <summary>7.2 문의 작성</summary>
    <img src="https://github.com/user-attachments/assets/33afefeb-344f-44fb-a285-5857be218a23" alt="">
 </details>
 
 <details>
-  <summary>6.3 문의 수정</summary>
+  <summary>7.3 문의 수정</summary>
   <img src="https://github.com/user-attachments/assets/329bb93f-98c6-4db4-bc33-ec079557b08e" alt="">
 </details>
 
 <details>
-  <summary>6.4 문의 삭제</summary>
+  <summary>7.4 문의 삭제</summary>
   <img src="https://github.com/user-attachments/assets/4a082156-8c8b-44f1-b0bf-582cd3f98c4a" alt="">
 </details>
 
 <details>
-  <summary>6.5 문의 검색</summary>
+  <summary>7.5 문의 검색</summary>
   <img src="https://github.com/user-attachments/assets/8df65b7a-12c3-48ff-9eef-1239ae636171" alt="">
 </details>
 
 <details>
-  <summary>6.6 문의 조회</summary>
+  <summary>7.6 문의 상세정보 조회</summary>
   <br>
-  6.6.1 비밀글일 때 작성자이거나 관리자일 경우 or 비밀글이 아닐 경우
+  7.6.1 문의 작성자이거나 관리자일 경우
   <img src="https://github.com/user-attachments/assets/b03e68cc-8eeb-4b1f-bb28-a5161f17bf01" alt="">
   <br><br>
-  6.6.2 비밀글일 때 작성자나 관리자가 아닐 경우
+  7.6.2 비밀글일 때 작성자나 관리자가 아닐 경우
   <img src="https://github.com/user-attachments/assets/0b944dca-f6bf-40ce-830d-e04b2d7a33a7" alt="">
 </details>
 
 <details>
-  <summary>6.7 관리자 답변</summary>
+  <summary>7.7 관리자 답변</summary>
   <br>
-  6.7.1 관리자 답변
+  7.7.1 관리자 답변
   <img src="https://github.com/user-attachments/assets/c219de34-526a-47da-9afd-c3846f9168b9" alt="">
   <br><br>
-  6.7.2 답변완료 처리
+  7.7.2 답변완료 처리
   <img src="https://github.com/user-attachments/assets/d0d8a4e2-7b8a-4a4d-8824-e49f3745d777" alt="">
 </details>
 
-<h2>7. 알림</h2> 
+<h2>8. 알림</h2> 
 
 <details>
-  <summary>7.1 SSE 연결</summary>
+  <summary>8.1 SSE 연결</summary>
   <img src="https://github.com/user-attachments/assets/68e251b7-9c57-4ce6-9cd4-84a3a1b65bc6" alt="">
 </details>
 
 <details>
-  <summary>7.2 알림 확인</summary>
+  <summary>8.2 알림 확인</summary>
   <img src="https://github.com/user-attachments/assets/7b78add8-3fd7-4eca-84be-4757c3c27620" alt="">
 </details>
 
-<br>
+---
 
-<br>
-
-# ✔️ 동료 평가
+# ✔️ 동료 평가<a id="동료-평가">
 
 
 | Team Member | 박경희님의 동료평가                                                                                                                                                                                                                       |
