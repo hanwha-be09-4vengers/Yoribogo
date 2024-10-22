@@ -3,7 +3,6 @@ package com.avengers.yoribogo.recipe.service;
 import com.avengers.yoribogo.common.exception.CommonException;
 import com.avengers.yoribogo.common.exception.ErrorCode;
 import com.avengers.yoribogo.openai.service.OpenAIService;
-import com.avengers.yoribogo.recipe.domain.Recipe;
 import com.avengers.yoribogo.recipe.domain.RecipeManual;
 import com.avengers.yoribogo.recipe.dto.RecipeManualDTO;
 import com.avengers.yoribogo.recipe.dto.RequestAIRecipeManualDTO;
@@ -17,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.util.*;
 

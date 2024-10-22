@@ -294,7 +294,7 @@ public class RecipeServiceImpl implements RecipeService {
             RecipeDTO newRecipeDTO = RecipeDTO
                     .builder()
                     .menuName(trimmedAiAnswerMenu)
-                    .menuIngredient(aiAnswerIngredients)
+                    .menuIngredient(trimmedAiAnswerIngredients)
                     .menuImage(null)
                     .menuType(MenuType.AI)
                     .userId(1L)

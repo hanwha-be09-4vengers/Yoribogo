@@ -1,6 +1,5 @@
 package com.avengers.yoribogo.openai.service;
 
-import com.avengers.yoribogo.openai.aggregate.Message;
 import com.avengers.yoribogo.openai.dto.*;
 import com.avengers.yoribogo.openai.provider.OpenAIProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,9 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Flux;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Service

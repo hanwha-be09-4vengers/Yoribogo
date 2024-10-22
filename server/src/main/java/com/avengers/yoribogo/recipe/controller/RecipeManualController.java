@@ -5,7 +5,6 @@ import com.avengers.yoribogo.recipe.dto.RecipeManualDTO;
 import com.avengers.yoribogo.recipe.dto.RequestAIRecipeManualDTO;
 import com.avengers.yoribogo.recipe.dto.RequestRecipeManualDTO;
 import com.avengers.yoribogo.recipe.service.RecipeManualService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
