@@ -16,4 +16,7 @@ public interface RecipeManualService {
     // 요리 레시피 매뉴얼 수정
     List<RecipeManualDTO> modifyRecipeManual(Long recipeId, RequestRecipeManualDTO requestRecipeManualDTO);
 
+    // AI 생성 매뉴얼 등록
+    void registAIRecipeManual(Long recipeId, String recipePrompt);
+
 }
