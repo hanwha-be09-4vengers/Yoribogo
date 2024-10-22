@@ -41,7 +41,7 @@ public class OpenAIServiceImpl implements OpenAIService {
 
     @Override
     public ResponseChatDTO getRecommend(String prompt) {
-        RequestChatDTO req = new RequestChatDTO(model, prompt, false);
+        RequestChatDTO req = new RequestChatDTO(model, prompt);
         return restTemplate.postForObject(url, req, ResponseChatDTO.class);
     }
 
@@ -70,7 +70,7 @@ public class OpenAIServiceImpl implements OpenAIService {
 
     @Override
     public Flux<String> getRecommendManuals(String prompt) throws JsonProcessingException {
-        RequestChatDTO req = new RequestChatDTO(model, prompt, true);
+        RequestChatFluxDTO req = new RequestChatFluxDTO(model, prompt, true);
         return openAIProvider.ask(req);
     }
 
