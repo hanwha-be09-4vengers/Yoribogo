@@ -71,9 +71,69 @@ const fetchData = async () => {
     if (recipeResponse.success) {
       menuInfo.value = recipeResponse.data
       menuImageSrc.value = menuInfo.value.menu_image || defaultImage.value
+
       const manualResponse = (await axios.get(`/api/manuals?recipe=${route.params.recipeId}`)).data
       if (manualResponse.success) {
         manualList.value = manualResponse.data
+      } else {
+        // Fetch the manual using the Fetch API for streaming response
+        const response = await fetch(`/api/manuals/ai?recipe=${route.params.recipeId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            menu_name: menuInfo.value.menu_name,
+            menu_ingredient: menuInfo.value.menu_ingredient
+          })
+        })
+
+        const data = response.body
+        const reader = data?.getReader()
+        const decoder = new TextDecoder()
+        const maxLength = 6
+        let done = false
+        let lastMessage = ''
+        let text = ''
+
+        while (!done && reader) {
+          const { value, done: doneReading } = await reader.read()
+          done = doneReading
+          const chunkValue = decoder.decode(value)
+          lastMessage += chunkValue
+
+          text = lastMessage.replaceAll('data:', '').replace(/\n/g, '')
+
+          // 공백만 있을 경우
+          if (text === ' ' || text === '') {
+            lastMessage = ''
+            continue
+          }
+
+          // 문장이 문자.공백으로 끝날 경우
+          if (/[a-zA-Z가-힣]\.\s*$/.test(text)) {
+            manualList.value[manualList.value.length - 1].manual_content = text.trim()
+            lastMessage = ''
+            text = ''
+            // 6개 이하일 때 새로운 빈 항목 추가
+            if (manualList.value.length < maxLength) {
+              manualList.value.push({ manual_content: '', manual_image: null })
+            }
+          }
+          // 이외의 경우 (수집 중인 문장이므로 마지막 항목 업데이트)
+          else {
+            if (manualList.value.length > 0) {
+              manualList.value[manualList.value.length - 1].manual_content = text.trim()
+            } else {
+              manualList.value.push({ manual_content: text.trim(), manual_image: null })
+            }
+          }
+        }
+
+        // 마지막 text가 문자.공백으로 끝나지 않을 경우에도 처리
+        if (text !== '') {
+          manualList.value[manualList.value.length - 1].manual_content = text.trim()
+        }
       }
     }
   } catch (error) {

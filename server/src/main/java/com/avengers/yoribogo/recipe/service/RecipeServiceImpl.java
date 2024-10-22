@@ -225,6 +225,7 @@ public class RecipeServiceImpl implements RecipeService {
                     "영어 설명에는 영어 요리 이름을 포함하고, 설명은 20단어 이내로 간결하게 해줘.";
 
             String aiAnswerMenu = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();
+            aiAnswerMenu = parseString(aiAnswerMenu);
             log.info(aiAnswerMenu);
 
             // 한국어 이름과 영어 이름 분리
@@ -293,7 +294,7 @@ public class RecipeServiceImpl implements RecipeService {
             RecipeDTO newRecipeDTO = RecipeDTO
                     .builder()
                     .menuName(trimmedAiAnswerMenu)
-                    .menuIngredient(aiAnswerIngredients)
+                    .menuIngredient(trimmedAiAnswerIngredients)
                     .menuImage(null)
                     .menuType(MenuType.AI)
                     .userId(1L)
@@ -301,15 +302,6 @@ public class RecipeServiceImpl implements RecipeService {
 
             // 엔티티 생성
             newRecipeDTO = registRecipe(newRecipeDTO);
-
-            // 7단계: AI가 추천한 요리의 레시피를 물어보기
-            String recipePrompt = trimmedAiAnswerMenu + "에 필요한 재료가 " +
-                    trimmedAiAnswerIngredients + "일 때, " +
-                    trimmedAiAnswerMenu + "의 레시피를 최대 6단계로 요약해줘. " +
-                    "각 단계에 번호만 붙여 '1. 쌀을 씻습니다.'와 같은 형식으로 간결하게 작성해줘.";
-
-            // 레시피 매뉴얼 생성 비동기 처리
-            recipeManualService.registAIRecipeManual(newRecipeDTO.getRecipeId(), recipePrompt);
 
             // 요리 이미지 생성 비동기 처리
             imageService.generateImageAsync(trimmedDescription, newRecipeDTO.getRecipeId());
