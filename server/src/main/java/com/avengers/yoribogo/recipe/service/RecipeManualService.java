@@ -1,7 +1,10 @@
 package com.avengers.yoribogo.recipe.service;
 
 import com.avengers.yoribogo.recipe.dto.RecipeManualDTO;
+import com.avengers.yoribogo.recipe.dto.RequestAIRecipeManualDTO;
 import com.avengers.yoribogo.recipe.dto.RequestRecipeManualDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -17,6 +20,6 @@ public interface RecipeManualService {
     List<RecipeManualDTO> modifyRecipeManual(Long recipeId, RequestRecipeManualDTO requestRecipeManualDTO);
 
     // AI 생성 매뉴얼 등록
-    void registAIRecipeManual(Long recipeId, String recipePrompt);
+    Flux<String> registAIRecipeManual(Long recipeId, RequestAIRecipeManualDTO requestAIRecipeManualDTO);
 
 }
