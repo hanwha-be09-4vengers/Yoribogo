@@ -30,89 +30,88 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useTokenStore } from '@/stores/tokenStore'; // Pinia 스토어 임포트
-import {  fetchUserByAuthId } from '@/api/user'; // 사용자 프로필 조회 API
+import { useTokenStore } from '@/stores/tokenStore' // Pinia 스토어 임포트
+import { fetchUserByAuthId } from '@/api/user' // 사용자 프로필 조회 API
 
-const router = useRouter();
-const tokenStore = useTokenStore(); // Pinia 스토어 사용
+const router = useRouter()
+const tokenStore = useTokenStore() // Pinia 스토어 사용
 
 // 로그인 상태 체크
-const isLoggedIn = computed(() => !!tokenStore.token.accessToken);
+const isLoggedIn = computed(() => !!tokenStore.token.accessToken)
 
 // 기본 프로필 이미지 URL
-const defaultProfileImage = 'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/default_profile.png';
+const defaultProfileImage =
+  'https://yoribogobucket.s3.ap-northeast-2.amazonaws.com/default_profile.png'
 // 프로필 이미지 상태 관리
-const profileImage = ref(defaultProfileImage);
+const profileImage = ref(defaultProfileImage)
 
 // 로그인된 경우에만 프로필 이미지 가져오기
 const loadUserProfileImage = async () => {
-  const userAuthId = tokenStore.token.userAuthId; // 정확한 경로로 변경
-  const accessToken = tokenStore.token.accessToken;
+  const userAuthId = tokenStore.token.userAuthId // 정확한 경로로 변경
+  const accessToken = tokenStore.token.accessToken
 
   if (isLoggedIn.value) {
-    console.log('토큰 상태:', userAuthId, accessToken); // 로그로 토큰 상태 확인
+    console.log('토큰 상태:', userAuthId, accessToken) // 로그로 토큰 상태 확인
 
     if (userAuthId && accessToken) {
       try {
         // 사용자 프로필 정보 가져오기
-        const userProfile = await fetchUserByAuthId(userAuthId, accessToken);
-        console.log('userProfile 프로필 버튼', userProfile);
+        const userProfile = await fetchUserByAuthId(userAuthId, accessToken)
+        console.log('userProfile 프로필 버튼', userProfile)
 
         // 프로필 이미지가 있으면 설정, 없으면 기본 이미지 설정
         if (userProfile.success && userProfile.data.profile_image) {
-          console.log('홈 네비의 사용자 프로필 사진: ',userProfile.data.profile_image)
-          profileImage.value = userProfile.data.profile_image; // 프로필 이미지 설정
+          console.log('홈 네비의 사용자 프로필 사진: ', userProfile.data.profile_image)
+          profileImage.value = userProfile.data.profile_image // 프로필 이미지 설정
         } else {
-          console.log('프로필 이미지가 없습니다. 기본 이미지를 사용합니다.');
-          profileImage.value = defaultProfileImage; // 기본 이미지로 설정
+          console.log('프로필 이미지가 없습니다. 기본 이미지를 사용합니다.')
+          profileImage.value = defaultProfileImage // 기본 이미지로 설정
         }
       } catch (error) {
-        console.error('프로필 이미지 가져오기 중 에러 발생:', error);
-        profileImage.value = defaultProfileImage; // 에러 발생 시 기본 이미지 사용
+        console.error('프로필 이미지 가져오기 중 에러 발생:', error)
+        profileImage.value = defaultProfileImage // 에러 발생 시 기본 이미지 사용
       }
     } else {
-      console.error('userAuthId 또는 accessToken이 없습니다.');
-      profileImage.value = defaultProfileImage; // 유효한 토큰이 없으면 기본 이미지 사용
+      console.error('userAuthId 또는 accessToken이 없습니다.')
+      profileImage.value = defaultProfileImage // 유효한 토큰이 없으면 기본 이미지 사용
     }
   } else {
-    profileImage.value = defaultProfileImage; // 로그인되지 않은 경우 기본 이미지 사용
+    profileImage.value = defaultProfileImage // 로그인되지 않은 경우 기본 이미지 사용
   }
-};
-
-
+}
 
 // 메뉴 보이기/숨기기
-const isMenuVisible = ref(false);
+const isMenuVisible = ref(false)
 const toggleMenu = () => {
-  isMenuVisible.value = !isMenuVisible.value;
-};
+  isMenuVisible.value = !isMenuVisible.value
+}
 
 // 마이페이지로 이동
 const goMyPage = () => {
-  router.push('/mypage');
-};
+  router.push('/mypage')
+}
 
 // 로그아웃 처리
 const logout = () => {
-  tokenStore.logout(); // Pinia 스토어의 로그아웃 함수 호출
-  router.push('/'); // 로그아웃 후 홈으로 이동
-  window.location.reload(); // 페이지 새로고침
-};
+  tokenStore.logout() // Pinia 스토어의 로그아웃 함수 호출
+  localStorage.removeItem('token')
+  router.push('/') // 로그아웃 후 홈으로 이동
+}
 
 // 회원가입 페이지로 이동
 const goSignup = () => {
-  router.push('/signup');
-};
+  router.push('/signup')
+}
 
 // 회원가입 페이지로 이동
 const goLogin = () => {
-  router.push('/login');
-};
+  router.push('/login')
+}
 
 // 마운트될 때 사용자 프로필 이미지 불러오기
 onMounted(() => {
-  loadUserProfileImage();
-});
+  loadUserProfileImage()
+})
 </script>
 
 <style scoped>
