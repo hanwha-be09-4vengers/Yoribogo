@@ -348,21 +348,26 @@ pipeline {
 
 <details>
   <summary>4.1 요리 추천</summary>
-  <img src="https://github.com/user-attachments/assets/387f03ec-1404-465d-af07-12b90073b25b" alt="">
+  <img src="https://github.com/user-attachments/assets/0d058a6f-0854-4bda-abbb-c01b40eeda02" alt="">
 </details>
 
 <details>
    <summary>4.2 요리 이미지 생성 비동기 처리</summary>
-   <img src="https://github.com/user-attachments/assets/dd9bccdd-0a14-4220-9e1e-856476d6edb7" alt="">
+   <img src="https://github.com/user-attachments/assets/223c8e93-df85-4d9e-ac72-ebf54aed35e5" alt="">
 </details>
 
 <details>
-  <summary>4.3 요리 추천에 만족한 경우</summary>
+   <summary>4.3 요리 레시피 생성 비동기 처리</summary>
+   <img src="https://github.com/user-attachments/assets/346b8687-0a67-41c9-a7a1-ca28b38945fe" alt="">
+</details>
+
+<details>
+  <summary>4.4 요리 추천에 만족한 경우</summary>
    <img src="https://github.com/user-attachments/assets/7d8af233-fbd8-4652-bb7a-9c425f0a429b" alt="">
 </details>
 
 <details>
-  <summary>4.4 요리 추천에 불만족한 경우</summary>
+  <summary>4.5 요리 추천에 불만족한 경우</summary>
    <img src="https://github.com/user-attachments/assets/5a2f5215-a177-4b86-ae16-d10c01d9ae62" alt="">
 </details>
 
@@ -443,9 +448,9 @@ pipeline {
 </details>
 
 <details>
-  <summary>7.6 문의 조회</summary>
+  <summary>7.6 회원 재문의</summary>
   <br>
-  7.6.1 비밀글일 때 작성자이거나 관리자일 경우 or 비밀글이 아닐 경우
+  7.6.1 문의 작성자이거나 관리자일 경우
   <img src="https://github.com/user-attachments/assets/b03e68cc-8eeb-4b1f-bb28-a5161f17bf01" alt="">
   <br><br>
   7.6.2 비밀글일 때 작성자나 관리자가 아닐 경우
