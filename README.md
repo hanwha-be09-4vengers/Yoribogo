@@ -373,7 +373,7 @@ pipeline {
 
 <details>
    <summary>4.3 요리 레시피 생성 비동기 처리</summary>
-   <img src="https://github.com/user-attachments/assets/346b8687-0a67-41c9-a7a1-ca28b38945fe" alt="">
+   <img src="https://github.com/user-attachments/assets/7be0f62e-061e-47c5-a649-335e1f57ce3d" alt="">
 </details>
 
 <details>
