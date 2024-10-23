@@ -25,7 +25,6 @@ export const useTokenStore = defineStore('token', () => {
 
     // 로컬 스토리지에 저장
     localStorage.setItem('token', JSON.stringify(token))
-    // console.log('토큰이 저장되었습니다:', token);
   }
 
   // 사용자 정보 조회 함수 (user_auth_id로 조회)
@@ -34,7 +33,6 @@ export const useTokenStore = defineStore('token', () => {
       const response = await fetchUserByAuthId(userAuthId, token.accessToken) // accessToken 추가
       if (response.success) {
         token.userId = response.data.user_id // user_id 저장
-        // console.log('사용자 정보 조회 성공:', response.data);
       } else {
         console.error('사용자 정보를 가져오지 못했습니다.')
       }
@@ -79,8 +77,6 @@ export const useTokenStore = defineStore('token', () => {
       token.refreshToken = parsedToken.refreshToken || null
       token.refreshTokenExpiry = parsedToken.refreshTokenExpiry || null
 
-      // console.log('로컬 스토리지에서 토큰이 복원되었습니다:', token);
-
       // user_auth_id가 String 타입인지 확인
       if (token.userAuthId && typeof token.userAuthId === 'string') {
         try {
@@ -91,8 +87,6 @@ export const useTokenStore = defineStore('token', () => {
       } else {
         console.warn('유효하지 않은 user_auth_id:', token.userAuthId)
       }
-    } else {
-      // console.log('로컬 스토리지에 저장된 토큰이 없습니다. 기본값으로 설정합니다.');
     }
   }
 
@@ -110,7 +104,6 @@ export const useTokenStore = defineStore('token', () => {
     localStorage.removeItem('token')
     // 로컬 스토리지 전체 제거
     localStorage.clear()
-    console.log('로그아웃되었습니다. 토큰이 초기화되었습니다.')
   }
 
   return {
