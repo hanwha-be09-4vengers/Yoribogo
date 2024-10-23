@@ -159,7 +159,6 @@ let eventSource = null
 
 const handleImageUpdate = (event) => {
   menuImageSrc.value = event.data
-  console.log(event.data)
 
   if (eventSource) {
     eventSource.removeEventListener('image-update', handleImageUpdate)
