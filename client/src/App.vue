@@ -18,8 +18,6 @@ const accessToken = computed(() => tokenStore.token.accessToken)
 const ConnectSSE = () => {
   if (accessToken.value) {
     connectSSE() // 토큰이 존재할 경우 SSE 연결 시도
-  } else {
-    console.error('토큰이 없습니다. SSE 연결을 할 수 없습니다.')
   }
 }
 
