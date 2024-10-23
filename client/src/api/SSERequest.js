@@ -9,7 +9,7 @@ export function connectSSE() {
   if (!eventSource) {
     // eventSource = new EventSource('/api/notifications/sseconnect');
     eventSource = new EventSource(
-                    `/api/notifications/sseconnect`,
+                    `/boot/api/notifications/sseconnect`,
                     {
                       headers: {
                         Authorization: `Bearer ${JSON.parse(localStorage.getItem('token')).accessToken}`,

@@ -62,7 +62,7 @@ const goSignup = () => {
   router.push('/signup')
 }
 const goLogin = () => {
-  router.push('/login')
+  router.push('/login-page')
 }
 // 로고 클릭 시 홈으로 이동
 const goHome = () => {

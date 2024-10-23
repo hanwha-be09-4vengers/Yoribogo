@@ -226,7 +226,7 @@ onMounted(() => {
   const tokenStore = useTokenStore()
   if (!tokenStore.token.accessToken) {
     alert('마이페이지를 보시려면 로그인이 필요합니다!')
-    router.push('/login')
+    router.push('/login-page')
   }
   fetchData()
 })
