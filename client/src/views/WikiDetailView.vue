@@ -49,7 +49,7 @@ import BackButton from '@/components/common/BackButton.vue'
 import RecipeManual from '@/components/recipe/RecipeManual.vue'
 import GoTopButton from '@/components/common/GoTopButton.vue'
 import axios from 'axios'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 const isImageLoading = ref(true)
@@ -61,6 +61,9 @@ const route = useRoute()
 const menuInfo = ref({})
 const manualList = ref([])
 const menuImageSrc = ref('')
+
+let eventSource = null // SSE 연결을 담을 변수
+let beforeUnloadHandler = null // beforeunload 핸들러 저장
 
 const defaultImage = ref(
   'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728804967802_a4720492-2dd2-4e59-8f31-79b55e6a169e_%E1%84%80%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.svg'
@@ -159,15 +162,35 @@ onMounted(() => {
   if (localStorage.getItem('token')) {
     isLogin.value = true
   }
+
   // SSE 연결 생성
-  const eventSource = new EventSource('/api/notifications/sseconnect')
+  eventSource = new EventSource('/api/notifications/sseconnect')
 
   fetchData()
 
   eventSource.addEventListener('image-update', (event) => {
     menuImageSrc.value = event.data
-    console.log('사진 업데이트됨: ', event.data)
   })
+
+  // 페이지 새로고침 또는 닫을 때 SSE 연결 해제
+  beforeUnloadHandler = () => {
+    if (eventSource) {
+      eventSource.close()
+    }
+  }
+  window.addEventListener('beforeunload', beforeUnloadHandler)
+})
+
+onUnmounted(() => {
+  // 컴포넌트가 언마운트될 때 실행됨
+  if (eventSource) {
+    eventSource.close()
+  }
+
+  // beforeunload 이벤트 리스너 제거
+  if (beforeUnloadHandler) {
+    window.removeEventListener('beforeunload', beforeUnloadHandler)
+  }
 })
 </script>
 

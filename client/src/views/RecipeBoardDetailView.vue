@@ -145,7 +145,6 @@ const fetchData = async () => {
       await axios.get(`/api/recipe-board/${route.params.board_id}/comments`)
     ).data
 
-    console.log('commentsResponse: 댓글 작성ㅎㅎ', commentsResponse)
     if (commentsResponse.success) {
       commentInfo.value = commentsResponse.data // 댓글 데이터를 저장
     } else {

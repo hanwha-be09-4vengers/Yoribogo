@@ -63,7 +63,6 @@ const fetchData = async (page, searchQuery = '') => {
     } else {
       // 전체 게시글 조회
       response = await axios.get(`/api/recipe-board/boards?pageNo=${page}`)
-      console.log(response.data)
     }
 
     if (response.data.success) {

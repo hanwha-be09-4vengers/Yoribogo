@@ -88,7 +88,6 @@ const isChangePasswordModalOpen = ref(false)
 const isAccountDeactivationModalOpen = ref(false)
 
 const openEditProfileModal = () => {
-  console.log('openEditProfileModal called')
   isEditProfileModalOpen.value = true
 }
 
@@ -97,7 +96,6 @@ const closeEditProfileModal = () => {
 }
 
 const openAccountOptionsModal = () => {
-  console.log('openAccountOptionsModal called')
   isAccountOptionsModalOpen.value = true
 }
 

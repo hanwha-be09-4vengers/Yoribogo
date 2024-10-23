@@ -58,7 +58,6 @@ const routes = [
     component: () => import('../views/RecipeBoardWriteView.vue'),
     props: true
   },
-
   {
     path: '/mypage',
     name: 'mypage',
