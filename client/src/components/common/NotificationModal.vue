@@ -5,7 +5,7 @@
       <!-- 알림 목록 -->
       <ul class="notification-list">
         <li
-          v-for="notification in props.notifications"
+          v-for="notification in noticationList"
           :key="notification.notificationId"
           :class="[
             'notification',
@@ -27,6 +27,8 @@
 </template>
 
 <script setup>
+import { onMounted, ref } from 'vue'
+
 // 부모 컴포넌트에서 전달받을 props 정의
 const props = defineProps({
   notifications: {
@@ -34,6 +36,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const noticationList = ref([])
 
 const emit = defineEmits(['close']) // 부모 컴포넌트로 close 이벤트 전달
 
@@ -69,6 +73,10 @@ const markAsRead = async (notification) => {
     console.error('Error updating notification status:', error)
   }
 }
+
+onMounted(() => {
+  if (props.notifications !== null) noticationList.value = props.notifications
+})
 </script>
 
 <style scoped>

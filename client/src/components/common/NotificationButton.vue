@@ -7,7 +7,11 @@
     </div>
 
     <!-- 모달창을 조건부로 렌더링하고 notifications 데이터를 전달 -->
-    <NotificationModal v-if="isMenuVisible" @close="toggleMenu" :notifications="notifications" />
+    <NotificationModal
+      v-if="isMenuVisible"
+      @close="toggleMenu"
+      :notifications="safeNotifications"
+    />
   </div>
 </template>
 
@@ -20,6 +24,8 @@ const isMenuVisible = ref(false)
 const notifications = ref([]) // 알림 데이터를 저장할 상태
 let eventSource = null // SSE 연결을 관리할 변수
 let beforeUnloadHandler = null // beforeunload 핸들러 저장
+
+const safeNotifications = computed(() => notifications.value || [])
 
 // 읽지 않은 알림의 개수를 계산하는 computed
 const unreadCount = computed(() => {
@@ -121,6 +127,7 @@ const loadNotifications = async () => {
       const data = await response.json()
       notifications.value = data.data // 서버에서 받은 알림 데이터를 저장
     } else {
+      notifications.value = []
       console.error('Failed to fetch notifications')
     }
   } catch (error) {
