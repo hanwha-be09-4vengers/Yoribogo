@@ -33,7 +33,6 @@ const handleKakaoCallback = async () => {
 
       if (response.success) {
         const tokenData = response.data
-        console.log('카카오 로그인 성공 후 받은 토큰:', tokenData)
 
         // user_auth_id로 사용자 정보 조회, 여기에 액세스 토큰을 전달
         const userProfileResponse = await fetchUserByAuthId(
@@ -41,8 +40,6 @@ const handleKakaoCallback = async () => {
           tokenData.access_token
         )
         const userProfile = userProfileResponse?.data || {}
-
-        console.log('userProfile 정보:', userProfile)
 
         // user_id 포함한 토큰과 사용자 정보를 Pinia 스토어에 저장
         await tokenStore.setTokenData({

@@ -73,7 +73,7 @@
 </template>
 
 <script setup>
-import { ref, onUnmounted, computed, defineEmits, defineProps, watch } from 'vue'
+import { ref, onUnmounted, computed, watch } from 'vue'
 import YesNoButton from '@/components/common/YesNoButton.vue' // YesNoButton 컴포넌트 임포트
 import router from '@/router/router'
 // api/user.js에서 정의된 sendSignupVerificationEmail 함수 사용

@@ -227,6 +227,7 @@ onMounted(() => {
   } else {
     alert('게시글을 보시려면 로그인이 필요합니다!')
     router.push('/login')
+    return
   }
 
   fetchData()

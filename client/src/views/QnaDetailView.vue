@@ -109,6 +109,7 @@ onMounted(async () => {
   } else {
     alert('문의 내용을 보시려면 로그인이 필요합니다!')
     router.push('/login')
+    return
   }
 
   const data = await getAnswers(route.params.num)

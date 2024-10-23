@@ -33,7 +33,12 @@
         <input id="file-upload-step" type="file" @change="handleFileChange" />
       </div>
       <div class="text-input">
-        <input type="text" :placeholder="props.placeholder" v-model="stepText" />
+        <input
+          id="text-upload-input"
+          type="text"
+          :placeholder="props.placeholder"
+          v-model="stepText"
+        />
       </div>
     </div>
   </div>
@@ -53,11 +58,6 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    required: true
-  },
-  index: {
-    // index 추가
-    type: Number,
     required: true
   }
 })

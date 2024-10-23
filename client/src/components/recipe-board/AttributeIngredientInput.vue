@@ -5,7 +5,12 @@
       <button @click="addItem">추가 +</button>
     </div>
     <div class="attribute-input-wrapper">
-      <input type="text" :placeholder="props.placeholder" v-model="inputValue" />
+      <input
+        id="attribute-input"
+        type="text"
+        :placeholder="props.placeholder"
+        v-model="inputValue"
+      />
     </div>
   </div>
 </template>

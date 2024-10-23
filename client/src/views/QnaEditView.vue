@@ -59,6 +59,7 @@ onMounted(async () => {
   } else {
     alert('문의를 수정하시려면 로그인이 필요합니다!')
     router.push('/login')
+    return
   }
 
   user.value = await getUserInfo(tokenStore.token.userId)

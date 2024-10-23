@@ -31,6 +31,7 @@ onMounted(() => {
   } else {
     alert('게시글을 작성하시려면 로그인이 필요합니다!')
     router.push('/login')
+    return
   }
 })
 </script>

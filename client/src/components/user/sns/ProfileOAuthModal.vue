@@ -128,9 +128,6 @@ const completeUpdateProfile = async () => {
   try {
     const profileImage = profilePictureFile.value || null // 파일 객체 사용
 
-    console.log('userId:', tokenStore.token.userId)
-    console.log('accessToken:', tokenStore.token.accessToken) // accessToken 값을 출력하여 확인
-
     // updateUserProfile 함수를 호출
     const response = await updateUserProfile(
       tokenStore.token.userId,

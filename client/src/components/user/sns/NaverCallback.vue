@@ -34,7 +34,6 @@ const handleNaverCallback = async () => {
 
       if (response.success) {
         const tokenData = response.data
-        console.log('네이버 로그인 성공 후 받은 토큰:', tokenData)
 
         // user_auth_id로 사용자 정보 조회
         const userProfileResponse = await fetchUserByAuthId(
@@ -42,8 +41,6 @@ const handleNaverCallback = async () => {
           tokenData.access_token
         ) // access_token 전달
         const userProfile = userProfileResponse?.data || {}
-
-        console.log('userProfile 정보:', userProfile)
 
         // Pinia 스토어에 토큰 저장 (user_id 포함)
         await tokenStore.setTokenData({
