@@ -1,3 +1,6 @@
+![image](https://github.com/user-attachments/assets/58acb2fe-4a0c-4028-b979-572142a5703b)
+
+
 # 목차
 
 1. [팀 소개](#팀-소개)
