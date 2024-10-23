@@ -3,7 +3,8 @@
     <img class="bg-circle" src="/src/assets/Intersect.png" alt="Background Circle" />
     <img class="chicken" src="/src/assets/chicken.png" alt="Chicken" />
     <header>
-      <MainNav></MainNav>
+      <!-- 로그인 상태에 따라 메뉴 및 알림 아이콘 표시 -->
+      <HomeNav @open-login-modal="openLoginModal" />
     </header>
     <main>
       <section id="start-section" class="start-section">
@@ -17,19 +18,60 @@
         <button id="start-btn" class="start-btn" @click="goQuestion">시작하기</button>
       </section>
     </main>
+    <LoginModal
+      v-if="isLoginModalVisible"
+      @close="closeLoginModal"
+      @goToStep1="openRegisterModal"
+      @openPasswordReset="openPasswordResetModal"
+      @openFindId="openFindIdModal"
+    />
   </div>
 </template>
 
 <script setup>
-import MainNav from '@/components/MainNav.vue'
+import LoginModal from '@/components/user/login/LoginModal.vue'
+import HomeNav from '@/components/user/HomeNav.vue'
+import NotificationButton from '@/components/common/NotificationButton.vue'
 import { useRouter } from 'vue-router'
+import { ref } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
+import { connectSSE, closeSSE } from '@/api/SSERequest'  // SSE 연결 함수
+
+// 로그인 상태 확인을 위한 변수
+const isLoggedIn = ref(false)
+const token = localStorage.getItem('token') // 로컬 스토리지에 저장된 토큰 확인
+
+if (token) {
+  isLoggedIn.value = true // 토큰이 있으면 로그인 상태로 설정
+}
 
 const router = useRouter()
+
+const isLoginModalVisible = ref(false) // 로그인 모달 상태
+
+// 로그인 모달 열기
+const openLoginModal = () => {
+  isLoginModalVisible.value = true
+}
+
+// 로그인 모달 닫기
+const closeLoginModal = () => {
+  isLoginModalVisible.value = false
+}
+
 
 const goQuestion = () => {
   router.push('/question/1')
 }
+
+
 </script>
+
+
+<style scoped>
+/* 기존 스타일 그대로 유지 */
+</style>
+
 
 <style scoped>
 .home-view {
@@ -62,8 +104,8 @@ const goQuestion = () => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-top: 12rem;
-  margin-left: 15rem;
+  margin-top: 18rem;
+  margin-left: 20rem;
   margin-bottom: 10rem;
   gap: 9.6rem;
 }
@@ -84,11 +126,11 @@ const goQuestion = () => {
 }
 
 .f-red {
-  color: var(--red-color);
+  color: var(--text-red-color);
 }
 
 .normal div span {
-  color: var(--red-color);
+  color: var(--text-red-color);
 }
 
 .indent {
@@ -115,18 +157,18 @@ const goQuestion = () => {
 }
 
 /* 노트북 */
-@media screen and (max-width: 1683px) {
+@media screen and (max-width: 1684px) {
   .start-section {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin-top: 12rem;
-    margin-left: 15rem;
+    margin-top: 14rem;
+    margin-left: 20rem;
     gap: 9.6rem;
   }
 }
 
-@media screen and (max-width: 1439px) {
+@media screen and (max-width: 1440px) {
   .chicken {
     top: 22rem;
     right: 15rem;
@@ -140,8 +182,22 @@ const goQuestion = () => {
   }
 }
 
+@media screen and (max-width: 1280px) {
+  .chicken {
+    top: 22rem;
+    right: 15rem;
+    width: 60rem;
+    height: 30rem;
+  }
+
+  .bg-circle {
+    width: 50rem;
+    height: 45rem;
+  }
+}
+
 /* 태블릿 */
-@media screen and (max-width: 1023px) {
+@media screen and (max-width: 1024px) {
   .chicken {
     top: 22rem;
     right: 15rem;
@@ -164,7 +220,7 @@ const goQuestion = () => {
 }
 
 /* 모바일 */
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 768px) {
   .chicken {
     left: 50%;
     transform: translateX(-50%);

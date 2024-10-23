@@ -120,14 +120,17 @@
 <br>
 
 # ✔️ 논리 모델링
-![image](https://github.com/user-attachments/assets/c610b0dd-2132-4689-a4fb-247238b6c9e7)
+![image](https://github.com/user-attachments/assets/91743676-fb4c-499b-b9fa-82c3442c849c)
+
 
 
 ---
 <br>
 
 # ✔️ 물리 모델링
-![image](https://github.com/user-attachments/assets/76ac4237-b652-4cc7-8500-77e56154cbf8)
+![image](https://github.com/user-attachments/assets/ca4c23da-0d3e-47bf-a90e-0fe984251b01)
+
+
 
 <br>
 
