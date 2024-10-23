@@ -1,7 +1,7 @@
 <template>
   <div class="recipe-board-detail-view">
     <header>
-      <NotificationButton></NotificationButton>
+      <NotificationButton v-if="isLogin"></NotificationButton>
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
     </header>
@@ -101,10 +101,10 @@ import WriteRecommentInput from '@/components/recipe-board/WriteRecommentInput.v
 import axios from 'axios'
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useTokenStore } from '@/stores/tokenStore'
 
 const isImageLoading = ref(true)
 const isImageError = ref(false)
+const isLogin = ref(false)
 
 const route = useRoute()
 const router = useRouter()
@@ -223,11 +223,13 @@ const handleImageLoad = () => {
 }
 
 onMounted(() => {
-  const tokenStore = useTokenStore()
-  if (!tokenStore.token.accessToken) {
-    alert('마이페이지를 보시려면 로그인이 필요합니다!')
+  if (localStorage.getItem('token')) {
+    isLogin.value = true
+  } else {
+    alert('게시글을 보시려면 로그인이 필요합니다!')
     router.push('/login')
   }
+
   fetchData()
 })
 </script>

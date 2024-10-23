@@ -1,7 +1,7 @@
 <template>
   <div class="wiki-view">
     <header>
-      <NotificationButton></NotificationButton>
+      <NotificationButton v-if="isLogin"></NotificationButton>
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
     </header>
@@ -34,7 +34,7 @@ import MainBoard from '@/components/common/MainBoard.vue'
 import SearchBar from '@/components/common/SearchBar.vue'
 import MenuItem from '@/components/recipe/MenuItem.vue'
 import PaginationComponent from '@/components/common/PaginationComponent.vue'
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router' // Vue Router 사용
 import axios from 'axios'
 
@@ -45,6 +45,7 @@ const menuList = ref([])
 const pageInfo = ref({})
 
 const isEmpty = ref(true)
+const isLogin = ref(false)
 
 const fetchData = async (name, page) => {
   try {
@@ -93,6 +94,12 @@ watch(
   },
   { immediate: true } // 즉시 호출
 )
+
+onMounted(() => {
+  if (localStorage.getItem('token')) {
+    isLogin.value = true
+  }
+})
 </script>
 
 <style scoped>

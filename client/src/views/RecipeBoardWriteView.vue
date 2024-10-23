@@ -1,16 +1,14 @@
 <template>
   <div class="recipe-board-view">
     <header>
-      <NotificationButton></NotificationButton>
+      <NotificationButton v-if="isLogin"></NotificationButton>
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
-    </header>   
+    </header>
     <MainBoard :cur="'recipe-board'">
       <!-- <router-view></router-view>
       WriteRecipeBoardComponent.vue -->
-      <WriteRecipeBoardComponent>
-
-      </WriteRecipeBoardComponent>
+      <WriteRecipeBoardComponent> </WriteRecipeBoardComponent>
     </MainBoard>
   </div>
 </template>
@@ -21,6 +19,17 @@ import MainBoard from '@/components/common/MainBoard.vue'
 import NotificationButton from '@/components/common/NotificationButton.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
 import WriteRecipeBoardComponent from '@/components/recipe-board/WriteRecipeBoardComponent.vue'
+import { onMounted, ref } from 'vue'
+
+const isLogin = ref(false)
+
+onMounted(() => {
+  if (localStorage.getItem('token')) {
+    isLogin.value = true
+  } else {
+    alert('게시글을 작성하시려면 로그인이 필요합니다!')
+  }
+})
 </script>
 
 <style scoped>

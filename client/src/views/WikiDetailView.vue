@@ -1,7 +1,7 @@
 <template>
   <div class="wiki-detail-view">
     <header>
-      <NotificationButton></NotificationButton>
+      <NotificationButton v-if="isLogin"></NotificationButton>
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
     </header>
@@ -54,6 +54,7 @@ import { useRoute } from 'vue-router'
 
 const isImageLoading = ref(true)
 const isImageError = ref(false)
+const isLogin = ref(false)
 
 const route = useRoute()
 
@@ -155,6 +156,9 @@ const handleImageLoad = () => {
 }
 
 onMounted(() => {
+  if (localStorage.getItem('token')) {
+    isLogin.value = true
+  }
   // SSE 연결 생성
   const eventSource = new EventSource('/api/notifications/sseconnect')
 
