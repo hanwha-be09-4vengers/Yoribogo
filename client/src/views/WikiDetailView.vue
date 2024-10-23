@@ -1,7 +1,7 @@
 <template>
   <div class="wiki-detail-view">
     <header>
-      <NotificationButton></NotificationButton>
+      <NotificationButton v-if="isLogin"></NotificationButton>
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
     </header>
@@ -54,6 +54,7 @@ import { useRoute } from 'vue-router'
 
 const isImageLoading = ref(true)
 const isImageError = ref(false)
+const isLogin = ref(false)
 
 const route = useRoute()
 
@@ -105,13 +106,13 @@ const fetchData = async () => {
           text = lastMessage.replaceAll('data:', '').replace(/\n/g, '')
 
           // 공백만 있을 경우
-          if (text === ' ' || text === '') {
+          if (text.trim === '') {
             lastMessage = ''
             continue
           }
 
-          // 문장이 문자.공백으로 끝날 경우
-          if (/[a-zA-Z가-힣]\.\s*$/.test(text)) {
+          // 문장이 문자.으로 끝날 경우
+          if (/[a-zA-Z가-힣]\.$/.test(text)) {
             manualList.value[manualList.value.length - 1].manual_content = text.trim()
             lastMessage = ''
             text = ''
@@ -130,7 +131,7 @@ const fetchData = async () => {
           }
         }
 
-        // 마지막 text가 문자.공백으로 끝나지 않을 경우에도 처리
+        // 마지막 text가 문자.으로 끝나지 않을 경우에도 처리
         if (text !== '') {
           manualList.value[manualList.value.length - 1].manual_content = text.trim()
         }
@@ -155,6 +156,9 @@ const handleImageLoad = () => {
 }
 
 onMounted(() => {
+  if (localStorage.getItem('token')) {
+    isLogin.value = true
+  }
   // SSE 연결 생성
   const eventSource = new EventSource('/api/notifications/sseconnect')
 
