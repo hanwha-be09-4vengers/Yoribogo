@@ -7,25 +7,17 @@
     </div>
 
     <!-- 모달창을 조건부로 렌더링하고 notifications 데이터를 전달 -->
-    <NotificationModal
-      v-if="isMenuVisible"
-      @close="toggleMenu"
-      :notifications="safeNotifications"
-    />
+    <NotificationModal v-if="isMenuVisible" @close="toggleMenu" :notifications="notifications" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import NotificationModal from './NotificationModal.vue'
 import { connectSSE } from '@/api/SSERequest' // SSE 연결을 위한 모듈 가져오기
 
 const isMenuVisible = ref(false)
 const notifications = ref([]) // 알림 데이터를 저장할 상태
-let eventSource = null // SSE 연결을 관리할 변수
-let beforeUnloadHandler = null // beforeunload 핸들러 저장
-
-const safeNotifications = computed(() => notifications.value || [])
 
 // 읽지 않은 알림의 개수를 계산하는 computed
 const unreadCount = computed(() => {
@@ -35,35 +27,33 @@ const unreadCount = computed(() => {
 })
 
 // SSE 연결 설정 (실시간 알림 처리)
-const setupSSE = () => {
-  eventSource = connectSSE()
+const eventSource = connectSSE()
 
-  eventSource.addEventListener('notification', (event) => {
-    const notification = JSON.parse(event.data)
+eventSource.addEventListener('notification', (event) => {
+  const notification = JSON.parse(event.data)
 
-    // 방어 코드 추가: notifications.value가 배열인지 확인
-    if (Array.isArray(notifications.value)) {
-      notifications.value.unshift({
+  // 방어 코드 추가: notifications.value가 배열인지 확인
+  if (Array.isArray(notifications.value)) {
+    notifications.value.unshift({
+      notificationId: notification.notificationId,
+      notificationContent: notification.notificationContent,
+      notificationStatus: notification.notificationStatus,
+      notificationCreatedAt: notification.notificationCreatedAt,
+      notificationReadAt: notification.notificationReadAt
+    })
+  } else {
+    // 배열이 아닐 경우 새 배열로 초기화
+    notifications.value = [
+      {
         notificationId: notification.notificationId,
         notificationContent: notification.notificationContent,
         notificationStatus: notification.notificationStatus,
         notificationCreatedAt: notification.notificationCreatedAt,
         notificationReadAt: notification.notificationReadAt
-      })
-    } else {
-      // 배열이 아닐 경우 새 배열로 초기화
-      notifications.value = [
-        {
-          notificationId: notification.notificationId,
-          notificationContent: notification.notificationContent,
-          notificationStatus: notification.notificationStatus,
-          notificationCreatedAt: notification.notificationCreatedAt,
-          notificationReadAt: notification.notificationReadAt
-        }
-      ]
-    }
-  })
-}
+      }
+    ]
+  }
+})
 
 // 모달 열림/닫힘 토글
 const toggleMenu = async () => {
@@ -81,26 +71,6 @@ const toggleMenu = async () => {
 // 페이지 로드 시 알림 상태 초기화
 onMounted(() => {
   loadNotifications()
-  setupSSE() // SSE 연결 초기화
-
-  // beforeunload 이벤트 처리
-  beforeUnloadHandler = () => {
-    if (eventSource) {
-      eventSource.close()
-    }
-  }
-  window.addEventListener('beforeunload', beforeUnloadHandler)
-})
-
-// 컴포넌트가 언마운트될 때 SSE 연결 해제
-onUnmounted(() => {
-  if (eventSource) {
-    eventSource.close()
-  }
-
-  if (beforeUnloadHandler) {
-    window.removeEventListener('beforeunload', beforeUnloadHandler)
-  }
 })
 
 // 서버로부터 알림 데이터를 받아오는 함수
@@ -127,7 +97,6 @@ const loadNotifications = async () => {
       const data = await response.json()
       notifications.value = data.data // 서버에서 받은 알림 데이터를 저장
     } else {
-      notifications.value = []
       console.error('Failed to fetch notifications')
     }
   } catch (error) {

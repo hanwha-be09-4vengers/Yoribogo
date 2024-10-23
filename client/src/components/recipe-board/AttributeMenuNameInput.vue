@@ -4,7 +4,7 @@
       <span>{{ name }}</span>
     </div>
     <div class="attribute-input-wrapper">
-      <input type="text" :placeholder="placeholder" v-model="inputValue" />
+      <input id="menu-name-input" type="text" :placeholder="placeholder" v-model="inputValue" />
     </div>
   </div>
 </template>

@@ -221,7 +221,8 @@ public class RecipeServiceImpl implements RecipeService {
                     "추가 사항이 요리와 관련된 경우(예: 알레르기 정보, 선호하는 음식, 상황), 그 요청을 우선 고려하여 요리를 추천해줘. " +
                     "비관련 사항(예: 유명 인물 이름, 해킹 방법 등, 성적인 단어)이 포함된 경우에는 요리를 추천하지 말고 '에러'라고 답해줘. " +
                     "요리를 추천하는 경우에는 다양한 나라의 요리 중 하나를 " +
-                    "'한국어 요리 이름(Detailed English description including the dish name)' 형식으로 한 문장으로 추천해줘. " +
+                    "'한국어 요리 이름(Detailed English description including the dish name)' " +
+                    "형식으로 앞과 뒤에 말이나 특수문자, 기호를 붙이지 말고 한 문장으로 추천해줘. " +
                     "영어 설명에는 영어 요리 이름을 포함하고, 설명은 20단어 이내로 간결하게 해줘.";
 
             String aiAnswerMenu = openAIService.getRecommend(prompt).getChoices().get(0).getMessage().getContent();

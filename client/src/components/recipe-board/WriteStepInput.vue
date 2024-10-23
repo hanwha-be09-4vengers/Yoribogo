@@ -48,8 +48,6 @@ onMounted(() => {
   const storedImage = localStorage.getItem(`step_image_${props.index}`)
   if (storedImage) {
     stepImage.value = storedImage
-  } else {
-    console.error(`로컬 스토리지에서 ${`step_image_${props.index}`} 키로 이미지가 없음`)
   }
 })
 

@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -45,7 +46,7 @@ public class NotificationService {
     }
 
     // SSE 연결 로직
-    private final List<SseEmitter> emitters = new ArrayList<>();
+    private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
     public SseEmitter subscribe() {
         SseEmitter emitter = new SseEmitter(0L);

@@ -17,7 +17,13 @@
       @click="uploadImage"
       :class="imageUploadStyle"
     >
-      <input type="file" @change="handleFileChange" />
+      <input
+        id="image-upload-input"
+        type="file"
+        name="imageUpload"
+        @change="handleFileChange"
+        style="display: none"
+      />
       <img v-if="imageUrl" :src="imageUrl" alt="Uploaded image" />
       <span v-else>{{ placeholder }}</span>
     </div>
@@ -26,86 +32,91 @@
     <div v-if="type === 'step'" class="step-container">
       <input v-model="inputValue" :placeholder="placeholder" class="step-input" />
       <div class="image-upload" @click="uploadImage">
-        <input type="file" @change="handleFileChange" />
+        <input
+          id="manual-image-upload-input"
+          type="file"
+          name="manualImageUpload"
+          @change="handleFileChange"
+          style="display: none"
+        />
         <img v-if="imageUrl" :src="imageUrl" alt="Uploaded image" />
       </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    label: {
-      type: String,
-      required: true
-    },
-    id: {
-      type: String,
-      required: true
-    },
-    type: {
-      type: String,
-      default: 'text' // 기본은 텍스트 필드
-    },
-    placeholder: {
-      type: String,
-      default: ''
-    }
+<script setup>
+import { ref, computed } from 'vue'
+
+// Props
+const props = defineProps({
+  label: {
+    type: String,
+    required: true
   },
-  computed: {
-    dynamicLabelStyle() {
-      // label에 따라 다른 스타일을 반환
-      if (this.label === '메뉴 명') {
-        return { width: '7.5rem' }
-      } else if (this.label === '대표 사진') {
-        return { width: '9rem' }
-      } else if (this.label === '재료') {
-        return { width: '5.8rem' }
-      }
-      return { width: '9rem' }
-    },
-    inputStyle() {
-      // 조건에 따라 input 필드의 스타일을 반환
-      if (this.label === '메뉴 명') {
-        return 'menu-input'
-      } else if (this.label === '재료') {
-        return 'ingredient-input'
-      } else if (this.label === '조리 순서') {
-        return 'step-input'
-      }
-      return 'default-input'
-    },
-    imageUploadStyle() {
-      // 조건에 따라 image-upload div의 스타일을 반환
-      if (this.label === '대표 사진' || this.label === '조리 순서') {
-        return 'image-upload-large'
-      }
-      return 'image-upload'
-    },
-    addButtonStyle() {
-      // 재료 입력과 조리 순서만 add 버튼 추가
-      if (this.label === '재료' || this.label === '조리 순서') {
-        return 'add-btn-yes'
-      }
-      return 'add-btn-no'
-    }
+  id: {
+    type: String,
+    required: true
   },
-  data() {
-    return {
-      inputValue: '',
-      imageUrl: ''
-    }
+  type: {
+    type: String,
+    default: 'text' // 기본은 텍스트 필드
   },
-  methods: {
-    uploadImage() {
-      // 이미지 업로드 로직
-    },
-    handleFileChange(event) {
-      const file = event.target.files[0]
-      this.imageUrl = URL.createObjectURL(file) // 이미지 미리보기
-    }
+  placeholder: {
+    type: String,
+    default: ''
   }
+})
+
+// Data
+const inputValue = ref('')
+const imageUrl = ref('')
+
+// Computed properties
+const dynamicLabelStyle = computed(() => {
+  if (props.label === '메뉴 명') {
+    return { width: '7.5rem' }
+  } else if (props.label === '대표 사진') {
+    return { width: '9rem' }
+  } else if (props.label === '재료') {
+    return { width: '5.8rem' }
+  }
+  return { width: '9rem' }
+})
+
+const inputStyle = computed(() => {
+  if (props.label === '메뉴 명') {
+    return 'menu-input'
+  } else if (props.label === '재료') {
+    return 'ingredient-input'
+  } else if (props.label === '조리 순서') {
+    return 'step-input'
+  }
+  return 'default-input'
+})
+
+const imageUploadStyle = computed(() => {
+  if (props.label === '대표 사진' || props.label === '조리 순서') {
+    return 'image-upload-large'
+  }
+  return 'image-upload'
+})
+
+const addButtonStyle = computed(() => {
+  if (props.label === '재료' || props.label === '조리 순서') {
+    return 'add-btn-yes'
+  }
+  return 'add-btn-no'
+})
+
+// Methods
+const uploadImage = () => {
+  // 이미지 업로드 로직
+}
+
+const handleFileChange = (event) => {
+  const file = event.target.files[0]
+  imageUrl.value = URL.createObjectURL(file) // 이미지 미리보기
 }
 </script>
 

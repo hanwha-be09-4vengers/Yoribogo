@@ -6,8 +6,6 @@
       <HomeButton></HomeButton>
     </header>
     <MainBoard :cur="'recipe-board'">
-      <!-- <router-view></router-view>
-      WriteRecipeBoardComponent.vue -->
       <WriteRecipeBoardComponent> </WriteRecipeBoardComponent>
     </MainBoard>
   </div>

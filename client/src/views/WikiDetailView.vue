@@ -49,7 +49,7 @@ import BackButton from '@/components/common/BackButton.vue'
 import RecipeManual from '@/components/recipe/RecipeManual.vue'
 import GoTopButton from '@/components/common/GoTopButton.vue'
 import axios from 'axios'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 const isImageLoading = ref(true)
@@ -61,9 +61,6 @@ const route = useRoute()
 const menuInfo = ref({})
 const manualList = ref([])
 const menuImageSrc = ref('')
-
-let eventSource = null // SSE 연결을 담을 변수
-let beforeUnloadHandler = null // beforeunload 핸들러 저장
 
 const defaultImage = ref(
   'https://cdxarchivephoto.s3.ap-northeast-2.amazonaws.com/1728804967802_a4720492-2dd2-4e59-8f31-79b55e6a169e_%E1%84%80%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.svg'
@@ -109,7 +106,7 @@ const fetchData = async () => {
           text = lastMessage.replaceAll('data:', '').replace(/\n/g, '')
 
           // 공백만 있을 경우
-          if (text.trim === '') {
+          if (text.trim() === '') {
             lastMessage = ''
             continue
           }
@@ -158,39 +155,28 @@ const handleImageLoad = () => {
   isImageError.value = false
 }
 
-onMounted(() => {
+let eventSource = null
+
+const handleImageUpdate = (event) => {
+  menuImageSrc.value = event.data
+  console.log(event.data)
+
+  if (eventSource) {
+    eventSource.removeEventListener('image-update', handleImageUpdate)
+    eventSource.close() // 연결 종료
+  }
+}
+
+onMounted(async () => {
   if (localStorage.getItem('token')) {
     isLogin.value = true
   }
 
+  await fetchData()
+
   // SSE 연결 생성
   eventSource = new EventSource('/api/notifications/sseconnect')
-
-  fetchData()
-
-  eventSource.addEventListener('image-update', (event) => {
-    menuImageSrc.value = event.data
-  })
-
-  // 페이지 새로고침 또는 닫을 때 SSE 연결 해제
-  beforeUnloadHandler = () => {
-    if (eventSource) {
-      eventSource.close()
-    }
-  }
-  window.addEventListener('beforeunload', beforeUnloadHandler)
-})
-
-onUnmounted(() => {
-  // 컴포넌트가 언마운트될 때 실행됨
-  if (eventSource) {
-    eventSource.close()
-  }
-
-  // beforeunload 이벤트 리스너 제거
-  if (beforeUnloadHandler) {
-    window.removeEventListener('beforeunload', beforeUnloadHandler)
-  }
+  eventSource.addEventListener('image-update', handleImageUpdate)
 })
 </script>
 

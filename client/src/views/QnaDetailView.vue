@@ -40,7 +40,7 @@
           <div class="write">
             <p v-bind="inquiry">답변 {{ inquiry.answers }}개</p>
             <div class="group">
-              <input type="text" v-model="writeAns" class="inputVal" />
+              <input id="answer-input" type="text" v-model="writeAns" class="inputVal" />
               <button type="button" @click="sendAnswer">등록</button>
             </div>
           </div>

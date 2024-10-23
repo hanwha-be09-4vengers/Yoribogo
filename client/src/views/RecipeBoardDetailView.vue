@@ -74,6 +74,7 @@
       <!-- 댓글 입력 -->
       <form class="comment-input" @submit.prevent="submitComment">
         <input
+          id="comment-text-input"
           v-model="newComment"
           placeholder="댓글을 입력하세요"
           style="width: 92%; border: 1px solid gray; height: 5rem; padding: 2rem"
