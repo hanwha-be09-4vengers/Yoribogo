@@ -111,8 +111,8 @@ const fetchData = async () => {
             continue
           }
 
-          // 문장이 문자.공백으로 끝날 경우
-          if (/[a-zA-Z가-힣]\.\s*$/.test(text)) {
+          // 문장이 문자.으로 끝날 경우
+          if (/[a-zA-Z가-힣]\.$/.test(text)) {
             manualList.value[manualList.value.length - 1].manual_content = text.trim()
             lastMessage = ''
             text = ''
@@ -131,7 +131,7 @@ const fetchData = async () => {
           }
         }
 
-        // 마지막 text가 문자.공백으로 끝나지 않을 경우에도 처리
+        // 마지막 text가 문자.으로 끝나지 않을 경우에도 처리
         if (text !== '') {
           manualList.value[manualList.value.length - 1].manual_content = text.trim()
         }
