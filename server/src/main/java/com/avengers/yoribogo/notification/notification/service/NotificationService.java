@@ -10,7 +10,6 @@ import com.avengers.yoribogo.notification.weeklypopularrecipe.dto.WeeklyPopularR
 import com.avengers.yoribogo.notification.weeklypopularrecipe.repository.WeeklyPopularRecipeMongoRepository;
 import com.avengers.yoribogo.notification.weeklypopularrecipe.service.WeeklyPopularRecipeService;
 import com.avengers.yoribogo.recipeboard.domain.RecipeBoard;
-import com.avengers.yoribogo.recipeboard.recipeboard.dto.RecipeBoardEntity;
 import com.avengers.yoribogo.recipeboard.repository.RecipeBoardRepository;
 import com.avengers.yoribogo.user.domain.UserEntity;
 import com.avengers.yoribogo.user.repository.UserRepository;
