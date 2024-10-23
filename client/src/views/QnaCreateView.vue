@@ -8,15 +8,26 @@
     <MainBoard :cur="'qna'">
       <div class="wrapper">
         <div class="L1">
-          <input type="text" class="t" v-model="title" placeholder="제목을 입력해주세요." />
+          <input
+            id="qna-title-input"
+            type="text"
+            class="t"
+            v-model="title"
+            placeholder="제목을 입력해주세요."
+          />
         </div>
         <div class="L2">
-          <textarea class="c" v-model="content" placeholder="내용을 입력해주세요."></textarea>
+          <textarea
+            id="qna-content-input"
+            class="c"
+            v-model="content"
+            placeholder="내용을 입력해주세요."
+          ></textarea>
         </div>
         <div class="L3">
           <div class="vib">
             <label>
-              <input type="radio" value="PRIVATE" v-model="visibility" />
+              <input id="personal-input" type="radio" value="PRIVATE" v-model="visibility" />
               비공개
             </label>
           </div>
@@ -50,6 +61,7 @@ onMounted(async () => {
   } else {
     alert('문의 작성을 하시려면 로그인이 필요합니다!')
     router.push('/login')
+    return
   }
 
   user.value = await getUserInfo(tokenStore.token.userId)

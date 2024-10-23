@@ -40,7 +40,7 @@
           <div class="write">
             <p v-bind="inquiry">답변 {{ inquiry.answers }}개</p>
             <div class="group">
-              <input type="text" v-model="writeAns" class="inputVal" />
+              <input id="answer-input" type="text" v-model="writeAns" class="inputVal" />
               <button type="button" @click="sendAnswer">등록</button>
             </div>
           </div>
@@ -109,6 +109,7 @@ onMounted(async () => {
   } else {
     alert('문의 내용을 보시려면 로그인이 필요합니다!')
     router.push('/login')
+    return
   }
 
   const data = await getAnswers(route.params.num)

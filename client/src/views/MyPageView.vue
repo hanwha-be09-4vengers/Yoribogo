@@ -88,7 +88,6 @@ const isChangePasswordModalOpen = ref(false)
 const isAccountDeactivationModalOpen = ref(false)
 
 const openEditProfileModal = () => {
-  console.log('openEditProfileModal called')
   isEditProfileModalOpen.value = true
 }
 
@@ -97,7 +96,6 @@ const closeEditProfileModal = () => {
 }
 
 const openAccountOptionsModal = () => {
-  console.log('openAccountOptionsModal called')
   isAccountOptionsModalOpen.value = true
 }
 
@@ -186,6 +184,7 @@ onMounted(() => {
   if (!tokenStore.token.accessToken) {
     alert('마이페이지를 보시려면 로그인이 필요합니다!')
     router.push('/login')
+    return
   } else {
     userId.value = JSON.parse(localStorage.getItem('token')).userId
     isLogin.value = true

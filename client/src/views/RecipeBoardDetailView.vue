@@ -74,6 +74,7 @@
       <!-- 댓글 입력 -->
       <form class="comment-input" @submit.prevent="submitComment">
         <input
+          id="comment-text-input"
           v-model="newComment"
           placeholder="댓글을 입력하세요"
           style="width: 92%; border: 1px solid gray; height: 5rem; padding: 2rem"
@@ -145,14 +146,12 @@ const fetchData = async () => {
       await axios.get(`/api/recipe-board/${route.params.board_id}/comments`)
     ).data
 
-    console.log('commentsResponse: 댓글 작성ㅎㅎ', commentsResponse)
     if (commentsResponse.success) {
       commentInfo.value = commentsResponse.data // 댓글 데이터를 저장
-    } else {
-      console.error('Failed to fetch comments:', commentsResponse.message)
     }
 
-    commentInfo.value.forEach(async (comment) => {
+    // forEach 대신 for...of 사용
+    for (const comment of commentInfo.value) {
       try {
         const profileResponse = (await axios.get(`/api/users/${comment['user_id']}/profile`)).data
         if (profileResponse.success) {
@@ -169,7 +168,7 @@ const fetchData = async () => {
       } catch (error) {
         console.error('유저 정보 불러오는 중 에러 발생', error)
       }
-    })
+    }
   } catch (error) {
     console.error('Failed to fetch data:', error)
   }
@@ -228,6 +227,7 @@ onMounted(() => {
   } else {
     alert('게시글을 보시려면 로그인이 필요합니다!')
     router.push('/login')
+    return
   }
 
   fetchData()

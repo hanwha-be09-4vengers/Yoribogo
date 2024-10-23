@@ -106,7 +106,7 @@ const fetchData = async () => {
           text = lastMessage.replaceAll('data:', '').replace(/\n/g, '')
 
           // 공백만 있을 경우
-          if (text.trim === '') {
+          if (text.trim() === '') {
             lastMessage = ''
             continue
           }
@@ -155,19 +155,28 @@ const handleImageLoad = () => {
   isImageError.value = false
 }
 
-onMounted(() => {
+let eventSource = null
+
+const handleImageUpdate = (event) => {
+  menuImageSrc.value = event.data
+  console.log(event.data)
+
+  if (eventSource) {
+    eventSource.removeEventListener('image-update', handleImageUpdate)
+    eventSource.close() // 연결 종료
+  }
+}
+
+onMounted(async () => {
   if (localStorage.getItem('token')) {
     isLogin.value = true
   }
+
+  await fetchData()
+
   // SSE 연결 생성
-  const eventSource = new EventSource('/api/notifications/sseconnect')
-
-  fetchData()
-
-  eventSource.addEventListener('image-update', (event) => {
-    menuImageSrc.value = event.data
-    console.log('사진 업데이트됨: ', event.data)
-  })
+  eventSource = new EventSource('/api/notifications/sseconnect')
+  eventSource.addEventListener('image-update', handleImageUpdate)
 })
 </script>
 

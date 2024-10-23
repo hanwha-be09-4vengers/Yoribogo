@@ -12,6 +12,7 @@
           <form class="search" @submit.prevent="searchText">
             <i class="fa-solid fa-magnifying-glass" @click="searchText"></i>
             <input
+              id="search-qna-input"
               class="inputValue"
               type="search"
               @keyup.enter="searchText"
