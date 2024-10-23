@@ -147,11 +147,10 @@ const fetchData = async () => {
 
     if (commentsResponse.success) {
       commentInfo.value = commentsResponse.data // 댓글 데이터를 저장
-    } else {
-      console.error('Failed to fetch comments:', commentsResponse.message)
     }
 
-    commentInfo.value.forEach(async (comment) => {
+    // forEach 대신 for...of 사용
+    for (const comment of commentInfo.value) {
       try {
         const profileResponse = (await axios.get(`/api/users/${comment['user_id']}/profile`)).data
         if (profileResponse.success) {
@@ -168,7 +167,7 @@ const fetchData = async () => {
       } catch (error) {
         console.error('유저 정보 불러오는 중 에러 발생', error)
       }
-    })
+    }
   } catch (error) {
     console.error('Failed to fetch data:', error)
   }
