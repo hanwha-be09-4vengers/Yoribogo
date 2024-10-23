@@ -106,7 +106,7 @@ const fetchData = async () => {
           text = lastMessage.replaceAll('data:', '').replace(/\n/g, '')
 
           // 공백만 있을 경우
-          if (text === ' ' || text === '') {
+          if (text.trim === '') {
             lastMessage = ''
             continue
           }
