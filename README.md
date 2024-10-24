@@ -11,22 +11,23 @@
    - [Frontend](#4-frontend)
    - [DevOps](#5-devops)
    - [Tool](#6-tool)
-3. [프로젝트 개요](#프로젝트-개요)
+3. [깃 브랜치 전략](#깃-브랜치-전략)
+4. [프로젝트 개요](#프로젝트-개요)
    - [프로젝트 소개](#프로젝트-소개)
    - [프로젝트 배경](#프로젝트-배경)
    - [유사 서비스와의 차별성](#유사-서비스와의-차별성)
-4. [DDD](#ddd)
+5. [DDD](#ddd)
    - [Bounded Context](#bounded-context)
    - [연관 관계 매핑](#연관-관계-매핑)
-5. [WBS](#wbs)
-6. [시스템 아키텍쳐](#시스템-아키텍쳐)
-7. [UI 설계](#ui-설계)
-8. [데이터베이스 모델링](#데이터베이스-모델링)
+6. [WBS](#wbs)
+7. [시스템 아키텍쳐](#시스템-아키텍쳐)
+8. [UI 설계](#ui-설계)
+9. [데이터베이스 모델링](#데이터베이스-모델링)
    - [개념 모델링](#개념-모델링)
    - [논리 모델링](#논리-모델링)
    - [물리 모델링](#물리-모델링)
-9. [JenkinsScript](#jenkins-script)
-10. [결과 화면](#결과-화면)
+10. [JenkinsScript](#jenkins-script)
+11. [결과 화면](#결과-화면)
 11. [동료 평가](#동료-평가)
 
 ## Team _4vengers_<a id="팀-소개">
@@ -77,6 +78,26 @@
 | GitHub                                                                                          | DA#                                                                                              | IntelliJ IDEA                                                                                          | Visual Studio Code                                                                                  |
 | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | <img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=GitHub&logoColor=white"> &nbsp; | <img src="https://img.shields.io/badge/DA%23-0B6121.svg?style=flat&logo=draw.io&logoColor=white"> &nbsp; | ![IntelliJ IDEA](https://img.shields.io/badge/IntelliJIDEA-000000.svg?style=flat&logo=intellij-idea&logoColor=white) | ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=flat&logo=visual-studio-code&logoColor=white) |
+
+---
+
+## ⚙️ 깃 브랜치 전략<a id="깃-브랜치-전략">
+
+### 깃 플로우(Git-flow)
+
+![image](https://github.com/user-attachments/assets/ff9fe80b-c684-496c-88fb-b2d0378adc78)
+
+**Main**: 배포 가능한 안정적인 코드가 저장되는 브랜치로, 프로덕션 환경에 릴리즈될 코드는 이 브랜치에 머지됩니다.
+
+**Develop**: 개발 중인 코드가 모이는 브랜치로, 각종 기능(feature)들이 여기로 병합됩니다. 완성된 기능들은 이 브랜치에서 통합 테스트를 거쳐 Main으로 넘어가게 됩니다.
+
+**Feature Branches**: 개별 기능을 개발할 때 사용하는 브랜치들로, 이 브랜치들은 기능이 완성되면 Develop 브랜치에 병합됩니다.
+
+### 깃 플로우의 특징
+- 브랜치별로 책임을 명확히 할 수 있음
+- 매우 디테일한 버전 정보를 제공 가능함
+- Main에 있는 코드는 테스트되고 최종 수정된 것만 반영되기 때문에 매우 깔끔한 상태로 유지됨
+- 브랜치별로 역할이 있으므로 문제가 있더라도 문제 발생시 각 브랜치를 대기 시킬 필요가 없음
 
 ---
 
