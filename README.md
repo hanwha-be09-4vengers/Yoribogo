@@ -45,9 +45,9 @@
 
 ### 1. Backend <a id="1-backend"></a>
 
-| Java 17                                                                       | Spring Boot                                                                                              | Spring Data JPA                                                                                                 | Hibernate                                                                       | Gradle                                                                 | JUnit5                                                                                             | OpenAI                                                                                       | SSE                                                                                         | Spring WebFlux                                                                              |
+| Java 17                                                                       | Spring Boot                                                                                              | Spring Data JPA                                                                                                 | Hibernate                                                                       | Gradle                                                                 | JUnit5                                                                                             | OpenAI                                                                                       | SSE                                                                                        | Spring WebFlux                                                                              |
 | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| ![Java](https://img.shields.io/badge/Java-17-007396.svg?&logo=java&color=red) | ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3-6DB33F.svg?&logo=spring-boot&color=lightgreen) | ![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-6DB33F.svg?&logo=spring-data-JPA) | ![Hibernate](https://img.shields.io/badge/Hibernate-59666C.svg?&logo=hibernate) | ![Gradle](https://img.shields.io/badge/Gradle-02303A.svg?&logo=gradle) | ![JUnit5](https://img.shields.io/badge/JUnit5-25A162.svg?&logo=junit5&logoColor=white&color=green) | ![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=flat&logo=openai&logoColor=white) | ![SSE](https://img.shields.io/badge/SSE-grey.svg) | ![Spring WebFlux](https://img.shields.io/badge/Spring_WebFlux-6AAD3D.svg) |
+| ![Java](https://img.shields.io/badge/Java-17-007396.svg?&logo=java&color=red) | ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3-6DB33F.svg?&logo=spring-boot&color=lightgreen) | ![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-6DB33F.svg?&logo=spring-data-JPA) | ![Hibernate](https://img.shields.io/badge/Hibernate-59666C.svg?&logo=hibernate) | ![Gradle](https://img.shields.io/badge/Gradle-02303A.svg?&logo=gradle) | ![JUnit5](https://img.shields.io/badge/JUnit5-25A162.svg?&logo=junit5&logoColor=white&color=green) | ![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=flat&logo=openai&logoColor=white) | ![SSE](https://img.shields.io/badge/SSE-Server%20Sent%20Event-grey.svg?&logo=server&color=blue) | ![Spring WebFlux](https://img.shields.io/badge/Spring_WebFlux-6AAD3D.svg) |
 
 ### 2. Security <a id="2-security"></a>
 
@@ -69,9 +69,10 @@
 
 ### 5. DevOps <a id="5-devops"></a>
 
-| Docker                                                                                    | Jenkins                                                                                            |
-| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| ![Docker](https://img.shields.io/badge/Docker-2496ED.svg?&logo=docker&logoColor=white)       | ![Jenkins](https://img.shields.io/badge/Jenkins-D24939?logo=jenkins&logoColor=white)                     |
+| Docker                                                                                     | Jenkins                                                                                            | Kubernetes                                                                                       |
+| ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| ![Docker](https://img.shields.io/badge/Docker-2496ED.svg?&logo=docker&logoColor=white)      | ![Jenkins](https://img.shields.io/badge/Jenkins-D24939.svg?&logo=jenkins&logoColor=white)           | ![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5.svg?&logo=kubernetes&logoColor=white) |
+
 
 ### 6. Tool <a id="6-tool"></a>
 
@@ -85,7 +86,8 @@
 
 ### 깃 플로우(Git-flow)
 
-![image](https://github.com/user-attachments/assets/ff9fe80b-c684-496c-88fb-b2d0378adc78)
+<img src="https://github.com/user-attachments/assets/ff9fe80b-c684-496c-88fb-b2d0378adc78" heigh="200" />
+
 
 **Main**: 배포 가능한 안정적인 코드가 저장되는 브랜치로, 프로덕션 환경에 릴리즈될 코드는 이 브랜치에 머지됩니다.
 
@@ -93,11 +95,10 @@
 
 **Feature Branches**: 개별 기능을 개발할 때 사용하는 브랜치들로, 이 브랜치들은 기능이 완성되면 Develop 브랜치에 병합됩니다.
 
-### 깃 플로우의 특징
-- 브랜치별로 책임을 명확히 할 수 있음
-- 매우 디테일한 버전 정보를 제공 가능함
-- Main에 있는 코드는 테스트되고 최종 수정된 것만 반영되기 때문에 매우 깔끔한 상태로 유지됨
-- 브랜치별로 역할이 있으므로 문제가 있더라도 문제 발생시 각 브랜치를 대기 시킬 필요가 없음
+### 우리팀 깃 브랜치 전략 (깃 플로우)의 특징
+- 명확한 구조: 개발, 테스트, 배포 등의 단계가 명확하게 구분되기 때문에, 팀 내에서 역할 분담이나 작업 흐름을 쉽게 관리하여, 브랜치별로 책임을 명확히 할 수 있음.
+- 안정성: Main에 있는 코드는 테스트되고 최종 수정된 것만 반영되기 때문에 안정된 상태로 유지됨.
+- 동시 개발 지원: 각 기능을 독립적인 feature 브랜치에서 작업할 수 있어 충돌을 최소화할 수 있어 각 브랜치를 대기 시킬 필요가 없음.
 
 ---
 
@@ -318,6 +319,7 @@ pipeline {
 
 <h2>1. Jenkins CI/CD </h2>
   <details>
+      <summary>Yoribogo CI/CD</summary>
       <img src="https://github.com/user-attachments/assets/ea5e2a4d-892f-4b01-90de-dff5091c5a82" alt="">
   </details>
           
@@ -460,7 +462,7 @@ pipeline {
 </details>
 
 <details>
-  <summary>6.3 회원탈퇴</summary>
+  <summary>6.3 회원탈퇴 및 재활성화</summary>
   <img src="https://github.com/user-attachments/assets/ac3110c6-23ac-4115-acb5-64dfe070ea92" alt="">
 </details>
 
