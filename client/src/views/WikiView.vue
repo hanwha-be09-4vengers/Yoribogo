@@ -1,7 +1,6 @@
 <template>
   <div class="wiki-view">
     <header>
-      <NotificationButton v-if="isLogin"></NotificationButton>
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
     </header>
@@ -29,7 +28,6 @@
 <script setup>
 import HomeButton from '@/components/common/HomeButton.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
-import NotificationButton from '@/components/common/NotificationButton.vue'
 import MainBoard from '@/components/common/MainBoard.vue'
 import SearchBar from '@/components/common/SearchBar.vue'
 import MenuItem from '@/components/recipe/MenuItem.vue'
@@ -51,8 +49,8 @@ const fetchData = async (name, page) => {
   try {
     let response
     name === ''
-      ? (response = (await axios.get(`/api/recipes?page=${page}`)).data)
-      : (response = (await axios.get(`/api/recipes/search?name=${name}&page=${page}`)).data)
+      ? (response = (await axios.get(`/boot/api/recipes?page=${page}`)).data)
+      : (response = (await axios.get(`/boot/api/recipes/search?name=${name}&page=${page}`)).data)
     if (response.success) {
       menuList.value = response.data.content
       pageInfo.value = response.data.page

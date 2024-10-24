@@ -1,7 +1,6 @@
 <template>
   <div class="wiki-detail-view">
     <header>
-      <NotificationButton v-if="isLogin"></NotificationButton>
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
     </header>
@@ -43,7 +42,6 @@
 <script setup>
 import HomeButton from '@/components/common/HomeButton.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
-import NotificationButton from '@/components/common/NotificationButton.vue'
 import MainBoard from '@/components/common/MainBoard.vue'
 import BackButton from '@/components/common/BackButton.vue'
 import RecipeManual from '@/components/recipe/RecipeManual.vue'
@@ -68,17 +66,17 @@ const defaultImage = ref(
 
 const fetchData = async () => {
   try {
-    const recipeResponse = (await axios.get(`/api/recipes/${route.params.recipeId}`)).data
+    const recipeResponse = (await axios.get(`/boot/api/recipes/${route.params.recipeId}`)).data
     if (recipeResponse.success) {
       menuInfo.value = recipeResponse.data
       menuImageSrc.value = menuInfo.value.menu_image || defaultImage.value
 
-      const manualResponse = (await axios.get(`/api/manuals?recipe=${route.params.recipeId}`)).data
+      const manualResponse = (await axios.get(`/boot/api/manuals?recipe=${route.params.recipeId}`)).data
       if (manualResponse.success) {
         manualList.value = manualResponse.data
       } else {
         // Fetch the manual using the Fetch API for streaming response
-        const response = await fetch(`/api/manuals/ai?recipe=${route.params.recipeId}`, {
+        const response = await fetch(`/boot/api/manuals/ai?recipe=${route.params.recipeId}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -172,10 +170,6 @@ onMounted(async () => {
   }
 
   await fetchData()
-
-  // SSE 연결 생성
-  eventSource = new EventSource('/api/notifications/sseconnect')
-  eventSource.addEventListener('image-update', handleImageUpdate)
 })
 </script>
 

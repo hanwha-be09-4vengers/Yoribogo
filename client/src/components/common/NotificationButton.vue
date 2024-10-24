@@ -92,7 +92,7 @@ const loadNotifications = async () => {
     }
 
     // API 요청 보내기
-    const response = await fetch(`/api/notifications/send/${userId}`)
+    const response = await fetch(`/boot/api/notifications/send/${userId}`)
     if (response.ok) {
       const data = await response.json()
       notifications.value = data.data // 서버에서 받은 알림 데이터를 저장

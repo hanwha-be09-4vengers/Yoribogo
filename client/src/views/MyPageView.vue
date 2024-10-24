@@ -1,7 +1,6 @@
 <template>
   <div class="mypage-view">
     <header>
-      <NotificationButton class="notification-btn" v-if="isLogin"></NotificationButton>
       <ProfileButton class="profile-btn"></ProfileButton>
       <HomeButton class="home-btn"></HomeButton>
     </header>
@@ -63,11 +62,10 @@ import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router' // vue-router 임포트
 import { useTokenStore } from '@/stores/tokenStore' // Pinia store 사용
 import axios from 'axios'
-
+//component
 import HomeButton from '@/components/common/HomeButton.vue'
 import MainBoard from '@/components/common/MainBoard.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
-import NotificationButton from '@/components/common/NotificationButton.vue'
 
 // 회원 프로필 관련 모달창
 import UserProfile from '@/components/user/profile/UserProfile.vue'
@@ -135,12 +133,12 @@ const fetchRecipes = async (userId, page) => {
   try {
     let response
     if (currentTab.value === '만족했던 레시피') {
-      response = (await axios.get(`/api/recommended-menus?user=${userId}&page=${page}`)).data
+      response = (await axios.get(`/boot/api/recommended-menus?user=${userId}&page=${page}`)).data
     } else if (currentTab.value === '북마크한 레시피') {
-      response = (await axios.get(`/api/recipe-board/favorites/users/${userId}?pageNo=${page}`))
+      response = (await axios.get(`/boot/api/recipe-board/favorites/users/${userId}?pageNo=${page}`))
         .data
     } else if (currentTab.value === '내가 작성한 레시피') {
-      response = (await axios.get(`/api/recipe-board/users/${userId}/boards?pageNo=${page}`)).data
+      response = (await axios.get(`/boot/api/recipe-board/users/${userId}/boards?pageNo=${page}`)).data
     }
 
     if (response.success) {
@@ -182,9 +180,9 @@ watch(
 onMounted(() => {
   const tokenStore = useTokenStore()
   if (!tokenStore.token.accessToken) {
-    alert('마이페이지를 보시려면 로그인이 필요합니다!')
-    router.push('/login')
-    return
+    alert('마이페이지를 보시려면 로그인이 필요합니다!');
+    router.push('/login-page');
+    return // 종료
   } else {
     userId.value = JSON.parse(localStorage.getItem('token')).userId
     isLogin.value = true

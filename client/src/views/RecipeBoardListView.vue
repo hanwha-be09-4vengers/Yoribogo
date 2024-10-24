@@ -1,7 +1,6 @@
 <template>
   <div class="recipe-board-list-view">
     <header>
-      <NotificationButton v-if="isLogin"></NotificationButton>
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
     </header>
@@ -33,7 +32,6 @@
 <script setup>
 import HomeButton from '@/components/common/HomeButton.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
-import NotificationButton from '@/components/common/NotificationButton.vue'
 import MainBoard from '@/components/common/MainBoard.vue'
 import SearchBar from '@/components/common/SearchBar.vue'
 import MenuItem from '@/components/recipe/MenuItem.vue'
@@ -62,7 +60,7 @@ const fetchData = async (page, searchQuery = '') => {
       )
     } else {
       // 전체 게시글 조회
-      response = await axios.get(`/api/recipe-board/boards?pageNo=${page}`)
+      response = await axios.get(`/boot/api/recipe-board/boards?pageNo=${page}`)
     }
 
     if (response.data.success) {

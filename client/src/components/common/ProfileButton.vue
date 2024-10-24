@@ -100,7 +100,7 @@ const goSignup = () => {
 
 // 회원가입 페이지로 이동
 const goLogin = () => {
-  router.push('/login')
+  router.push('/login-page')
 }
 
 // 마운트될 때 사용자 프로필 이미지 불러오기

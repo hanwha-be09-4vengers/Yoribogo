@@ -128,8 +128,8 @@ const login = async () => {
   }
 
   try {
-    // 절대 경로를 사용하여 로그인 API 호출
-    const response = await axios.post('/login', {
+    // 
+    const response = await axios.post('/boot/login', {
       user_auth_id: username.value,
       password: password.value
     })

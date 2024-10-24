@@ -1,7 +1,6 @@
 <template>
   <div class="qna-create-view">
     <header>
-      <NotificationButton class="notification-btn" v-if="isLogin"></NotificationButton>
       <ProfileButton class="profile-btn"></ProfileButton>
       <HomeButton class="home-btn"></HomeButton>
     </header>
@@ -42,7 +41,6 @@
 import HomeButton from '@/components/common/HomeButton.vue'
 import MainBoard from '@/components/common/MainBoard.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
-import NotificationButton from '@/components/common/NotificationButton.vue'
 
 import { ref, onMounted, toRaw } from 'vue'
 import { useRouter } from 'vue-router'
