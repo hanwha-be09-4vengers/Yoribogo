@@ -82,7 +82,7 @@ const fetchRecommendedMenu = async () => {
       throw new Error('세션이 만료되었습니다.')
     }
 
-    const response = (await axios.post('/api/recipes/recommend', requestData)).data
+    const response = (await axios.post('/boot/api/recipes/recommend', requestData)).data
 
     if (response.success) {
       menuName.value = response.data.menu_name
@@ -103,7 +103,7 @@ const fetchRecommendedMenu = async () => {
 const postRecommendData = async (satisfaction) => {
   try {
     const userId = JSON.parse(localStorage.getItem('token')).userId
-    await axios.post('/api/recommended-menus', {
+    await axios.post('/boot/api/recommended-menus', {
       satisfaction: satisfaction,
       user_id: userId,
       recipe_id: recipeId.value

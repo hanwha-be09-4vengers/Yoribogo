@@ -1,7 +1,6 @@
 <template>
   <div class="recipe-board-detail-view">
     <header>
-      <NotificationButton v-if="isLogin"></NotificationButton>
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
     </header>
@@ -92,7 +91,6 @@
 <script setup>
 import HomeButton from '@/components/common/HomeButton.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
-import NotificationButton from '@/components/common/NotificationButton.vue'
 import MainBoard from '@/components/common/MainBoard.vue'
 import BackButton from '@/components/common/BackButton.vue'
 import RecipeManual from '@/components/recipe/RecipeManual.vue'
@@ -128,12 +126,12 @@ const fetchData = async () => {
   try {
     commentInfo.value = []
     userProfiles.value = []
-    const recipeResponse = (await axios.get(`/api/recipe-board/detail/${route.params.board_id}`))
+    const recipeResponse = (await axios.get(`/boot/api/recipe-board/detail/${route.params.board_id}`))
       .data
     if (recipeResponse.success) {
       menuInfo.value = recipeResponse.data
       menuImageSrc.value = menuInfo.value.board_image || defaultImage.value
-      const writerResponse = (await axios.get(`/api/users/${menuInfo.value.user_id}/profile`)).data
+      const writerResponse = (await axios.get(`/boot/api/users/${menuInfo.value.user_id}/profile`)).data
       if (writerResponse.success) {
         writerProfiles.value = writerResponse.data
         profileImageSrc.value = writerProfiles.value.profileImage || defaultImage.value
@@ -143,7 +141,7 @@ const fetchData = async () => {
 
     // 댓글 정보 가져오기 (배열 형태로 바로 반환됨)
     const commentsResponse = (
-      await axios.get(`/api/recipe-board/${route.params.board_id}/comments`)
+      await axios.get(`/boot/api/recipe-board/${route.params.board_id}/comments`)
     ).data
 
     if (commentsResponse.success) {
@@ -153,7 +151,7 @@ const fetchData = async () => {
     // forEach 대신 for...of 사용
     for (const comment of commentInfo.value) {
       try {
-        const profileResponse = (await axios.get(`/api/users/${comment['user_id']}/profile`)).data
+        const profileResponse = (await axios.get(`/boot/api/users/${comment['user_id']}/profile`)).data
         if (profileResponse.success) {
           // userProfiles 배열에 하나씩 추가
           userProfiles.value.push({
@@ -186,7 +184,7 @@ const handleAddComment = async (newComment) => {
 
     // 서버로 새 댓글 전송
     const response = (
-      await axios.post(`/api/recipe-board/${route.params.board_id}/comments`, commentData)
+      await axios.post(`/boot/api/recipe-board/${route.params.board_id}/comments`, commentData)
     ).data
 
     // 새로운 댓글을 로컬에 추가

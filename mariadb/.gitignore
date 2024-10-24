@@ -1,4 +1,0 @@
-# .gitignore
-
-# mariadb가 설정된 .env 파일 무시
-.env

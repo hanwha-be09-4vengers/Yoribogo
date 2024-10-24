@@ -163,7 +163,7 @@ const submitRecipe = async () => {
       console.error('board_image is not a File instance')
     }
 
-    const boardResponse = await axios.post('/api/recipe-board/create', formData)
+    const boardResponse = await axios.post('/boot/api/recipe-board/create', formData)
 
     // manual_step을 처리하는 비동기 함수
     const manualDataPromises = manual_step.value.map(async (step, index) => {
@@ -197,7 +197,7 @@ const submitRecipe = async () => {
       })
 
       await axios.post(
-        `/api/recipe-board/create/manual/${boardResponse.data.data.board_id}`,
+        `/boot/api/recipe-board/create/manual/${boardResponse.data.data.board_id}`,
         manualFormData
       )
     }

@@ -4,8 +4,9 @@ FROM mariadb:latest
 # 환경 변수 설정 (루트 비밀번호)
 ENV MYSQL_ROOT_PASSWORD=mariadb
 ENV MYSQL_DATABASE=yoribogodb
-# ENV MYSQL_USER=yoribogo
-# ENV MYSQL_PASSWORD=yoribogo
+# init.sql에 설정된 비밀번호
+# .gitignore에 설정했으나 참고를 위해서 집어 넣음
+
 
 # 초기 SQL 파일 복사 (선택 사항)
 COPY ./init.sql /docker-entrypoint-initdb.d/

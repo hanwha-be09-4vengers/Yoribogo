@@ -1,7 +1,6 @@
 <template>
   <div class="recipe-board-view">
     <header>
-      <NotificationButton v-if="isLogin"></NotificationButton>
       <ProfileButton></ProfileButton>
       <HomeButton></HomeButton>
     </header>
@@ -14,7 +13,6 @@
 <script setup>
 import HomeButton from '@/components/common/HomeButton.vue'
 import MainBoard from '@/components/common/MainBoard.vue'
-import NotificationButton from '@/components/common/NotificationButton.vue'
 import ProfileButton from '@/components/common/ProfileButton.vue'
 import WriteRecipeBoardComponent from '@/components/recipe-board/WriteRecipeBoardComponent.vue'
 import { onMounted, ref } from 'vue'

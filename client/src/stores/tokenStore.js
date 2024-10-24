@@ -44,7 +44,7 @@ export const useTokenStore = defineStore('token', () => {
   // 새 액세스 토큰 발급 함수 (리프레시 토큰 사용)
   const refreshAccessToken = async () => {
     try {
-      const response = await axios.post('/api/users/auth/refresh-token', {
+      const response = await axios.post('/boot/api/users/auth/refresh-token', {
         refresh_token: token.refreshToken // 리프레시 토큰 전송
       })
 
